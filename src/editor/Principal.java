@@ -17,6 +17,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import com.sun.xml.internal.ws.encoding.soap.SOAP12Constants;
+
 /**
  *
  * @author helbert
@@ -43,6 +45,10 @@ public class Principal {
 	private static final int MENU_GER_USU = 3;
 	private static final int MENU_SAIR = 0;
 
+	private static final int MENU_USU_INS = 1;
+	private static final int MENU_USU_CON = 2;
+	private static final int MENU_USU_VOL = 0;;
+
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		Principal princ = new Principal();
 		int opcaoMenu = -1;
@@ -52,7 +58,7 @@ public class Principal {
 				try {
 					if (usuario == null) {
 						usuario = princ.logar(entrada);
-						System.out.println(String.format("Usuario Logado: %s", usuario.getNome()));
+						System.out.println(String.format("Usuario Logado: %s\n", usuario.getNome()));
 					}
 
 					opcaoMenu = princ.exibir_menu(entrada, usuario);
@@ -65,7 +71,7 @@ public class Principal {
 						break;
 					case MENU_GER_USU:
 						if (usuario.getAcessoUsuario().isUsuarioAdm()) {
-							princ.inserir_usuario(entrada);
+							princ.gerenciar_usuario(entrada);
 						}
 						break;
 					case MENU_SAIR:
@@ -84,8 +90,48 @@ public class Principal {
 		}
 	}
 
+	public void gerenciar_usuario(Scanner s) throws NoSuchAlgorithmException, IOException {
+		int opcaoMenu = -1;
+		do {
+			try {
+
+				opcaoMenu = exibir_menu_usuario(s);
+
+				switch (opcaoMenu) {
+				case MENU_USU_INS:
+					inserir_usuario(s);
+					System.out.println("Usuario inserido com sucesso!\n");
+					break;
+				case MENU_USU_CON:
+					break;
+				case MENU_USU_VOL:
+					break;
+				default:
+					System.err.println("Opcao Invalida!");
+				}
+
+			} catch (InputMismatchException es) {
+				s.nextLine();
+				System.err.println("Opcao Invalida!");
+			}
+		} while (opcaoMenu != 0);
+
+	}
+
+	public int exibir_menu_usuario(Scanner s) throws InputMismatchException {
+		System.out.println("--- MENU USUARIO ---");
+		System.out.println("1 - Novo Usuario");
+		System.out.println("2 - Consultar Usuario");
+		System.out.println("0 - Voltar");
+		System.out.print("Selecione: ");
+		int opc = s.nextInt();
+		System.out.print("\n");
+		s.nextLine();
+		return opc;
+	}
+
 	public int exibir_menu(Scanner s, Usuario u) throws InputMismatchException {
-		System.out.println("MENU");
+		System.out.println("--- MENU ---");
 		System.out.println("1 - Novo Arquivo");
 		System.out.println("2 - Consultar Arquivos");
 		if (u.getAcessoUsuario().isUsuarioAdm()) {
@@ -94,6 +140,7 @@ public class Principal {
 		System.out.println("0 - Sair");
 		System.out.print("Selecione: ");
 		int opc = s.nextInt();
+		System.out.print("\n");
 		s.nextLine();
 		return opc;
 	}
@@ -133,7 +180,8 @@ public class Principal {
 		String arq_acesso[];
 		AcessoUsuario aceUsu;
 		int ultimoCodigo = 0;
-
+		
+		System.out.println("--- LOGIN ---");
 		System.out.print("Usuario: ");
 		login = s.nextLine();
 		System.out.print("Senha: ");
@@ -179,7 +227,8 @@ public class Principal {
 		File dir, file;
 		boolean isMakeDir;
 
-		System.out.print("Nome do aqruivo: ");
+		System.out.println("--- NOVO ARQUIVO ---");
+		System.out.print("Nome do arquivo: ");
 		nomeArquivo = s.nextLine();
 		PATH_FILE = String.format("%s//%s", DIR_ARQUIVOS, nomeArquivo);
 		URL_FILE = String.format("%s//%s.txt", PATH_FILE, nomeArquivo);

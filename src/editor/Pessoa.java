@@ -7,7 +7,7 @@ package editor;
 
 /**
  *
- * @author helbe
+ * @author helbert
  */
 public abstract class Pessoa {
 
