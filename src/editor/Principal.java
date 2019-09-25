@@ -1,10 +1,5 @@
 package editor;
 
-import editor.exc.DiretorioException;
-import editor.acesso.AcessoUsuario;
-import editor.crypt.Criptografia;
-import editor.exc.SenhaInvalidaException;
-import editor.exc.LoginInvalidoException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,12 +12,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.sun.xml.internal.ws.encoding.soap.SOAP12Constants;
+import editor.acesso.AcessoUsuario;
+import editor.crypt.Criptografia;
+import editor.exc.DiretorioException;
+import editor.exc.LoginInvalidoException;
+import editor.exc.SenhaInvalidaException;
 
-/**
- *
- * @author helbert
- */
 public class Principal {
 
 	// LOGAR
@@ -177,7 +172,7 @@ public class Principal {
 		String login, senha;
 		String registro, campoCod, campoLogin, campoSenha;
 		String dadosUsuario[];
-		String arq_acesso[];
+//		String arq_acesso[];
 		AcessoUsuario aceUsu;
 		int ultimoCodigo = 0;
 		
@@ -198,12 +193,12 @@ public class Principal {
 				if (campoLogin.equalsIgnoreCase(login)) {
 					if (campoSenha.equals(senha)) {
 						aceUsu = new AcessoUsuario(Boolean.parseBoolean(dadosUsuario[4]));
-						if (dadosUsuario.length > 5) {
-							arq_acesso = dadosUsuario[5].split(",");
-							for (String x : arq_acesso) {
-								System.out.println("VER AQUI");
-							}
-						}
+//						if (dadosUsuario.length > 5) {
+//							arq_acesso = dadosUsuario[5].split(",");
+//							for (String x : arq_acesso) {
+//								System.out.println("VER AQUI");
+//							}
+//						}
 						u = new Usuario(Integer.parseInt(dadosUsuario[0]), dadosUsuario[1], login, senha, aceUsu);
 					} else {
 						throw new SenhaInvalidaException("Senha invalida!");

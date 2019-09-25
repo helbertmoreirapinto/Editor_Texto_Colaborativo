@@ -5,10 +5,6 @@
  */
 package editor;
 
-/**
- *
- * @author helbert
- */
 public abstract class Pessoa {
 
     private String nome;
@@ -17,16 +13,10 @@ public abstract class Pessoa {
         this.nome = nome;
     }
 
-    /**
-     * @return the nome
-     */
     public String getNome() {
         return nome;
     }
 
-    /**
-     * @param nome the nome to set
-     */
     public void setNome(String nome) {
         this.nome = nome;
     }
