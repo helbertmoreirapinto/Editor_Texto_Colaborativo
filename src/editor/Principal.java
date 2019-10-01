@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map.Entry;
@@ -37,6 +38,9 @@ public class Principal {
 	private static final String NOME_ARQUIVO_USUARIOS = "USU_DB//USUARIOS.txt";
 	private static final String DIR_ARQUIVOS = "ARQUIVOS";
 	private static final String TERMINAR_EDICAO = "\\q";
+	private static final String FILE_DATA = ".data";
+	private static final String FILE_TEXT = ".txt";
+	private static final int COD_ELEM_AUTOR = 0;
 
 	private static final int MENU_GER_ARQ = 1;
 	private static final int MENU_GER_USU = 2;
@@ -45,6 +49,8 @@ public class Principal {
 	private static final int MENU_ARQ_NOVO = 1;
 	private static final int MENU_ARQ_EDIT = 2;
 	private static final int MENU_ARQ_GERE = 3;
+	private static final int MENU_ARQ_ALT_ACESS = 1;
+	private static final int MENU_ARQ_DEL = 2;
 	private static final int MENU_ARQ_VOLT = 0;
 
 	private static final int MENU_USU_NOVO = 1;
@@ -55,12 +61,10 @@ public class Principal {
 		Principal princ = new Principal();
 		int opcaoMenu = -1;
 		Usuario usuarioLogado = null;
-		HashMap<Integer, Usuario> usuarioList = new HashMap<Integer, Usuario>();
 		ArrayList<Arquivo> arquivoList = new ArrayList<Arquivo>();
 
 		try {
 
-			usuarioList = princ.carregar_lista_usuario();
 			arquivoList = princ.carregar_lista_arquivo();
 
 		} catch (IOException e) {
@@ -70,13 +74,15 @@ public class Principal {
 		/* Remover */
 		for (Arquivo a : arquivoList) {
 			System.out.println(a.getNome());
+			System.out.println(a.getCodigoAutor());
+			System.out.println(Arrays.asList(a.getUsuarioAcessoAdm()));
 		}
 
 		try (Scanner entrada = new Scanner(System.in)) {
 			do {
 				try {
 					if (usuarioLogado == null) {
-						usuarioLogado = princ.logar(entrada, usuarioList);
+						usuarioLogado = princ.logar(entrada);
 						System.out.println(String.format("Usuario Logado: %s\n", usuarioLogado.getNome()));
 					}
 					opcaoMenu = princ.exibir_menu(entrada, usuarioLogado);
@@ -86,8 +92,8 @@ public class Principal {
 						princ.gerenciar_arquivo(entrada, usuarioLogado);
 						break;
 					case MENU_GER_USU:
-						if (usuarioLogado.getAcessoUsuario().isUsuarioAdm()) {
-							princ.gerenciar_usuario(entrada, usuarioList);
+						if (usuarioLogado.isAdm()) {
+							princ.gerenciar_usuario(entrada);
 						}
 						break;
 					case MENU_SAIR:
@@ -111,7 +117,7 @@ public class Principal {
 	private int exibir_menu(Scanner s, Usuario u) throws InputMismatchException {
 		System.out.println("--- MENU ---");
 		System.out.println("1 - Gerenciar Arquivo");
-		if (u.getAcessoUsuario().isUsuarioAdm()) {
+		if (u.isAdm()) {
 			System.out.println("2 - Gerenciar Usuario");
 		}
 		System.out.println("0 - Sair");
@@ -155,11 +161,10 @@ public class Principal {
 		return usuarioList;
 	}
 
-	private Usuario logar(Scanner s, HashMap<Integer, Usuario> usuarioList)
+	private Usuario logar(Scanner s)
 			throws NoSuchAlgorithmException, LoginInvalidoException, FileNotFoundException, IOException {
-
 		String login, senha;
-
+		HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
 		System.out.println("--- LOGIN ---");
 		System.out.print("Usuario: ");
 		login = s.nextLine();
@@ -175,9 +180,8 @@ public class Principal {
 		throw new LoginInvalidoException("Login/Senha invalidos");
 	}
 
-	private void gerenciar_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
-			throws NoSuchAlgorithmException, IOException {
-
+	private void gerenciar_usuario(Scanner s) throws NoSuchAlgorithmException, IOException {
+		HashMap<Integer, Usuario> usuarioList;
 		int opcaoMenu = -1;
 		do {
 			try {
@@ -228,8 +232,7 @@ public class Principal {
 
 			PrintWriter out = new PrintWriter(buffer);
 			out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
-					usuario.getSenha(), String.valueOf(usuario.getAcessoUsuario().isUsuarioAdm()),
-					String.valueOf(usuario.isAtivo()));
+					usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
 			buffer.flush();
 		}
 	}
@@ -287,27 +290,60 @@ public class Principal {
 		return opc;
 	}
 
-	private ArrayList<Arquivo> carregar_lista_arquivo() {
-		ArrayList<Arquivo> arquivoList = new ArrayList<Arquivo>();
+	private ArrayList<Arquivo> carregar_lista_arquivo() throws FileNotFoundException, IOException {
+		ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
+		File diretorioArquivos = new File(DIR_ARQUIVOS);
+		File[] arquivoList = diretorioArquivos.listFiles();
+		int codigoAutor;
+		String nomeArquivo;
+		ArrayList<String> usuarioAcesso;
+		if (arquivoList != null) {
+			for (File file : arquivoList) {
+				if (file.getName().contains(FILE_DATA)) {
+					nomeArquivo = file.getName().substring(0, file.getName().indexOf("."));
+					usuarioAcesso = new ArrayList<String>();
+					try (FileReader reader = new FileReader(file); BufferedReader buffer = new BufferedReader(reader)) {
+						while (buffer.ready()) {
+							usuarioAcesso.add(buffer.readLine());
+						}
+						codigoAutor = Integer.parseInt(usuarioAcesso.get(COD_ELEM_AUTOR));
+						listaRetorno.add(new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso));
+					}
+				}
+			}
+		}
 
-		return arquivoList;
+		return listaRetorno;
 	}
 
 	private void gerenciar_arquivo(Scanner s, Usuario usuarioLogado) throws CriarDiretorioException, IOException {
 
 		int opcaoMenu = -1;
+		ArrayList<Arquivo> arquivosComAcesso;
+		Arquivo arquivo;
+		int cod;
 		do {
 			try {
+				arquivosComAcesso = filtrar_acesso_arquivo(usuarioLogado);
 				opcaoMenu = exibir_menu_arquivo(s);
-
 				switch (opcaoMenu) {
 				case MENU_ARQ_NOVO:
 					inserir_arquivo(s, usuarioLogado);
 					System.out.println("Arquivo inserido com sucesso!\n");
 					break;
 				case MENU_ARQ_EDIT:
+					cod = selecionar_arquivo(s, arquivosComAcesso);
+					if (cod != MENU_ARQ_VOLT) {
+						arquivo = arquivosComAcesso.get(cod - 1);
+//						editar arquivo selecionado
+					}
 					break;
 				case MENU_ARQ_GERE:
+					cod = selecionar_arquivo(s, arquivosComAcesso);
+					if (cod != MENU_ARQ_VOLT) {
+						arquivo = arquivosComAcesso.get(cod - 1);
+						alterar_acesso_arquivo(s, arquivo);
+					}
 					break;
 				case MENU_ARQ_VOLT:
 					break;
@@ -336,8 +372,8 @@ public class Principal {
 		nomeArquivo = s.nextLine();
 
 		PATH_FILE = String.format("%s", DIR_ARQUIVOS);
-		URL_FILE = String.format("%s//%s.txt", PATH_FILE, nomeArquivo);
-		URL_FILE_CONFIG = String.format("%s//%s.config", PATH_FILE, nomeArquivo);
+		URL_FILE = String.format("%s//%s%s", PATH_FILE, nomeArquivo, FILE_TEXT);
+		URL_FILE_CONFIG = String.format("%s//%s%s", PATH_FILE, nomeArquivo, FILE_DATA);
 
 		dir = new File(PATH_FILE);
 		isMakeDir = dir.mkdirs();
@@ -355,12 +391,6 @@ public class Principal {
 				// Arquivo existe e usuario tem acesso nele
 			}
 
-			try (FileWriter writer = new FileWriter(URL_FILE_CONFIG, !append_mode);
-					BufferedWriter buffer = new BufferedWriter(writer)) {
-				// Ver logica de acessos aqui
-
-			}
-
 			System.out.println("Insira o texto o arquivo:");
 			try (FileWriter writer = new FileWriter(URL_FILE, append_mode);
 					BufferedWriter buffer = new BufferedWriter(writer)) {
@@ -370,9 +400,94 @@ public class Principal {
 				}
 				buffer.flush();
 			}
+
+			try (FileWriter writer = new FileWriter(URL_FILE_CONFIG, !append_mode);
+					BufferedWriter buffer = new BufferedWriter(writer)) {
+				// Ver logica de acessos aqui
+				System.out.println("Selecione usuarios com acesso ADM ao arquivo: [Ex: cod_usu;cod_usu;cod_usu]");
+				buffer.append("1\n");
+				buffer.append("2\n");
+				buffer.append("3\n");
+
+				buffer.flush();
+			}
 		} else {
 			throw new CriarDiretorioException("Erro ao criar diretorio do arquivo!");
 		}
+	}
+
+	private void alterar_acesso_arquivo(Scanner s, Arquivo a) throws FileNotFoundException {
+		String URL_ARQ = String.format("%s//%s%s", DIR_ARQUIVOS, a.getNome(), FILE_TEXT);
+		String URL_ARQ_DATA = String.format("%s//%s%s", DIR_ARQUIVOS, a.getNome(), FILE_DATA);
+		File file = new File(URL_ARQ);
+		File fileData = new File(URL_ARQ_DATA);
+		int opc = -1;
+		do {
+			try {
+				System.out.println("--- GERENCIAR ARQUIVO ---");
+				System.out.println(String.format("ARQUIVO: %s", a.getNome()));
+				System.out.println("1 - Alterar acessos do arquivo");
+				System.out.println("2 - Deletar arquivo");
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+
+				opc = s.nextInt();
+				s.hasNextLine();
+
+				if (opc == MENU_ARQ_ALT_ACESS) {
+
+				} else if (opc == MENU_ARQ_DEL) {
+					if (file.delete() && fileData.delete()) {
+						System.out.println("Arquivo excluido com sucesso!");
+						break;
+					} else {
+						throw new FileNotFoundException("Nao foi possivel excluir arquivo");
+					}
+				}
+			} catch (InputMismatchException err) {
+				System.err.println("Opcao invalida!");
+			}
+		} while (opc != MENU_ARQ_VOLT);
+		System.out.print("\n");
+
+	}
+
+	private ArrayList<Arquivo> filtrar_acesso_arquivo(Usuario usuarioLogado) throws FileNotFoundException, IOException {
+		ArrayList<Arquivo> arquivoList = carregar_lista_arquivo();
+		ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
+
+		if (usuarioLogado.isAdm()) {
+			return arquivoList;
+		}
+
+		for (Arquivo a : arquivoList) {
+			if (a.getCodigoAutor() == usuarioLogado.getCodigo()) {
+				listaRetorno.add(a);
+				continue;
+			}
+
+			for (String usu : a.getUsuarioAcessoAdm()) {
+				if (Integer.parseInt(usu) == usuarioLogado.getCodigo()) {
+					listaRetorno.add(a);
+					break;
+				}
+			}
+		}
+		return listaRetorno;
+	}
+
+	private int selecionar_arquivo(Scanner s, ArrayList<Arquivo> arquivoList) throws InputMismatchException {
+		int opc;
+		System.out.println("--- SELECIONAR ARQUIVO ---");
+		for (int i = 0; i < arquivoList.size(); i++) {
+			System.out.println(String.format("%d - %s", (i + 1), arquivoList.get(i).getNome()));
+		}
+		System.out.println("0 - Voltar");
+		System.out.print("Selecione: ");
+		opc = s.nextInt();
+		s.nextLine();
+		System.out.print("\n");
+		return opc;
 	}
 
 }

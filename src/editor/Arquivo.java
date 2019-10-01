@@ -3,25 +3,22 @@ package editor;
 import java.util.ArrayList;
 
 public class Arquivo {
-	private static int cod = 0;
-	private int codigo;
 	private String nome;
-	private ArrayList<String> autorList;
+	private int codigoAutor;
+	private ArrayList<String> usuarioAcessoAdm;
 
-	public Arquivo(String nome, ArrayList<String> autorList) {
-		this.codigo = ++cod;
+	public Arquivo(String nome, int codigoAutor) {
 		this.nome = nome;
-		this.autorList = autorList;
+		this.codigoAutor = codigoAutor;
 	}
-
-	public int getCodigo() {
-		return codigo;
+	
+	public Arquivo(String nome, int codigoAutor, ArrayList<String> usuarioAcessoAdm) {
+		this.nome = nome;
+		this.codigoAutor = codigoAutor;
+		this.usuarioAcessoAdm = usuarioAcessoAdm;
 	}
-
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-
+	
+	
 	public String getNome() {
 		return nome;
 	}
@@ -30,11 +27,19 @@ public class Arquivo {
 		this.nome = nome;
 	}
 
-	public ArrayList<String> getAutorList() {
-		return autorList;
+	public int getCodigoAutor() {
+		return codigoAutor;
 	}
 
-	public void setAutorList(ArrayList<String> autorList) {
-		this.autorList = autorList;
+	public void setCodigoAutor(int codigoAutor) {
+		this.codigoAutor = codigoAutor;
+	}
+
+	public ArrayList<String> getUsuarioAcessoAdm() {
+		return usuarioAcessoAdm;
+	}
+
+	public void setUsuarioAcessoAdm(ArrayList<String> usuarioAcessoAdm) {
+		this.usuarioAcessoAdm = usuarioAcessoAdm;
 	}
 }
