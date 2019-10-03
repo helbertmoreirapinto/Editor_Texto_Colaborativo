@@ -20,6 +20,7 @@ import editor.crypt.Criptografia;
 import editor.exc.ArquivoDuplicadoException;
 import editor.exc.CriarDiretorioException;
 import editor.exc.LoginInvalidoException;
+import editor.exc.UsuarioInativoException;
 
 public class Principal {
 
@@ -40,6 +41,8 @@ public class Principal {
 	private static final int MENU_ARQ_ALT_ACESS = 1;
 	private static final int MENU_ARQ_DEL = 2;
 	private static final int MENU_ARQ_VOLT = 0;
+	private static final int MENU_USU_ALT = 1;
+	private static final int MENU_USU_INATIVO = 2;
 
 	private static final int MENU_USU_NOVO = 1;
 	private static final int MENU_USU_CONS = 2;
@@ -49,22 +52,6 @@ public class Principal {
 		Principal princ = new Principal();
 		int opcaoMenu = -1;
 		Usuario usuarioLogado = null;
-//		ArrayList<Arquivo> arquivoList = new ArrayList<Arquivo>();
-
-//		try {
-//
-//			arquivoList = princ.carregar_lista_arquivo();
-//
-//		} catch (IOException e) {
-//			System.err.println(e.getMessage());
-//		}
-
-		/* Remover */
-//		for (Arquivo a : arquivoList) {
-//			System.out.println(a.getNome());
-//			System.out.println(a.getCodigoAutor());
-//			System.out.println(Arrays.asList(a.getUsuarioAcessoAdm()));
-//		}
 
 		try (Scanner entrada = new Scanner(System.in)) {
 			do {
@@ -90,7 +77,7 @@ public class Principal {
 					default:
 						System.err.println("Opcao invalida!");
 					}
-				} catch (LoginInvalidoException | CriarDiretorioException | IOException
+				} catch (LoginInvalidoException | CriarDiretorioException | UsuarioInativoException | IOException
 						| NoSuchAlgorithmException err) {
 					System.err.println(err.getMessage());
 				} catch (InputMismatchException err) {
@@ -149,8 +136,8 @@ public class Principal {
 		return usuarioList;
 	}
 
-	private Usuario logar(Scanner s)
-			throws NoSuchAlgorithmException, LoginInvalidoException, FileNotFoundException, IOException {
+	private Usuario logar(Scanner s) throws NoSuchAlgorithmException, LoginInvalidoException, FileNotFoundException,
+			IOException, UsuarioInativoException {
 		String login, senha;
 		HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
 		System.out.println("--- LOGIN ---");
@@ -162,6 +149,9 @@ public class Principal {
 		for (Entry<Integer, Usuario> entrySet : usuarioList.entrySet()) {
 			if (login.equalsIgnoreCase(entrySet.getValue().getLogin())
 					&& senha.equals(entrySet.getValue().getSenha())) {
+				if (!entrySet.getValue().isAtivo()) {
+					throw new UsuarioInativoException("Usuario inativo!");
+				}
 				return entrySet.getValue();
 			}
 		}
@@ -225,7 +215,8 @@ public class Principal {
 		}
 	}
 
-	private void consultar_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList) {
+	private void consultar_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
+			throws IOException, NoSuchAlgorithmException {
 		int opc = -1;
 		Usuario usu;
 		do {
@@ -234,11 +225,31 @@ public class Principal {
 				if (opc == MENU_USU_VOLT)
 					return;
 				usu = usuarioList.get(opc);
-				alterar_usuario(s, usu);
+				if (alterar_usuario(s, usu)) {
+					atualizar_arquivo(usuarioList);
+					System.out.println("Usuario alterado com sucesso!");
+				}
+				usuarioList = carregar_lista_usuario();
 			} catch (InputMismatchException e) {
+				System.err.println("Opcao invalida!");
 				s.nextLine();
 			}
 		} while (opc != MENU_USU_VOLT);
+	}
+
+	private void atualizar_arquivo(HashMap<Integer, Usuario> usuarioList) throws IOException {
+		boolean append_mode = false;
+		try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode);
+				BufferedWriter buffer = new BufferedWriter(writer)) {
+			Usuario usuario;
+			for (Entry<Integer, Usuario> entrySet : usuarioList.entrySet()) {
+				usuario = entrySet.getValue();
+				PrintWriter out = new PrintWriter(buffer);
+				out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
+						usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
+			}
+			buffer.flush();
+		}
 	}
 
 	private int exibir_consulta_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
@@ -261,8 +272,41 @@ public class Principal {
 		return opc;
 	}
 
-	private void alterar_usuario(Scanner s, Usuario usuario) {
-		System.out.println(usuario.getNome());
+	private boolean alterar_usuario(Scanner s, Usuario usuario) throws NoSuchAlgorithmException {
+		int opc = -1;
+		do {
+			try {
+				System.out.println("--- ALTERAR USUARIO ---");
+				System.out.println("USUARIO: " + usuario.getNome());
+				System.out.println("1 - Alterar dados");
+				System.out.println(String.format("2 - Tornar %s", (usuario.isAtivo()) ? "inativo" : "ativo"));
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opc = s.nextInt();
+				s.nextLine();
+
+				if (opc == MENU_USU_ALT) {
+					System.out.print(String.format("Nome [%s]: ", usuario.getNome()));
+					usuario.setNome(s.nextLine());
+					System.out.print(String.format("Login [%s]: ", usuario.getLogin()));
+					usuario.setLogin(s.nextLine());
+					System.out.print(String.format("Senha: "));
+					usuario.setSenha(Criptografia.criptografar(s.nextLine()));
+					System.out.print("Usuario ADM? ");
+					usuario.setAdm(s.nextBoolean());
+					s.nextLine();
+					return true;
+				} else if (opc == MENU_USU_INATIVO) {
+					usuario.setAtivo(!usuario.isAtivo());
+					return true;
+				}
+			} catch (InputMismatchException err) {
+				System.err.println("Opcao invalida!");
+				s.nextLine();
+				return false;
+			}
+		} while (opc != MENU_USU_VOLT);
+		return false;
 	}
 
 	/* CRUD ARQUIVO */

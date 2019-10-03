@@ -8,15 +8,6 @@ public class Usuario extends Pessoa {
 	private String senha;
 	private boolean ativo;
 	private boolean adm;
-//	private AcessoUsuario acessoUsuario;
-
-//	public Usuario(int codigo, String nome, String login, String senha, AcessoUsuario acessoUsuario) {
-//		super(nome);
-//		this.codigo = codigo;
-//		this.login = login;
-//		this.senha = senha;
-//		this.acessoUsuario = acessoUsuario;
-//	}
 
 	public Usuario(String nome, String login, String senha, boolean adm, boolean ativo) {
 		super(nome);
@@ -25,7 +16,6 @@ public class Usuario extends Pessoa {
 		this.senha = senha;
 		this.adm = adm;
 		this.ativo = ativo;
-//		this.acessoUsuario = new AcessoUsuario(adm);
 	}
 
 	public static void set_cod(int cod) {
