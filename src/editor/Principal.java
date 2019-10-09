@@ -10,26 +10,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
 import editor.crypt.Criptografia;
-import editor.exc.ArquivoDuplicadoException;
 import editor.exc.CriarDiretorioException;
 import editor.exc.LoginInvalidoException;
+import editor.exc.NewFileException;
 import editor.exc.UsuarioInativoException;
 
 public class Principal {
 
 	private static final String NOME_ARQUIVO_USUARIOS = "USU_DB//USUARIOS.txt";
-	private static final String DIR_ARQUIVOS = "ARQUIVOS";
-	private static final String TERMINAR_EDICAO = "\\q";
-	private static final String FILE_DATA = ".data";
-	private static final String FILE_TEXT = ".txt";
 	private static final int COD_ELEM_AUTOR = 0;
+
+	private static final String SIM = "s";
+	private static final String NAO = "n";
 
 	private static final int MENU_GER_ARQ = 1;
 	private static final int MENU_GER_USU = 2;
@@ -38,37 +36,53 @@ public class Principal {
 	private static final int MENU_ARQ_NOVO = 1;
 	private static final int MENU_ARQ_EDIT = 2;
 	private static final int MENU_ARQ_GERE = 3;
-	private static final int MENU_ARQ_ALT_ACESS = 1;
-	private static final int MENU_ARQ_DEL = 2;
+//	private static final int MENU_ARQ_ALT_ACESS = 1;
+//	private static final int MENU_ARQ_DEL = 2;
 	private static final int MENU_ARQ_VOLT = 0;
-	private static final int MENU_USU_ALT = 1;
-	private static final int MENU_USU_INATIVO = 2;
+
+	private static final int MENU_EDIT_TERMINAR_EDICAO = 0;
+	private static final int MENU_EDIT_NEW_LINHA = 1;
+	private static final int MENU_EDIT_UNDO = 2;
+	private static final int MENU_EDIT_REDO = 3;
+	private static final int MENU_EDIT_INS = 4;
+	private static final int MENU_EDIT_CONSULTAR = 5;
 
 	private static final int MENU_USU_NOVO = 1;
 	private static final int MENU_USU_CONS = 2;
-	private static final int MENU_USU_VOLT = 0;;
+	private static final int MENU_USU_VOLT = 0;
 
 	public static void main(String[] args) {
-		Principal princ = new Principal();
 		int opcaoMenu = -1;
-		Usuario usuarioLogado = null;
+		Usuario user = null;
 
 		try (Scanner entrada = new Scanner(System.in)) {
 			do {
 				try {
-					if (usuarioLogado == null) {
-						usuarioLogado = princ.logar(entrada);
-						System.out.println(String.format("Usuario Logado: %s\n", usuarioLogado.getNome()));
+
+					if (user == null) {
+						user = logar(entrada);
+						System.out.println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
 					}
-					opcaoMenu = princ.exibir_menu(entrada, usuarioLogado);
+
+//					Menu Principal
+					System.out.println("--- MENU ---");
+					System.out.println("1 - Gerenciar Arquivo");
+					if (user.isAdm()) {
+						System.out.println("2 - Gerenciar Usuario");
+					}
+					System.out.println("0 - Sair");
+					System.out.print("Selecione: ");
+					opcaoMenu = entrada.nextInt();
+					System.out.print("\n");
+					entrada.nextLine();
 
 					switch (opcaoMenu) {
 					case MENU_GER_ARQ:
-						princ.gerenciar_arquivo(entrada, usuarioLogado);
+						gerenciar_arquivo(entrada, user);
 						break;
 					case MENU_GER_USU:
-						if (usuarioLogado.isAdm()) {
-							princ.gerenciar_usuario(entrada);
+						if (user.isAdm()) {
+							gerenciar_usuario(entrada);
 						}
 						break;
 					case MENU_SAIR:
@@ -88,35 +102,8 @@ public class Principal {
 		}
 	}
 
-	/* MENU */
-	private int exibir_menu(Scanner s, Usuario u) throws InputMismatchException {
-		System.out.println("--- MENU ---");
-		System.out.println("1 - Gerenciar Arquivo");
-		if (u.isAdm()) {
-			System.out.println("2 - Gerenciar Usuario");
-		}
-		System.out.println("0 - Sair");
-		System.out.print("Selecione: ");
-		int opc = s.nextInt();
-		System.out.print("\n");
-		s.nextLine();
-		return opc;
-	}
-
 	/* CRUD USUARIO */
-	private int exibir_menu_usuario(Scanner s) throws InputMismatchException {
-		System.out.println("--- MENU USUARIO ---");
-		System.out.println("1 - Novo Usuario");
-		System.out.println("2 - Consultar Usuario");
-		System.out.println("0 - Voltar");
-		System.out.print("Selecione: ");
-		int opc = s.nextInt();
-		System.out.print("\n");
-		s.nextLine();
-		return opc;
-	}
-
-	private HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
+	private static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
 		HashMap<Integer, Usuario> usuarioList = new HashMap<Integer, Usuario>();
 		String registro;
 		String campo[];
@@ -136,8 +123,8 @@ public class Principal {
 		return usuarioList;
 	}
 
-	private Usuario logar(Scanner s) throws NoSuchAlgorithmException, LoginInvalidoException, FileNotFoundException,
-			IOException, UsuarioInativoException {
+	private static Usuario logar(Scanner s) throws NoSuchAlgorithmException, LoginInvalidoException,
+			FileNotFoundException, IOException, UsuarioInativoException {
 		String login, senha;
 		HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
 		System.out.println("--- LOGIN ---");
@@ -158,12 +145,22 @@ public class Principal {
 		throw new LoginInvalidoException("Login/Senha invalidos");
 	}
 
-	private void gerenciar_usuario(Scanner s) throws NoSuchAlgorithmException, IOException {
+	private static void gerenciar_usuario(Scanner s) throws NoSuchAlgorithmException, IOException {
 		HashMap<Integer, Usuario> usuarioList;
 		int opcaoMenu = -1;
+		Usuario u;
 		do {
 			try {
-				opcaoMenu = exibir_menu_usuario(s);
+
+//				Menu Usuario
+				System.out.println("--- MENU USUARIO ---");
+				System.out.println("1 - Novo Usuario");
+				System.out.println("2 - Consultar Usuario");
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opcaoMenu = s.nextInt();
+				System.out.print("\n");
+				s.nextLine();
 
 				switch (opcaoMenu) {
 				case MENU_USU_NOVO:
@@ -172,7 +169,18 @@ public class Principal {
 					break;
 				case MENU_USU_CONS:
 					usuarioList = carregar_lista_usuario();
-					consultar_usuario(s, usuarioList);
+					u = consultar_usuario(s, usuarioList);
+					if (u != null) {
+						alterar_usuario(s, u, usuarioList);
+					}
+					// alterar? u
+//					if (alterar_usuario(s, u)) {
+//						atualizar_usuario(usuarioList);
+//					} else {
+//						return;
+//					}
+//					usuarioList = carregar_lista_usuario();
+
 					break;
 				case MENU_USU_VOLT:
 					break;
@@ -188,7 +196,7 @@ public class Principal {
 
 	}
 
-	private void inserir_usuario(Scanner s) throws IOException, NoSuchAlgorithmException {
+	private static void inserir_usuario(Scanner s) throws IOException, NoSuchAlgorithmException {
 		Usuario usuario;
 		String nome, login, senha;
 		boolean adm, ativo = true, append_mode = true;
@@ -215,301 +223,115 @@ public class Principal {
 		}
 	}
 
-	private void consultar_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
+	private static Usuario consultar_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
 			throws IOException, NoSuchAlgorithmException {
 		int opc = -1;
-		Usuario usu;
+		Usuario usu = null;
 		do {
 			try {
-				opc = exibir_consulta_usuario(s, usuarioList);
-				if (opc == MENU_USU_VOLT)
-					return;
-				usu = usuarioList.get(opc);
-				if (alterar_usuario(s, usu)) {
-					atualizar_arquivo(usuarioList);
-					System.out.println("Usuario alterado com sucesso!");
+
+//				Menu Consulta Usuario
+				System.out.println("--- SELECIONAR USUARIO ---");
+				System.out.println("COD\t|NOME\t\t\t\t|NICK\t\t|ATIVO\t|");
+				for (Entry<Integer, Usuario> entryset : usuarioList.entrySet()) {
+					System.out.println(String.format("%03d\t|%-31s|%-15s|%s\t|", entryset.getValue().getCodigo(),
+							entryset.getValue().getNome(), entryset.getValue().getLogin(),
+							String.valueOf(entryset.getValue().isAtivo())));
 				}
-				usuarioList = carregar_lista_usuario();
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opc = s.nextInt();
+				s.nextLine();
+				System.out.print("\n");
+
+				if (opc < 0 || opc > usuarioList.size()) {
+					throw new InputMismatchException();
+				}
+
+				if (opc == MENU_USU_VOLT) {
+					return usu;
+				}
+
+				return usuarioList.get(opc);
 			} catch (InputMismatchException e) {
 				System.err.println("Opcao invalida!");
 				s.nextLine();
 			}
 		} while (opc != MENU_USU_VOLT);
+
+		return usu;
 	}
 
-	private void atualizar_arquivo(HashMap<Integer, Usuario> usuarioList) throws IOException {
-		boolean append_mode = false;
-		try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode);
-				BufferedWriter buffer = new BufferedWriter(writer)) {
-			Usuario usuario;
-			for (Entry<Integer, Usuario> entrySet : usuarioList.entrySet()) {
-				usuario = entrySet.getValue();
-				PrintWriter out = new PrintWriter(buffer);
-				out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
-						usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
-			}
-			buffer.flush();
-		}
-	}
-
-	private int exibir_consulta_usuario(Scanner s, HashMap<Integer, Usuario> usuarioList)
-			throws InputMismatchException {
-		int opc;
-		System.out.println("--- SELECIONAR USUARIO ---");
-		System.out.println("COD\t|NOME\t\t\t\t|NICK\t\t|ATIVO\t|");
-		for (Entry<Integer, Usuario> entryset : usuarioList.entrySet()) {
-			System.out.println(String.format("%03d\t|%-31s|%-15s|%s\t|", entryset.getValue().getCodigo(),
-					entryset.getValue().getNome(), entryset.getValue().getLogin(),
-					String.valueOf(entryset.getValue().isAtivo())));
-		}
-		System.out.println("0 - Voltar");
-		System.out.print("Selecione: ");
-		opc = s.nextInt();
-		s.nextLine();
-		System.out.print("\n");
-		if (opc > usuarioList.size())
-			throw new InputMismatchException();
-		return opc;
-	}
-
-	private boolean alterar_usuario(Scanner s, Usuario usuario) throws NoSuchAlgorithmException {
-		int opc = -1;
+	private static void alterar_usuario(Scanner s, Usuario usuario, HashMap<Integer, Usuario> usuarioList) throws NoSuchAlgorithmException, IOException {
+		String val = "";
 		do {
 			try {
 				System.out.println("--- ALTERAR USUARIO ---");
-				System.out.println("USUARIO: " + usuario.getNome());
-				System.out.println("1 - Alterar dados");
-				System.out.println(String.format("2 - Tornar %s", (usuario.isAtivo()) ? "inativo" : "ativo"));
-				System.out.println("0 - Voltar");
-				System.out.print("Selecione: ");
-				opc = s.nextInt();
-				s.nextLine();
-
-				if (opc == MENU_USU_ALT) {
-					System.out.print(String.format("Nome [%s]: ", usuario.getNome()));
-					usuario.setNome(s.nextLine());
-					System.out.print(String.format("Login [%s]: ", usuario.getLogin()));
-					usuario.setLogin(s.nextLine());
-					System.out.print(String.format("Senha: "));
-					usuario.setSenha(Criptografia.criptografar(s.nextLine()));
-					System.out.print("Usuario ADM? ");
-					usuario.setAdm(s.nextBoolean());
-					s.nextLine();
-					return true;
-				} else if (opc == MENU_USU_INATIVO) {
-					usuario.setAtivo(!usuario.isAtivo());
-					return true;
+				System.out.println("Usuario: " + usuario.getNome());
+				System.out.print("Deseja alterar dados do usuario? [S/n] ");
+				val = s.nextLine();
+				System.out.print("\n");
+				if (val.equalsIgnoreCase(NAO)) {
+					return;
 				}
 			} catch (InputMismatchException err) {
-				System.err.println("Opcao invalida!");
+				System.err.println("Valor invalido!");
 				s.nextLine();
-				return false;
 			}
-		} while (opc != MENU_USU_VOLT);
-		return false;
+		} while (!val.equalsIgnoreCase(SIM));
+		
+		try {
+			System.out.print(String.format("Nome [%s]: ", usuario.getNome()));
+			usuario.setNome(s.nextLine());
+			System.out.print(String.format("Login [%s]: ", usuario.getLogin()));
+			usuario.setLogin(s.nextLine());
+			System.out.print(String.format("Senha: "));
+			usuario.setSenha(Criptografia.criptografar(s.nextLine()));
+			System.out.print(String.format("Usuario ADM? [%s]: ", usuario.isAdm()));
+			usuario.setAdm(s.nextBoolean());
+			System.out.print(String.format("Ativo? [%s]: ", usuario.isAtivo()));
+			usuario.setAtivo(s.nextBoolean());
+			s.nextLine();
+			
+			boolean append_mode = false;
+			try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode);
+					BufferedWriter buffer = new BufferedWriter(writer)) {
+				Usuario user;
+				for (Entry<Integer, Usuario> entrySet : usuarioList.entrySet()) {
+					user = entrySet.getValue();
+					PrintWriter out = new PrintWriter(buffer);
+					out.printf("%d#%s#%s#%s#%s#%s#%n", user.getCodigo(), user.getNome(), user.getLogin(),
+							user.getSenha(), String.valueOf(user.isAdm()), String.valueOf(user.isAtivo()));
+				}
+				buffer.flush();
+			}
+			
+			System.out.println("Usuario alterado com sucesso!");
+			
+		} catch (InputMismatchException err) {
+			System.err.println("Valor invalido!");
+			s.nextLine();
+		}
+		System.out.print("\n");
 	}
 
 	/* CRUD ARQUIVO */
-	private int exibir_menu_arquivo(Scanner s) throws InputMismatchException {
-		System.out.println("--- MENU ARQUIVO ---");
-		System.out.println("1 - Novo Arquivo");
-		System.out.println("2 - Editar Arquivo");
-		System.out.println("3 - Gerenciar Arquivo");
-		System.out.println("0 - Voltar");
-		System.out.print("Selecione: ");
-		int opc = s.nextInt();
-		System.out.print("\n");
-		s.nextLine();
-		return opc;
-	}
-
-	private ArrayList<Arquivo> carregar_lista_arquivo() throws FileNotFoundException, IOException {
-		ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
-		File diretorioArquivos = new File(DIR_ARQUIVOS);
-		File[] arquivoList = diretorioArquivos.listFiles();
-		int codigoAutor;
-		String nomeArquivo;
-		ArrayList<String> usuarioAcesso;
-		if (arquivoList != null) {
-			for (File file : arquivoList) {
-				if (file.getName().contains(FILE_DATA)) {
-					nomeArquivo = file.getName().substring(0, file.getName().indexOf("."));
-					usuarioAcesso = new ArrayList<String>();
-					try (FileReader reader = new FileReader(file); BufferedReader buffer = new BufferedReader(reader)) {
-						while (buffer.ready()) {
-							usuarioAcesso.add(buffer.readLine());
-						}
-						codigoAutor = Integer.parseInt(usuarioAcesso.get(COD_ELEM_AUTOR));
-						listaRetorno.add(new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso));
-					}
-				}
-			}
-		}
-
-		return listaRetorno;
-	}
-
-	private void gerenciar_arquivo(Scanner s, Usuario usuarioLogado) throws CriarDiretorioException, IOException {
-
-		int opcaoMenu = -1;
-		ArrayList<Arquivo> arquivosComAcesso;
-		Arquivo arquivo;
-		int cod;
+	private static boolean configurar_acesso_arquivo(Scanner s) {
+		String opc = "";
 		do {
-			try {
-				arquivosComAcesso = filtrar_acesso_arquivo(usuarioLogado);
-				opcaoMenu = exibir_menu_arquivo(s);
-				switch (opcaoMenu) {
-				case MENU_ARQ_NOVO:
-					inserir_arquivo(s, usuarioLogado);
-					System.out.println("Arquivo inserido com sucesso!\n");
-					break;
-				case MENU_ARQ_EDIT:
-					cod = selecionar_arquivo(s, arquivosComAcesso);
-					if (cod != MENU_ARQ_VOLT) {
-						arquivo = arquivosComAcesso.get(cod - 1);
-//						editar arquivo selecionado
-					}
-					break;
-				case MENU_ARQ_GERE:
-					cod = selecionar_arquivo(s, arquivosComAcesso);
-					if (cod != MENU_ARQ_VOLT) {
-						arquivo = arquivosComAcesso.get(cod - 1);
-						alterar_acesso_arquivo(s, arquivo);
-					}
-					break;
-				case MENU_ARQ_VOLT:
-					break;
-				default:
-					System.err.println("Opcao invalida!");
-				}
-
-			} catch (InputMismatchException err) {
-				s.nextLine();
-				System.err.println("Opcao invalida!");
-			} catch (ArquivoDuplicadoException err) {
-				System.err.println(err.getMessage());
+			System.out.println("--- ARQUIVO ---");
+			System.out.println("Deseja configurar acessos ao arquivo?[S/n]");
+			opc = s.nextLine();
+			System.out.print("\n");
+			if (opc.equalsIgnoreCase(SIM)) {
+				return true;
 			}
-		} while (opcaoMenu != MENU_ARQ_VOLT);
+		} while (!opc.equalsIgnoreCase(NAO));
+		return false;
 	}
 
-	private void inserir_arquivo(Scanner s, Usuario usuarioLogado)
-			throws IOException, ArquivoDuplicadoException, CriarDiretorioException {
-		boolean append_mode = true;
-		String nomeArquivo, PATH_FILE, URL_FILE, URL_FILE_DATA;
-		File dir, file, fileData;
-		boolean isMakeDir;
-
-		System.out.println("--- NOVO ARQUIVO ---");
-		System.out.print("Nome do arquivo: ");
-		nomeArquivo = s.nextLine();
-
-		PATH_FILE = String.format("%s", DIR_ARQUIVOS);
-		URL_FILE = String.format("%s//%s%s", PATH_FILE, nomeArquivo, FILE_TEXT);
-		URL_FILE_DATA = String.format("%s//%s%s", PATH_FILE, nomeArquivo, FILE_DATA);
-
-		dir = new File(PATH_FILE);
-		isMakeDir = dir.mkdirs();
-
-		if (dir.exists() || isMakeDir) {
-
-			file = new File(URL_FILE);
-			fileData = new File(URL_FILE_DATA);
-			ArrayList<String> acessoUsuario;
-
-			if ((file.exists() || fileData.exists())) {
-				acessoUsuario = acesso_usuario_arquivo(fileData);
-				if (!acessoUsuario.contains(String.valueOf(usuarioLogado.getCodigo()))) {
-					throw new ArquivoDuplicadoException("Arquivo com este nome enconrado!");
-				}
-//				Arquivo existe e usuario tem acesso nele
-//				Entrar no modo edicao
-				return;
-			}
-
-			System.out.println("Insira o texto o arquivo:");
-			try (FileWriter writer = new FileWriter(URL_FILE, append_mode);
-					BufferedWriter buffer = new BufferedWriter(writer)) {
-				String linha;
-				while (!(linha = s.nextLine()).equals(TERMINAR_EDICAO)) {
-					buffer.append(linha + "\n");
-				}
-				buffer.flush();
-			}
-
-			try (FileWriter writer = new FileWriter(URL_FILE_DATA, !append_mode);
-					BufferedWriter buffer = new BufferedWriter(writer)) {
-
-				ArrayList<String> usuarioAcessoArquivoList = selecionar_usuario_acesso_arquivo(s);
-				buffer.write(usuarioLogado.getCodigo() + "\n");
-				for (String codUsu : usuarioAcessoArquivoList) {
-					buffer.write(codUsu + "\n");
-				}
-				buffer.flush();
-			}
-		} else {
-			throw new CriarDiretorioException("Erro ao criar diretorio do arquivo!");
-		}
-	}
-
-	private ArrayList<String> acesso_usuario_arquivo(File fileData) throws FileNotFoundException, IOException {
-		ArrayList<String> listaRetorno = new ArrayList<String>();
-		try (FileReader reader = new FileReader(fileData); BufferedReader buffer = new BufferedReader(reader)) {
-			while (buffer.ready()) {
-				listaRetorno.add(buffer.readLine());
-			}
-		}
-		return listaRetorno;
-	}
-
-	private void alterar_acesso_arquivo(Scanner s, Arquivo a) throws IOException {
-		String URL_ARQ = String.format("%s//%s%s", DIR_ARQUIVOS, a.getNome(), FILE_TEXT);
-		String URL_ARQ_DATA = String.format("%s//%s%s", DIR_ARQUIVOS, a.getNome(), FILE_DATA);
-		File file = new File(URL_ARQ);
-		File fileData = new File(URL_ARQ_DATA);
-		boolean append_mode = false;
-		ArrayList<String> usuarioAcessoArquivoList;
-		int opc = -1;
-		do {
-			try {
-				System.out.println("--- GERENCIAR ARQUIVO ---");
-				System.out.println(String.format("ARQUIVO: %s", a.getNome()));
-				System.out.println("1 - Alterar acessos do arquivo");
-				System.out.println("2 - Deletar arquivo");
-				System.out.println("0 - Voltar");
-				System.out.print("Selecione: ");
-
-				opc = s.nextInt();
-				s.hasNextLine();
-
-				if (opc == MENU_ARQ_ALT_ACESS) {
-					try (FileWriter writer = new FileWriter(URL_ARQ_DATA, append_mode);
-							BufferedWriter buffer = new BufferedWriter(writer)) {
-
-						usuarioAcessoArquivoList = selecionar_usuario_acesso_arquivo(s);
-						buffer.write(a.getCodigoAutor() + "\n");
-						for (String codUsu : usuarioAcessoArquivoList) {
-							buffer.write(codUsu + "\n");
-						}
-						buffer.flush();
-					}
-				} else if (opc == MENU_ARQ_DEL) {
-					if (file.delete() && fileData.delete()) {
-						System.out.println("Arquivo excluido com sucesso!");
-						break;
-					} else {
-						throw new FileNotFoundException("Nao foi possivel excluir arquivo");
-					}
-				}
-			} catch (InputMismatchException err) {
-				System.err.println("Opcao invalida!");
-			}
-		} while (opc != MENU_ARQ_VOLT);
-		System.out.print("\n");
-	}
-
-	private ArrayList<String> selecionar_usuario_acesso_arquivo(Scanner s) throws FileNotFoundException, IOException {
-		ArrayList<String> listaRetorno = new ArrayList<String>();
+	private static ArrayList<Integer> selecionar_usuario_acesso(Scanner s) throws FileNotFoundException, IOException {
+		ArrayList<Integer> listaRetorno = new ArrayList<Integer>();
 		String opc;
 		String[] vet;
 		HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
@@ -521,53 +343,182 @@ public class Principal {
 		System.out.println("0 - Voltar");
 		System.out.println("Selecione [utilize ; como separador]:");
 		opc = s.nextLine();
+		System.out.print("\n");
 
 		if (opc.equals("") || opc.equals(String.valueOf(MENU_ARQ_VOLT))) {
 			return listaRetorno;
 		}
 
 		vet = opc.split(";");
-		listaRetorno.addAll(Arrays.asList(vet));
-
+		for (String cod : vet) {
+			listaRetorno.add(Integer.parseInt(cod));
+		}
 		return listaRetorno;
 	}
 
-	private ArrayList<Arquivo> filtrar_acesso_arquivo(Usuario usuarioLogado) throws FileNotFoundException, IOException {
-		ArrayList<Arquivo> arquivoList = carregar_lista_arquivo();
-		ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
+	public static void editar_arquivo(Scanner s, Arquivo arq) throws IOException {
+		int opc = -1;
+		try (FileWriter fw = new FileWriter(arq.getFile()); BufferedWriter buff = new BufferedWriter(fw)) {
+			do {
+				try {
 
-		if (usuarioLogado.isAdm()) {
-			return arquivoList;
+//					Menu editar
+					System.out.println("-- EDITAR ARQUIVO --");
+					System.out.println("1 - Inserir texto");
+					System.out.println("2 - Inserir quebra linha");
+					System.out.println("3 - Desfazer");
+					System.out.println("4 - Refazer");
+					System.out.println("5 - Consultar arquivo");
+					System.out.println("0 - Terminar edicao");
+					System.out.print("Selecione: ");
+					opc = s.nextInt();
+					s.nextLine();
+					System.out.print("\n");
+
+					switch (opc) {
+					case MENU_EDIT_CONSULTAR:
+						break;
+					case MENU_EDIT_INS:
+						buff.append(s.nextLine());
+						break;
+					case MENU_EDIT_NEW_LINHA:
+						buff.append("\n");
+						break;
+					case MENU_EDIT_REDO:
+						break;
+					case MENU_EDIT_UNDO:
+						break;
+					case MENU_EDIT_TERMINAR_EDICAO:
+						break;
+					default:
+						System.err.println("Opcao invalida!");
+					}
+				} catch (InputMismatchException err) {
+					System.err.println("Opcao invalida!");
+					s.nextLine();
+				}
+			} while (opc != MENU_EDIT_TERMINAR_EDICAO);
 		}
+	}
 
-		for (Arquivo a : arquivoList) {
-			if (a.getCodigoAutor() == usuarioLogado.getCodigo()) {
-				listaRetorno.add(a);
-				continue;
-			}
-
-			for (String usu : a.getUsuarioAcessoAdm()) {
-				if (Integer.parseInt(usu) == usuarioLogado.getCodigo()) {
-					listaRetorno.add(a);
-					break;
+	private static ArrayList<Arquivo> carregar_lista_arquivo(Usuario user) throws FileNotFoundException, IOException {
+		ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
+		File diretorioArquivos = new File(Arquivo.DIR_ARQUIVOS);
+		File[] arquivoList = diretorioArquivos.listFiles();
+		int codigoAutor;
+		String nomeArquivo;
+		ArrayList<Integer> usuarioAcesso;
+		if (arquivoList != null) {
+			for (File file : arquivoList) {
+				if (file.getName().contains(Arquivo.FILE_DATA)) {
+					nomeArquivo = file.getName().substring(0, file.getName().indexOf("."));
+					usuarioAcesso = new ArrayList<Integer>();
+					try (FileReader reader = new FileReader(file); BufferedReader buffer = new BufferedReader(reader)) {
+						while (buffer.ready()) {
+							usuarioAcesso.add(Integer.parseInt(buffer.readLine()));
+						}
+						if (usuarioAcesso.contains(user.getCodigo())) {
+							codigoAutor = usuarioAcesso.get(COD_ELEM_AUTOR);
+							listaRetorno.add(new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso));
+						}
+					}
 				}
 			}
 		}
+
 		return listaRetorno;
 	}
 
-	private int selecionar_arquivo(Scanner s, ArrayList<Arquivo> arquivoList) throws InputMismatchException {
-		int opc;
-		System.out.println("--- SELECIONAR ARQUIVO ---");
-		for (int i = 0; i < arquivoList.size(); i++) {
-			System.out.println(String.format("%d - %s", (i + 1), arquivoList.get(i).getNome()));
-		}
-		System.out.println("0 - Voltar");
-		System.out.print("Selecione: ");
-		opc = s.nextInt();
-		s.nextLine();
-		System.out.print("\n");
-		return opc;
+	private static void gerenciar_arquivo(Scanner s, Usuario user) throws CriarDiretorioException, IOException {
+		int opcaoMenu = -1;
+		Arquivo arquivo;
+		do {
+			try {
+
+//				Menu de Arquivo
+				System.out.println("--- MENU ARQUIVO ---");
+				System.out.println("1 - Novo Arquivo");
+				System.out.println("2 - Editar Arquivo");
+				System.out.println("3 - Gerenciar Arquivo");
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opcaoMenu = s.nextInt();
+				System.out.print("\n");
+				s.nextLine();
+
+				switch (opcaoMenu) {
+				case MENU_ARQ_NOVO:
+					inserir_arquivo(s, user);
+					break;
+				case MENU_ARQ_EDIT:
+					arquivo = consultar_arquivo(s, user);
+					editar_arquivo(s, arquivo);
+					break;
+				case MENU_ARQ_GERE:
+					gerenciar_arquivo(s, user);
+					break;
+				case MENU_ARQ_VOLT:
+					break;
+				default:
+					System.err.println("Opcao invalida!");
+				}
+			} catch (InputMismatchException err) {
+				s.nextLine();
+				System.err.println("Opcao invalida!");
+			} catch (NewFileException e) {
+				System.err.println("Opcao invalida!");
+			}
+		} while (opcaoMenu != MENU_ARQ_VOLT);
 	}
 
+	private static Arquivo consultar_arquivo(Scanner s, Usuario user) throws FileNotFoundException, IOException {
+		Arquivo arquivo = null;
+		ArrayList<Arquivo> lista = carregar_lista_arquivo(user);
+		int opc = -1;
+		try {
+			do {
+				System.out.println("--- SELECIONAR ARQUIVO ---");
+				for (int i = 1; i <= lista.size(); i++) {
+					System.out.println(String.format("|%02d| %-20s|", i, lista.get(i - 1).getNome()));
+				}
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opc = s.nextInt();
+				s.nextLine();
+
+				if (opc < 0 || opc > lista.size()) {
+					throw new InputMismatchException("Valor invalido!");
+				}
+
+				return lista.get(opc - 1);
+
+			} while (opc != MENU_ARQ_VOLT);
+		} catch (InputMismatchException err) {
+			s.nextLine();
+			System.err.println(err.getMessage());
+		}
+
+		return arquivo;
+	}
+
+	private static void inserir_arquivo(Scanner s, Usuario user) throws IOException, NewFileException {
+		System.out.println("--- NOVO ARQUIVO ---");
+		System.out.print("Nome do arquivo: ");
+		String nomeArquivo = s.nextLine();
+
+		ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<Integer>();
+
+		Arquivo arquivo = new Arquivo(nomeArquivo, user.getCodigo(), null);
+		if (configurar_acesso_arquivo(s)) {
+			codigoUsuarioAcesso = selecionar_usuario_acesso(s);
+			arquivo.setUsuarioAcessoAdm(codigoUsuarioAcesso);
+		}
+		if (arquivo.createFile()) {
+			System.out.println("Arquivo inserido com sucesso!\n");
+		} else {
+			throw new NewFileException("Problema ao criar arquivo!");
+		}
+		editar_arquivo(s, arquivo);
+//		arquivo.editar(s);
+	}
 }
