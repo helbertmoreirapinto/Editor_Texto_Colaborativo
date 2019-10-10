@@ -106,7 +106,7 @@ public class Principal {
 	}
 
 	/*
-	 * -x-x-x-x-x-x-x-x-x-x-x-x-x USUARIOS -x-x-x-x-x-x-x-x-x-x-x-x-x
+	 * ---------------------------- USUARIOS ----------------------------
 	 */
 	private static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
 		HashMap<Integer, Usuario> usuarioList = new HashMap<Integer, Usuario>();
@@ -313,7 +313,9 @@ public class Principal {
 		System.out.print("\n");
 	}
 
-	/* CRUD ARQUIVO */
+	/*
+	 * ---------------------------- ARQUIVOS ----------------------------
+	 */
 	private static boolean configurar_acesso_arquivo(Scanner s) {
 		String opc = "";
 		do {
@@ -327,9 +329,6 @@ public class Principal {
 		return false;
 	}
 
-	/*
-	 * -x-x-x-x-x-x-x-x-x-x-x-x-x ARQUIVOS -x-x-x-x-x-x-x-x-x-x-x-x-x
-	 */
 	private static ArrayList<Integer> selecionar_usuario_acesso(Scanner s) throws FileNotFoundException, IOException {
 		ArrayList<Integer> listaRetorno = new ArrayList<Integer>();
 		String opc;
@@ -564,10 +563,10 @@ public class Principal {
 					return;
 				case MENU_ARQ_GERE:
 					codigoUsuarioAcesso = selecionar_usuario_acesso(s);
-					if(codigoUsuarioAcesso!= null && codigoUsuarioAcesso.size() > 0) {
+					if (codigoUsuarioAcesso != null && codigoUsuarioAcesso.size() > 0) {
 						arq.setUsuarioAcessoAdm(codigoUsuarioAcesso);
 						arq.updateFileData();
-						System.out.println("Acessos do arquivo alterados com sucesso!\n");						
+						System.out.println("Acessos do arquivo alterados com sucesso!\n");
 					}
 					return;
 				case MENU_ARQ_EXC:
@@ -628,6 +627,7 @@ public class Principal {
 
 	private static void inserir_arquivo(Scanner s, Usuario user)
 			throws IOException, NewFileException, ArquivoDuplicadoException {
+
 		ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<Integer>();
 		boolean arquivoExiste = false;
 		Arquivo arquivo = null;
