@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import editor.crypt.Criptografia;
+import editor.exc.ArquivoDuplicadoException;
 import editor.exc.CriarDiretorioException;
 import editor.exc.LoginInvalidoException;
 import editor.exc.NewFileException;
@@ -34,18 +35,19 @@ public class Principal {
 	private static final int MENU_SAIR = 0;
 
 	private static final int MENU_ARQ_NOVO = 1;
-	private static final int MENU_ARQ_EDIT = 2;
-	private static final int MENU_ARQ_GERE = 3;
-//	private static final int MENU_ARQ_ALT_ACESS = 1;
-//	private static final int MENU_ARQ_DEL = 2;
+	private static final int MENU_ARQ_CON = 2;
+	private static final int MENU_ARQ_EDIT = 1;
+	private static final int MENU_ARQ_GERE = 2;
+	private static final int MENU_ARQ_EXC = 3;
+
 	private static final int MENU_ARQ_VOLT = 0;
 
 	private static final int MENU_EDIT_TERMINAR_EDICAO = 0;
-	private static final int MENU_EDIT_NEW_LINHA = 1;
-	private static final int MENU_EDIT_UNDO = 2;
-	private static final int MENU_EDIT_REDO = 3;
-	private static final int MENU_EDIT_INS = 4;
-	private static final int MENU_EDIT_CONSULTAR = 5;
+	private static final int MENU_EDIT_INS = 1;
+	private static final int MENU_EDITAR_LINHA = 2;
+	private static final int MENU_APAGAR_LINHA = 3;
+	private static final int MENU_EDIT_DESFAZER = 4;
+	private static final int MENU_EDIT_REFAZER = 5;
 
 	private static final int MENU_USU_NOVO = 1;
 	private static final int MENU_USU_CONS = 2;
@@ -61,7 +63,8 @@ public class Principal {
 
 					if (user == null) {
 						user = logar(entrada);
-						System.out.println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
+						System.out
+								.println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
 					}
 
 //					Menu Principal
@@ -102,7 +105,9 @@ public class Principal {
 		}
 	}
 
-	/* CRUD USUARIO */
+	/*
+	 * -x-x-x-x-x-x-x-x-x-x-x-x-x USUARIOS -x-x-x-x-x-x-x-x-x-x-x-x-x
+	 */
 	private static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
 		HashMap<Integer, Usuario> usuarioList = new HashMap<Integer, Usuario>();
 		String registro;
@@ -173,14 +178,6 @@ public class Principal {
 					if (u != null) {
 						alterar_usuario(s, u, usuarioList);
 					}
-					// alterar? u
-//					if (alterar_usuario(s, u)) {
-//						atualizar_usuario(usuarioList);
-//					} else {
-//						return;
-//					}
-//					usuarioList = carregar_lista_usuario();
-
 					break;
 				case MENU_USU_VOLT:
 					break;
@@ -262,7 +259,8 @@ public class Principal {
 		return usu;
 	}
 
-	private static void alterar_usuario(Scanner s, Usuario usuario, HashMap<Integer, Usuario> usuarioList) throws NoSuchAlgorithmException, IOException {
+	private static void alterar_usuario(Scanner s, Usuario usuario, HashMap<Integer, Usuario> usuarioList)
+			throws NoSuchAlgorithmException, IOException {
 		String val = "";
 		do {
 			try {
@@ -279,7 +277,7 @@ public class Principal {
 				s.nextLine();
 			}
 		} while (!val.equalsIgnoreCase(SIM));
-		
+
 		try {
 			System.out.print(String.format("Nome [%s]: ", usuario.getNome()));
 			usuario.setNome(s.nextLine());
@@ -292,7 +290,7 @@ public class Principal {
 			System.out.print(String.format("Ativo? [%s]: ", usuario.isAtivo()));
 			usuario.setAtivo(s.nextBoolean());
 			s.nextLine();
-			
+
 			boolean append_mode = false;
 			try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode);
 					BufferedWriter buffer = new BufferedWriter(writer)) {
@@ -305,9 +303,9 @@ public class Principal {
 				}
 				buffer.flush();
 			}
-			
+
 			System.out.println("Usuario alterado com sucesso!");
-			
+
 		} catch (InputMismatchException err) {
 			System.err.println("Valor invalido!");
 			s.nextLine();
@@ -322,7 +320,6 @@ public class Principal {
 			System.out.println("--- ARQUIVO ---");
 			System.out.println("Deseja configurar acessos ao arquivo?[S/n]");
 			opc = s.nextLine();
-			System.out.print("\n");
 			if (opc.equalsIgnoreCase(SIM)) {
 				return true;
 			}
@@ -330,6 +327,9 @@ public class Principal {
 		return false;
 	}
 
+	/*
+	 * -x-x-x-x-x-x-x-x-x-x-x-x-x ARQUIVOS -x-x-x-x-x-x-x-x-x-x-x-x-x
+	 */
 	private static ArrayList<Integer> selecionar_usuario_acesso(Scanner s) throws FileNotFoundException, IOException {
 		ArrayList<Integer> listaRetorno = new ArrayList<Integer>();
 		String opc;
@@ -343,9 +343,9 @@ public class Principal {
 		System.out.println("0 - Voltar");
 		System.out.println("Selecione [utilize ; como separador]:");
 		opc = s.nextLine();
-		System.out.print("\n");
 
 		if (opc.equals("") || opc.equals(String.valueOf(MENU_ARQ_VOLT))) {
+			System.out.print("\n");
 			return listaRetorno;
 		}
 
@@ -356,49 +356,103 @@ public class Principal {
 		return listaRetorno;
 	}
 
-	public static void editar_arquivo(Scanner s, Arquivo arq) throws IOException {
+	private static void editar_arquivo(Scanner s, Arquivo arq) throws IOException {
+		ArrayList<ArrayList<String>> historico_alteracao = new ArrayList<ArrayList<String>>();
+		ArrayList<String> aux;
+		ArrayList<String> texto;
 		int opc = -1;
-		try (FileWriter fw = new FileWriter(arq.getFile()); BufferedWriter buff = new BufferedWriter(fw)) {
-			do {
-				try {
+		int ind_alteracao = 0;
+		int lin;
 
-//					Menu editar
-					System.out.println("-- EDITAR ARQUIVO --");
-					System.out.println("1 - Inserir texto");
-					System.out.println("2 - Inserir quebra linha");
-					System.out.println("3 - Desfazer");
-					System.out.println("4 - Refazer");
-					System.out.println("5 - Consultar arquivo");
-					System.out.println("0 - Terminar edicao");
-					System.out.print("Selecione: ");
-					opc = s.nextInt();
-					s.nextLine();
-					System.out.print("\n");
+		texto = arq.getTexto();
+		aux = new ArrayList<String>();
+		aux.addAll(texto);
+		historico_alteracao.add(aux);
 
-					switch (opc) {
-					case MENU_EDIT_CONSULTAR:
-						break;
-					case MENU_EDIT_INS:
-						buff.append(s.nextLine());
-						break;
-					case MENU_EDIT_NEW_LINHA:
-						buff.append("\n");
-						break;
-					case MENU_EDIT_REDO:
-						break;
-					case MENU_EDIT_UNDO:
-						break;
-					case MENU_EDIT_TERMINAR_EDICAO:
-						break;
-					default:
-						System.err.println("Opcao invalida!");
-					}
-				} catch (InputMismatchException err) {
-					System.err.println("Opcao invalida!");
-					s.nextLine();
+		do {
+			try {
+
+//				Menu editar
+				System.out.println(String.format("\nNome arquivo: %s", arq.getNome()));
+				System.out.println("---------------------------------------");
+				for (int i = 0; i < texto.size(); i++) {
+					System.out.println(String.format("%02d | %s", i, texto.get(i)));
 				}
-			} while (opc != MENU_EDIT_TERMINAR_EDICAO);
+				System.out.println("---------------------------------------");
+
+				System.out.println("-- EDITAR ARQUIVO --");
+				System.out.println("1 - Inserir texto");
+				System.out.println("2 - Editar linha");
+				System.out.println("3 - Apagar linha");
+				if (ind_alteracao > 0) {
+					System.out.println("4 - Desfazer");
+				}
+				if (ind_alteracao < (historico_alteracao.size() - 1)) {
+					System.out.println("5 - Refazer");
+				}
+				System.out.println("0 - Terminar edicao");
+				System.out.print("Selecione: ");
+				opc = s.nextInt();
+				s.nextLine();
+
+				switch (opc) {
+				case MENU_EDIT_INS:
+					System.out.print("Texto: ");
+					texto.add(s.nextLine());
+					break;
+				case MENU_EDIT_DESFAZER:
+					if (ind_alteracao > 0) {
+						texto = historico_alteracao.get(--ind_alteracao);
+					}
+					break;
+				case MENU_EDIT_REFAZER:
+					if (ind_alteracao < (historico_alteracao.size() - 1)) {
+						texto = historico_alteracao.get(++ind_alteracao);
+					}
+					break;
+				case MENU_APAGAR_LINHA:
+					lin = selecionar_linha(s, texto.size());
+					texto.remove(lin);
+					break;
+				case MENU_EDITAR_LINHA:
+					lin = selecionar_linha(s, texto.size());
+					System.out.print("Texto: ");
+					texto.add(lin, s.nextLine());
+					break;
+				case MENU_EDIT_TERMINAR_EDICAO:
+					arq.editar(texto);
+					System.out.print("\n");
+					continue;
+				default:
+					System.err.println("Opcao invalida!");
+				}
+
+				if (opc == MENU_EDIT_INS || opc == MENU_APAGAR_LINHA || opc == MENU_EDITAR_LINHA) {
+					for (int i = ind_alteracao; i < historico_alteracao.size() - 1; i++) {
+						historico_alteracao.remove(i);
+					}
+					aux = new ArrayList<String>();
+					aux.addAll(texto);
+					historico_alteracao.add(aux);
+					ind_alteracao++;
+				}
+
+			} catch (InputMismatchException err) {
+				System.err.println("Opcao invalida!");
+				s.nextLine();
+			}
+		} while (opc != MENU_EDIT_TERMINAR_EDICAO);
+	}
+
+	private static int selecionar_linha(Scanner s, int max) throws InputMismatchException {
+		int lin;
+		System.out.print("Linha: ");
+		lin = s.nextInt();
+		if (lin < 0 || lin > max - 1) {
+			throw new InputMismatchException("Valor invalido");
 		}
+		s.nextLine();
+		return lin;
 	}
 
 	private static ArrayList<Arquivo> carregar_lista_arquivo(Usuario user) throws FileNotFoundException, IOException {
@@ -408,18 +462,29 @@ public class Principal {
 		int codigoAutor;
 		String nomeArquivo;
 		ArrayList<Integer> usuarioAcesso;
+		Arquivo arquivo;
+
 		if (arquivoList != null) {
-			for (File file : arquivoList) {
-				if (file.getName().contains(Arquivo.FILE_DATA)) {
-					nomeArquivo = file.getName().substring(0, file.getName().indexOf("."));
+			for (File fileD : arquivoList) {
+				if (fileD.getName().contains(Arquivo.FILE_DATA)) {
+					nomeArquivo = fileD.getName().substring(0, fileD.getName().indexOf("."));
 					usuarioAcesso = new ArrayList<Integer>();
-					try (FileReader reader = new FileReader(file); BufferedReader buffer = new BufferedReader(reader)) {
+					try (FileReader reader = new FileReader(fileD);
+							BufferedReader buffer = new BufferedReader(reader)) {
 						while (buffer.ready()) {
 							usuarioAcesso.add(Integer.parseInt(buffer.readLine()));
 						}
 						if (usuarioAcesso.contains(user.getCodigo())) {
 							codigoAutor = usuarioAcesso.get(COD_ELEM_AUTOR);
-							listaRetorno.add(new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso));
+							arquivo = new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso);
+							for (File file : arquivoList) {
+								if (file.getName().equals(String.format("%s%s", nomeArquivo, Arquivo.FILE_TEXT))) {
+									arquivo.setFile(file);
+									break;
+								}
+							}
+							arquivo.setFileData(fileD);
+							listaRetorno.add(arquivo);
 						}
 					}
 				}
@@ -438,8 +503,7 @@ public class Principal {
 //				Menu de Arquivo
 				System.out.println("--- MENU ARQUIVO ---");
 				System.out.println("1 - Novo Arquivo");
-				System.out.println("2 - Editar Arquivo");
-				System.out.println("3 - Gerenciar Arquivo");
+				System.out.println("2 - Consltar Arquivo");
 				System.out.println("0 - Voltar");
 				System.out.print("Selecione: ");
 				opcaoMenu = s.nextInt();
@@ -450,28 +514,84 @@ public class Principal {
 				case MENU_ARQ_NOVO:
 					inserir_arquivo(s, user);
 					break;
-				case MENU_ARQ_EDIT:
-					arquivo = consultar_arquivo(s, user);
-					editar_arquivo(s, arquivo);
-					break;
-				case MENU_ARQ_GERE:
-					gerenciar_arquivo(s, user);
+				case MENU_ARQ_CON:
+					arquivo = selecionar_arquivo(s, user);
+					if (arquivo != null) {
+						consultar_arquivo(s, arquivo);
+					}
 					break;
 				case MENU_ARQ_VOLT:
-					break;
+					continue;
 				default:
 					System.err.println("Opcao invalida!");
 				}
 			} catch (InputMismatchException err) {
 				s.nextLine();
 				System.err.println("Opcao invalida!");
-			} catch (NewFileException e) {
-				System.err.println("Opcao invalida!");
+			} catch (NewFileException | ArquivoDuplicadoException e) {
+				System.err.println(e.getMessage());
 			}
 		} while (opcaoMenu != MENU_ARQ_VOLT);
 	}
 
-	private static Arquivo consultar_arquivo(Scanner s, Usuario user) throws FileNotFoundException, IOException {
+	private static void consultar_arquivo(Scanner s, Arquivo arq) throws IOException {
+		System.out.println("--- GERENCIAR ARQUIVO ---");
+		ArrayList<String> texto = arq.getTexto();
+		ArrayList<Integer> codigoUsuarioAcesso;
+		int opc = -1;
+		String confirm = "";
+
+		System.out.println("Nome arquivo: " + arq.getNome());
+		for (int i = 0; i < texto.size(); i++) {
+			System.out.println(texto.get(i));
+		}
+		System.out.print("\n");
+
+		do {
+			try {
+				System.out.println("1 - Editar");
+				System.out.println("2 - Alterar acessos");
+				System.out.println("3 - Remover");
+				System.out.println("0 - Voltar");
+				System.out.print("Selecione: ");
+				opc = s.nextInt();
+				System.out.print("\n");
+				s.nextLine();
+
+				switch (opc) {
+				case MENU_ARQ_EDIT:
+					editar_arquivo(s, arq);
+					return;
+				case MENU_ARQ_GERE:
+					codigoUsuarioAcesso = selecionar_usuario_acesso(s);
+					if(codigoUsuarioAcesso!= null && codigoUsuarioAcesso.size() > 0) {
+						arq.setUsuarioAcessoAdm(codigoUsuarioAcesso);
+						arq.updateFileData();
+						System.out.println("Acessos do arquivo alterados com sucesso!\n");						
+					}
+					return;
+				case MENU_ARQ_EXC:
+					System.out.print("Deseja mesmo remover arquivo? [S/n] ");
+					confirm = s.nextLine();
+					if (confirm.equalsIgnoreCase(SIM)) {
+						arq.excluir();
+						System.out.println("Arquivo removido com sucesso!\n");
+					}
+					return;
+				case MENU_ARQ_VOLT:
+					return;
+				default:
+					System.err.println("Opcao invalida!");
+				}
+			} catch (InputMismatchException err) {
+				s.nextLine();
+				System.err.println("Opcao invalida!");
+			}
+		} while (opc != MENU_ARQ_VOLT);
+
+	}
+
+	private static Arquivo selecionar_arquivo(Scanner s, Usuario user) throws FileNotFoundException, IOException {
 		Arquivo arquivo = null;
 		ArrayList<Arquivo> lista = carregar_lista_arquivo(user);
 		int opc = -1;
@@ -479,15 +599,20 @@ public class Principal {
 			do {
 				System.out.println("--- SELECIONAR ARQUIVO ---");
 				for (int i = 1; i <= lista.size(); i++) {
-					System.out.println(String.format("|%02d| %-20s|", i, lista.get(i - 1).getNome()));
+					System.out.println(String.format("%d - %s", i, lista.get(i - 1).getNome()));
 				}
 				System.out.println("0 - Voltar");
 				System.out.print("Selecione: ");
 				opc = s.nextInt();
 				s.nextLine();
+				System.out.print("\n");
 
 				if (opc < 0 || opc > lista.size()) {
 					throw new InputMismatchException("Valor invalido!");
+				}
+
+				if (opc == MENU_ARQ_VOLT) {
+					return arquivo;
 				}
 
 				return lista.get(opc - 1);
@@ -501,24 +626,43 @@ public class Principal {
 		return arquivo;
 	}
 
-	private static void inserir_arquivo(Scanner s, Usuario user) throws IOException, NewFileException {
+	private static void inserir_arquivo(Scanner s, Usuario user)
+			throws IOException, NewFileException, ArquivoDuplicadoException {
+		ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<Integer>();
+		boolean arquivoExiste = false;
+		Arquivo arquivo = null;
+
 		System.out.println("--- NOVO ARQUIVO ---");
 		System.out.print("Nome do arquivo: ");
 		String nomeArquivo = s.nextLine();
+		System.out.print("\n");
 
-		ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<Integer>();
+		ArrayList<Arquivo> arquivoList = carregar_lista_arquivo(user);
+		for (Arquivo a : arquivoList) {
+			if (a.getNome().equalsIgnoreCase(nomeArquivo)) {
+				if (!a.getCodigoUsuarioAcesso().contains(user.getCodigo())) {
+					throw new ArquivoDuplicadoException("Arquivo ja existe!");
+				}
+				// arquivo existe e user tem acesso pra editar
+				arquivoExiste = true;
+				arquivo = a;
+				break;
+			}
+		}
 
-		Arquivo arquivo = new Arquivo(nomeArquivo, user.getCodigo(), null);
-		if (configurar_acesso_arquivo(s)) {
-			codigoUsuarioAcesso = selecionar_usuario_acesso(s);
-			arquivo.setUsuarioAcessoAdm(codigoUsuarioAcesso);
+		if (!arquivoExiste) {
+			arquivo = new Arquivo(nomeArquivo, user.getCodigo(), null);
+			if (configurar_acesso_arquivo(s)) {
+				codigoUsuarioAcesso = selecionar_usuario_acesso(s);
+				arquivo.setUsuarioAcessoAdm(codigoUsuarioAcesso);
+			}
+			if (arquivo.createFile()) {
+				System.out.println("Arquivo inserido com sucesso!\n");
+			} else {
+				throw new NewFileException("Problema ao criar arquivo!");
+			}
 		}
-		if (arquivo.createFile()) {
-			System.out.println("Arquivo inserido com sucesso!\n");
-		} else {
-			throw new NewFileException("Problema ao criar arquivo!");
-		}
+
 		editar_arquivo(s, arquivo);
-//		arquivo.editar(s);
 	}
 }

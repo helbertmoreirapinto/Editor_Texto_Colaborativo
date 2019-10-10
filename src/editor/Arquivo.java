@@ -1,7 +1,9 @@
 package editor;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,8 +12,6 @@ public class Arquivo {
 	public static final String DIR_ARQUIVOS = "ARQUIVOS";
 	public static final String FILE_DATA = ".data";
 	public static final String FILE_TEXT = ".txt";
-
-		
 
 	private String nome;
 	private int codigoAutor;
@@ -45,15 +45,46 @@ public class Arquivo {
 		}
 		return this.file.exists() && this.fileData.exists();
 	}
-	
+
+	public void editar(ArrayList<String> texto) throws IOException {
+		boolean append_mode = false;
+		try (FileWriter fw = new FileWriter(this.file, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
+			for (String txt : texto) {
+				buffer.append(txt + "\n");
+			}
+			buffer.flush();
+		}
+	}
+
 	public void excluir() {
-
+		file.delete();
+		fileData.delete();
 	}
 
-	public void alterarAcessoArquivo() {
-
+	public void updateFileData() throws IOException {
+		boolean append_mode = false;
+		this.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_DATA));
+		try (FileWriter fw = new FileWriter(this.fileData, append_mode);
+				BufferedWriter buffer = new BufferedWriter(fw)) {
+			buffer.append(this.codigoAutor + "\n");
+			for (Integer codUsu : this.codigoUsuarioAcesso) {
+				buffer.append(codUsu + "\n");
+			}
+			buffer.flush();
+		}
 	}
 
+	public ArrayList<String> getTexto() throws IOException {
+		ArrayList<String> texto = new ArrayList<String>();
+		try (FileReader reader = new FileReader(this.file); BufferedReader buffer = new BufferedReader(reader)) {
+			while (buffer.ready()) {
+				texto.add(buffer.readLine());
+			}
+		}
+		return texto;
+	}
+
+	/* GETTER AND SETTER */
 	public String getNome() {
 		return nome;
 	}
