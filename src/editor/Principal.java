@@ -67,7 +67,7 @@ public class Principal {
                                 .println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
                     }
 
-//					Menu Principal
+//                  Menu Principal
                     System.out.println("--- MENU ---");
                     System.out.println("1 - Gerenciar Arquivo");
                     if (user.isAdm()) {
@@ -106,10 +106,10 @@ public class Principal {
     }
 
     /*
-	 * ---------------------------- USUARIOS ----------------------------
+    * ---------------------------- USUARIOS ----------------------------
      */
     private static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
-        HashMap<Integer, Usuario> usuarioList = new HashMap<Integer, Usuario>();
+        HashMap<Integer, Usuario> usuarioList = new HashMap<>();
         String registro;
         String campo[];
         Usuario usuario;
@@ -157,7 +157,7 @@ public class Principal {
         do {
             try {
 
-//				Menu Usuario
+//		Menu Usuario
                 System.out.println("--- MENU USUARIO ---");
                 System.out.println("1 - Novo Usuario");
                 System.out.println("2 - Consultar Usuario");
@@ -227,14 +227,14 @@ public class Principal {
         do {
             try {
 
-//				Menu Consulta Usuario
+//		Menu Consulta Usuario
                 System.out.println("--- SELECIONAR USUARIO ---");
                 System.out.println("COD\t|NOME\t\t\t\t|NICK\t\t|ATIVO\t|");
-                for (Entry<Integer, Usuario> entryset : usuarioList.entrySet()) {
+                usuarioList.entrySet().forEach((entryset) -> {
                     System.out.println(String.format("%03d\t|%-31s|%-15s|%s\t|", entryset.getValue().getCodigo(),
                             entryset.getValue().getNome(), entryset.getValue().getLogin(),
                             String.valueOf(entryset.getValue().isAtivo())));
-                }
+                });
                 System.out.println("0 - Voltar");
                 System.out.print("Selecione: ");
                 opc = s.nextInt();
@@ -314,10 +314,10 @@ public class Principal {
     }
 
     /*
-	 * ---------------------------- ARQUIVOS ----------------------------
+    * ---------------------------- ARQUIVOS ----------------------------
      */
     private static boolean configurar_acesso_arquivo(Scanner s) {
-        String opc = "";
+        String opc;
         do {
             System.out.println("--- ARQUIVO ---");
             System.out.println("Deseja configurar acessos ao arquivo?[S/n]");
@@ -330,15 +330,15 @@ public class Principal {
     }
 
     private static ArrayList<Integer> selecionar_usuario_acesso(Scanner s) throws FileNotFoundException, IOException {
-        ArrayList<Integer> listaRetorno = new ArrayList<Integer>();
+        ArrayList<Integer> listaRetorno = new ArrayList<>();
         String opc;
         String[] vet;
         HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
         System.out.println("--- SELECIONAR USUARIO ---");
         System.out.println("Selecione os usuarios com acesso ADM ao arquivo: ");
-        for (Entry<Integer, Usuario> entrySet : usuarioList.entrySet()) {
+        usuarioList.entrySet().forEach((Entry<Integer, Usuario> entrySet) -> {
             System.out.println(entrySet.getKey() + " - " + entrySet.getValue().getNome());
-        }
+        });
         System.out.println("0 - Voltar");
         System.out.println("Selecione [utilize ; como separador]:");
         opc = s.nextLine();
@@ -356,7 +356,7 @@ public class Principal {
     }
 
     private static void editar_arquivo(Scanner s, Arquivo arq) throws IOException {
-        ArrayList<ArrayList<String>> historico_alteracao = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> historico_alteracao = new ArrayList<>();
         ArrayList<String> aux;
         ArrayList<String> texto;
         int opc = -1;
@@ -364,14 +364,14 @@ public class Principal {
         int lin;
 
         texto = arq.getTexto();
-        aux = new ArrayList<String>();
+        aux = new ArrayList<>();
         aux.addAll(texto);
         historico_alteracao.add(aux);
 
         do {
             try {
 
-//				Menu editar
+//		Menu editar
                 System.out.println(String.format("\nNome arquivo: %s", arq.getNome()));
                 System.out.println("---------------------------------------");
                 for (int i = 0; i < texto.size(); i++) {
@@ -434,7 +434,7 @@ public class Principal {
                     for (int i = ind_alteracao; i < historico_alteracao.size() - 1; i++) {
                         historico_alteracao.remove(i);
                     }
-                    aux = new ArrayList<String>();
+                    aux = new ArrayList<>();
                     aux.addAll(texto);
                     historico_alteracao.add(aux);
                     ind_alteracao++;
@@ -459,7 +459,7 @@ public class Principal {
     }
 
     private static ArrayList<Arquivo> carregar_lista_arquivo(Usuario user) throws FileNotFoundException, IOException {
-        ArrayList<Arquivo> listaRetorno = new ArrayList<Arquivo>();
+        ArrayList<Arquivo> listaRetorno = new ArrayList<>();
         File diretorioArquivos = new File(Arquivo.DIR_ARQUIVOS);
         File[] arquivoList = diretorioArquivos.listFiles();
         int codigoAutor;
@@ -471,7 +471,7 @@ public class Principal {
             for (File fileD : arquivoList) {
                 if (fileD.getName().contains(Arquivo.FILE_DATA)) {
                     nomeArquivo = fileD.getName().substring(0, fileD.getName().indexOf("."));
-                    usuarioAcesso = new ArrayList<Integer>();
+                    usuarioAcesso = new ArrayList<>();
                     try (FileReader reader = new FileReader(fileD);
                             BufferedReader buffer = new BufferedReader(reader)) {
                         while (buffer.ready()) {
@@ -503,7 +503,7 @@ public class Principal {
         do {
             try {
 
-//				Menu de Arquivo
+//		Menu de Arquivo
                 System.out.println("--- MENU ARQUIVO ---");
                 System.out.println("1 - Novo Arquivo");
                 System.out.println("2 - Consltar Arquivo");
@@ -542,7 +542,7 @@ public class Principal {
         ArrayList<String> texto = arq.getTexto();
         ArrayList<Integer> codigoUsuarioAcesso;
         int opc = -1;
-        String confirm = "";
+        String confirm;
 
         System.out.println("Nome arquivo: " + arq.getNome());
         System.out.println("---------------------------------------");
@@ -598,7 +598,7 @@ public class Principal {
     private static Arquivo selecionar_arquivo(Scanner s, Usuario user) throws FileNotFoundException, IOException {
         Arquivo arquivo = null;
         ArrayList<Arquivo> lista = carregar_lista_arquivo(user);
-        int opc = -1;
+        int opc;
         try {
             do {
                 System.out.println("--- SELECIONAR ARQUIVO ---");
@@ -632,7 +632,7 @@ public class Principal {
     private static void inserir_arquivo(Scanner s, Usuario user)
             throws IOException, NewFileException, ArquivoDuplicadoException {
 
-        ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<Integer>();
+        ArrayList<Integer> codigoUsuarioAcesso;
         boolean arquivoExiste = false;
         Arquivo arquivo = null;
 

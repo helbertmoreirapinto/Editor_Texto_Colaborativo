@@ -30,7 +30,7 @@ public class Arquivo {
     public Arquivo(String nome, int codigoAutor, ArrayList<Integer> codigoUsuarioAcesso) {
         this.nome = nome;
         this.codigoAutor = codigoAutor;
-        this.codigoUsuarioAcesso = (codigoUsuarioAcesso != null) ? codigoUsuarioAcesso : new ArrayList<Integer>();
+        this.codigoUsuarioAcesso = (codigoUsuarioAcesso != null) ? codigoUsuarioAcesso : new ArrayList<>();
     }
 
     /**
