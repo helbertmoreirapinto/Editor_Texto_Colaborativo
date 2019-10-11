@@ -1,18 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package editor;
 
 public abstract class Pessoa {
 
     private String nome;
 
+    /**
+     * Construtor da classe Pessoa(String).
+     *
+     * @param nome
+     */
     public Pessoa(String nome) {
         this.nome = nome;
     }
 
+    /* GETTER AND SETTER */
     public String getNome() {
         return nome;
     }
