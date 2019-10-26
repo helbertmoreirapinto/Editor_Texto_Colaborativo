@@ -1,6 +1,14 @@
 package editor;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+
 public class Usuario extends Pessoa {
+
+    private static final String NOME_ARQUIVO_USUARIOS = "USU_DB//USUARIOS.txt";
 
     private static int cod = 0;
     private int codigo;
@@ -70,5 +78,34 @@ public class Usuario extends Pessoa {
 
     public void setAdm(boolean adm) {
         this.adm = adm;
+    }
+
+    /* STATIC METHODS */
+    /**
+     * Metodo responsavel em carregar para a memoria os usuarios salvaos no
+     * arquivo de dados.
+     *
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
+        HashMap<Integer, Usuario> usuarioList = new HashMap<>();
+        String registro;
+        String campo[];
+        Usuario usuario;
+        Usuario.set_cod(0);
+
+        try (FileReader reader = new FileReader(NOME_ARQUIVO_USUARIOS);
+                BufferedReader buffer = new BufferedReader(reader)) {
+            while (buffer.ready()) {
+                registro = buffer.readLine();
+                campo = registro.split("#");
+                usuario = new Usuario(campo[1], campo[2], campo[3], Boolean.parseBoolean(campo[4]),
+                        Boolean.parseBoolean(campo[5]));
+                usuarioList.put(usuario.getCodigo(), usuario);
+            }
+        }
+        return usuarioList;
     }
 }
