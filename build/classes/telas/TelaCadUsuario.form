@@ -23,16 +23,16 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="panTxt" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="panTxt" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="143" max="-2" attributes="0"/>
+                      <Component id="panButton" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="panButton" alignment="1" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -58,34 +58,30 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="chkAtivo" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" attributes="0">
+                      <Component id="chkADM" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lblNome" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblSenha" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="txtNome" pref="89" max="32767" attributes="0"/>
-                                      <Component id="txtSenha1" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Component id="chkADM" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblNome" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblSenha" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="txtNome" pref="170" max="32767" attributes="0"/>
+                              <Component id="txtSenha1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblLogin" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblConfSenha" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblConfSenha" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblLogin" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="txtLogin" pref="89" max="32767" attributes="0"/>
-                              <Component id="txtSenha2" max="32767" attributes="0"/>
+                              <Component id="txtSenha2" pref="170" max="32767" attributes="0"/>
+                              <Component id="txtLogin" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace pref="38" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -93,27 +89,18 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtNome" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblNome" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblLogin" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtLogin" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtSenha1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblSenha" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtSenha2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblConfSenha" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="txtNome" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblNome" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblLogin" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtLogin" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="txtSenha1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblSenha" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblConfSenha" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtSenha2" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="chkADM" min="-2" max="-2" attributes="0"/>
@@ -175,7 +162,7 @@
                   <Component id="btnSalvar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnCancelar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

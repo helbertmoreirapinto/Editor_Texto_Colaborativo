@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Usuario extends Pessoa {
 
     private static final String NOME_ARQUIVO_USUARIOS = "USU_DB//USUARIOS.txt";
-
     private static int cod = 0;
+
     private int codigo;
     private String login;
     private String senha;
@@ -107,5 +109,31 @@ public class Usuario extends Pessoa {
             }
         }
         return usuarioList;
+    }
+
+    /**
+     * Colsulta os usuarios cadastrados filtrando de acordo com o campo de pesquisa
+     * Aceita valores de nome ou codigo para o filtro.
+     *
+     * @param campoPesquisa
+     * @return
+     */
+    public static ArrayList<Usuario> consultar_usuario(String campoPesquisa) {
+        ArrayList<Usuario> listaRetorno = new ArrayList<>();
+
+        try {
+            HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
+            Usuario u;
+            for (Map.Entry<Integer, Usuario> entry : usuarioList.entrySet()) {
+                u = entry.getValue();
+                if (u.getNome().toLowerCase().contains(campoPesquisa.toLowerCase()) || String.valueOf(u.getCodigo()).contains(campoPesquisa)) {
+                    listaRetorno.add(entry.getValue());
+                }
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+        return listaRetorno;
     }
 }
