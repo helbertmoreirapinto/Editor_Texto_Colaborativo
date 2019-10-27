@@ -2,10 +2,10 @@
 2#Helbert Moreira Pinto#helbert#d0523d51e2bada9ccb67caa7f33b0e48#false#true#
 3#Antonio Sebastian#antonio#4a181673429f0b6abbfd452f0f3b5950#false#true#
 4#Gabriell Tavares de Luna#gabriell#2f519ca05a03eb438a92abece94b2ca6#false#true#
-5#lucas tavares dos santos#lucas#dc53fc4f621c80bdc2fa0329a6123708#false#true#
-6#higor tessari#higor#85e8a9c05ae31716feb96cd99825c482#false#true#
-7#renata oliveira brito#renata#1b67d3053dc8facc72e0238bc8640c7a#false#true#
-8#george alexandre gantus#george#9b306ab04ef5e25f9fb89c998a6aedab#false#true#
-9#victor amaral#victor#ffc150a160d37e92012c196b6af4160d#false#true#
+5#Lucas Tavares dos Santos#lucas#dc53fc4f621c80bdc2fa0329a6123708#false#true#
+6#Higor Tessari#higor#85e8a9c05ae31716feb96cd99825c482#false#true#
+7#Renata Oliveira Brito#renata#1b67d3053dc8facc72e0238bc8640c7a#false#true#
+8#George Alexandre Gantus#george#9b306ab04ef5e25f9fb89c998a6aedab#false#true#
+9#Vitor Amaral#vitor#997d13b90da22b35ce43bebdd332ad11#false#true#
 10#Edson Andrade#edson#cd4fbce046c46f107e45ae0ddd0db7d3#false#true#
 11#Fernando Monitor PAE#fernando#cebdd715d4ecaafee8f147c2e85e0754#false#true#
