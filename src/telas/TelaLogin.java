@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package telas;
 
 import editor.Usuario;
@@ -10,7 +5,6 @@ import editor.crypt.Criptografia;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import javax.swing.JOptionPane;
 
@@ -46,14 +40,14 @@ public class TelaLogin extends javax.swing.JFrame {
                 if (elem.getValue().getLogin().equals(login) && elem.getValue().getSenha().equals(senha)) {
                     usuarioLogado = elem.getValue();
                     iniciar_menu(usuarioLogado);
+                    return;
                 }
             }
             
             //Nao logou
             JOptionPane.showMessageDialog(null, "Login/Senha Invalidos");
             txtLogin.selectAll();
-            txtLogin.grabFocus();
-            
+            txtLogin.grabFocus();  
         } catch (NoSuchAlgorithmException ex) {
             System.err.println(ex.getMessage());
         }
@@ -62,8 +56,6 @@ public class TelaLogin extends javax.swing.JFrame {
     private void iniciar_menu(Usuario usuarioLogado) {
         TelaMenu tela = new TelaMenu(usuarioLogado);
         tela.setLocationRelativeTo(null);
-        tela.setAlwaysOnTop(true);
-        tela.setDefaultCloseOperation(EXIT_ON_CLOSE);
         tela.setVisible(true);
         this.dispose();
     }

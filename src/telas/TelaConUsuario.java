@@ -3,6 +3,7 @@ package telas;
 import editor.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -26,7 +27,6 @@ public class TelaConUsuario extends javax.swing.JFrame {
         model = new UsuarioTableModel();
 
         tabUsuario.setModel(model);
-//        model.sorter(tabUsuario, txtPesquisar, model);
         txtPesquisar.requestFocus();
 
         tabUsuario.getColumnModel().getColumn(0).setPreferredWidth(60);
@@ -150,6 +150,11 @@ public class TelaConUsuario extends javax.swing.JFrame {
                 tabUsuarioMouseClicked(evt);
             }
         });
+        tabUsuario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tabUsuarioKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabUsuario);
         if (tabUsuario.getColumnModel().getColumnCount() > 0) {
             tabUsuario.getColumnModel().getColumn(0).setResizable(false);
@@ -267,6 +272,13 @@ public class TelaConUsuario extends javax.swing.JFrame {
             selecionar_usuario();
         }
     }//GEN-LAST:event_tabUsuarioMouseClicked
+
+    private void tabUsuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabUsuarioKeyPressed
+        char key = evt.getKeyChar();
+        if (key == '\n') {
+            selecionar_usuario();
+        }
+    }//GEN-LAST:event_tabUsuarioKeyPressed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -389,30 +401,11 @@ public class TelaConUsuario extends javax.swing.JFrame {
             fireTableRowsInserted(tamanhoAntigo, getRowCount() - 1);
         }
 
-        public Object[][] getAllThings() {
-            int row = getRowCount();
-            int col = getColumnCount();
-            Object[][] dados = new Object[row][col];
-
-            for (int i = 0; i < row; i++) {
-                //dados[i][0] = getValueAt2(i, 0);
-                //dados[i][1] = getValueAt2(i, 1);
-                //dados[i][2] = getValueAt2(i, 2);
-                // estou usando o primeiro valueAt pois já me retorna o Id
-                dados[i][3] = getValueAt(i, 0);
-            }
-            return dados;
-        }
-
         public void sorter(JTable table, final JTextField filterText, UsuarioTableModel model) {
             sorter = new TableRowSorter<>(model);
             table.setRowSorter(sorter);
             table.setFillsViewportHeight(true);
-//            table.getColumnModel().getColumn(1).setPreferredWidth(50);
-//            table.getColumnModel().getColumn(2).setPreferredWidth(200);
-
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
             filterText.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void changedUpdate(DocumentEvent e) {
@@ -432,13 +425,12 @@ public class TelaConUsuario extends javax.swing.JFrame {
         }
 
         private void newFilter(JTextField filterText) {
-            RowFilter<UsuarioTableModel, Object> rf = null;
+            RowFilter<UsuarioTableModel, Object> rf;
             try {
                 rf = RowFilter.regexFilter(filterText.getText(), 1);
-            } catch (java.util.regex.PatternSyntaxException e) {
-                return;
+                sorter.setRowFilter(rf);
+            } catch (PatternSyntaxException e) {
             }
-            sorter.setRowFilter(rf);
         }
 
         public List<Usuario> getAllExits() {

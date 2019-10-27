@@ -1,6 +1,10 @@
 package telas;
 
 import editor.Usuario;
+import editor.crypt.Criptografia;
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -9,9 +13,13 @@ import javax.swing.JOptionPane;
  */
 public class TelaCadUsuario extends javax.swing.JFrame {
 
+    private Usuario usuario;
+
     public TelaCadUsuario(Usuario usuario) {
         initComponents();
+        this.usuario = usuario;
         if (usuario != null) {
+            txtCod.setText(String.valueOf(usuario.getCodigo()));
             txtLogin.setText(usuario.getLogin());
             txtNome.setText(usuario.getNome());
             txtSenha1.setText("");
@@ -23,9 +31,11 @@ public class TelaCadUsuario extends javax.swing.JFrame {
 
     private boolean validar_campos() {
         if (txtNome.getText().trim().equals("") || txtLogin.getText().trim().equals("") || txtSenha1.getText().trim().equals("")) {
+            JOptionPane.showMessageDialog(null, "Favor preencher todos os campos");
             return false;
         }
         if (!txtSenha1.getText().equals(txtSenha2.getText())) {
+            JOptionPane.showMessageDialog(null, "Confirmação de senha invalida");
             return false;
         }
 
@@ -41,12 +51,14 @@ public class TelaCadUsuario extends javax.swing.JFrame {
         lblLogin = new javax.swing.JLabel();
         lblSenha = new javax.swing.JLabel();
         lblConfSenha = new javax.swing.JLabel();
+        chkADM = new javax.swing.JCheckBox();
+        chkAtivo = new javax.swing.JCheckBox();
+        txtCod = new javax.swing.JLabel();
+        lblCod = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         txtLogin = new javax.swing.JTextField();
         txtSenha1 = new javax.swing.JTextField();
         txtSenha2 = new javax.swing.JTextField();
-        chkADM = new javax.swing.JCheckBox();
-        chkAtivo = new javax.swing.JCheckBox();
         panButton = new javax.swing.JPanel();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -63,7 +75,28 @@ public class TelaCadUsuario extends javax.swing.JFrame {
 
         chkADM.setText("Usuario ADM");
 
+        chkAtivo.setSelected(true);
         chkAtivo.setText("Usuario Ativo");
+
+        lblCod.setText("Código:");
+
+        txtNome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNomeActionPerformed(evt);
+            }
+        });
+
+        txtSenha1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSenha1ActionPerformed(evt);
+            }
+        });
+
+        txtSenha2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSenha2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panTxtLayout = new javax.swing.GroupLayout(panTxt);
         panTxt.setLayout(panTxtLayout);
@@ -71,25 +104,28 @@ public class TelaCadUsuario extends javax.swing.JFrame {
             panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panTxtLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(chkAtivo)
                     .addComponent(chkADM)
                     .addGroup(panTxtLayout.createSequentialGroup()
                         .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblNome)
-                            .addComponent(lblSenha))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .addComponent(txtSenha1))
-                        .addGap(18, 18, 18)
-                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblConfSenha)
-                            .addComponent(lblLogin))
-                        .addGap(18, 18, 18)
-                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtSenha2, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                            .addComponent(txtLogin))))
+                            .addComponent(lblSenha))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtSenha1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSenha2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panTxtLayout.createSequentialGroup()
+                            .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblNome)
+                                .addComponent(lblCod)
+                                .addComponent(lblLogin))
+                            .addGap(78, 78, 78)
+                            .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtCod)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panTxtLayout.setVerticalGroup(
@@ -97,21 +133,29 @@ public class TelaCadUsuario extends javax.swing.JFrame {
             .addGroup(panTxtLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCod)
+                    .addComponent(txtCod))
+                .addGap(18, 18, 18)
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNome)
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblLogin)
                     .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSenha1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSenha)
+                    .addComponent(txtSenha1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblConfSenha)
                     .addComponent(txtSenha2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(chkADM)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(chkAtivo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Confirm.gif"))); // NOI18N
@@ -124,6 +168,11 @@ public class TelaCadUsuario extends javax.swing.JFrame {
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.gif"))); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panButtonLayout = new javax.swing.GroupLayout(panButton);
         panButton.setLayout(panButtonLayout);
@@ -151,11 +200,12 @@ public class TelaCadUsuario extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
+                        .addContainerGap()
+                        .addComponent(panTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
                         .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -163,34 +213,84 @@ public class TelaCadUsuario extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panTxt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        if (validar_campos()) {
-            //Salvar alteracoes ou novo usuario
-        }else{
-            JOptionPane.showMessageDialog(null, "Favor preencher os campos");
+        try {
+            boolean ret;
+            if (validar_campos()) {
+                if (usuario != null) {
+                    usuario.setNome(txtNome.getText());
+                    usuario.setLogin(txtLogin.getText());
+                    usuario.setSenha(Criptografia.criptografar(txtSenha1.getText()));
+                    usuario.setAdm(chkADM.isSelected());
+                    usuario.setAtivo(chkAtivo.isSelected());
+                    ret = Usuario.alterar_usuario(usuario);
+                    if (ret) {
+                        JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
+                    }
+                } else {
+                    usuario = new Usuario(
+                            txtNome.getText(),
+                            txtLogin.getText(),
+                            Criptografia.criptografar(txtSenha1.getText()),
+                            chkADM.isSelected(), chkAtivo.isSelected());
+                    txtCod.setText(String.valueOf(usuario.getCodigo()));
+                    ret = Usuario.inserir_usuario(usuario);
+                    if (ret) {
+                        JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
+                    }
+                }
+                if (ret) {
+                    txtLogin.setEditable(false);
+                    txtSenha1.setEditable(false);
+                    txtSenha2.setEditable(false);
+                    txtNome.setEditable(false);
+                    chkADM.setEnabled(false);
+                    chkAtivo.setEnabled(false);
+                }
+            }
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println(ex.getMessage());
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtSenha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenha1ActionPerformed
+
+    }//GEN-LAST:event_txtSenha1ActionPerformed
+
+    private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
+
+    }//GEN-LAST:event_txtNomeActionPerformed
+
+    private void txtSenha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenha2ActionPerformed
+
+    }//GEN-LAST:event_txtSenha2ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JCheckBox chkADM;
     private javax.swing.JCheckBox chkAtivo;
+    private javax.swing.JLabel lblCod;
     private javax.swing.JLabel lblConfSenha;
     private javax.swing.JLabel lblLogin;
     private javax.swing.JLabel lblNome;
     private javax.swing.JLabel lblSenha;
     private javax.swing.JPanel panButton;
     private javax.swing.JPanel panTxt;
+    private javax.swing.JLabel txtCod;
     private javax.swing.JTextField txtLogin;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtSenha1;

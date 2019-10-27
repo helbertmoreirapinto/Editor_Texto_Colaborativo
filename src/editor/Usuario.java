@@ -1,12 +1,18 @@
 package editor;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Usuario extends Pessoa {
 
@@ -112,8 +118,8 @@ public class Usuario extends Pessoa {
     }
 
     /**
-     * Colsulta os usuarios cadastrados filtrando de acordo com o campo de pesquisa
-     * Aceita valores de nome ou codigo para o filtro.
+     * Colsulta os usuarios cadastrados filtrando de acordo com o campo de
+     * pesquisa Aceita valores de nome ou codigo para o filtro.
      *
      * @param campoPesquisa
      * @return
@@ -135,5 +141,45 @@ public class Usuario extends Pessoa {
         }
 
         return listaRetorno;
+    }
+
+    public static boolean alterar_usuario(Usuario usuarioAlterado) {
+        try {
+            HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
+            usuarioList.put(usuarioAlterado.getCodigo(), usuarioAlterado);
+
+            boolean append_mode = false;
+            Usuario usuario;
+
+            try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode); BufferedWriter buffer = new BufferedWriter(writer)) {
+                for (Map.Entry<Integer, Usuario> elem : usuarioList.entrySet()) {
+                    usuario = elem.getValue();
+                    PrintWriter out = new PrintWriter(buffer);
+                    out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
+                            usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
+                    buffer.flush();
+                }
+            }
+            return true;
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean inserir_usuario(Usuario usuario) {
+        boolean append_mode = true;
+        try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode); BufferedWriter buffer = new BufferedWriter(writer)) {
+
+            PrintWriter out = new PrintWriter(buffer);
+            out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
+                    usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
+            buffer.flush();
+            
+            return true;
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
     }
 }
