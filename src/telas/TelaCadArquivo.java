@@ -389,7 +389,17 @@ public class TelaCadArquivo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        System.exit(0);
+        if(arquivo != null){
+            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            
+        }else{
+            TelaMenu tela = new TelaMenu(user);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+        }
+        this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

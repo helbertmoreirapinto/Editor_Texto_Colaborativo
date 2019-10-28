@@ -117,9 +117,19 @@ public class TelaMenu extends javax.swing.JFrame {
         menArquivo.setText("Arquivo");
 
         itemIncArquivo.setText("Novo Arquivo");
+        itemIncArquivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemIncArquivoActionPerformed(evt);
+            }
+        });
         menArquivo.add(itemIncArquivo);
 
         itemConArquivo.setText("Consultar");
+        itemConArquivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemConArquivoActionPerformed(evt);
+            }
+        });
         menArquivo.add(itemConArquivo);
 
         jMenuBar1.add(menArquivo);
@@ -183,6 +193,20 @@ public class TelaMenu extends javax.swing.JFrame {
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemConUsuarioActionPerformed
+
+    private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
+        TelaCadArquivo tela = new TelaCadArquivo(usuario.getCodigo(), null);
+        tela.setLocationRelativeTo(null);
+        tela.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemIncArquivoActionPerformed
+
+    private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
+        TelaConArquivo tela = new TelaConArquivo(usuario.getCodigo());
+        tela.setLocationRelativeTo(null);
+        tela.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_itemConArquivoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
