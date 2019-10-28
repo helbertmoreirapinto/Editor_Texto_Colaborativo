@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package telas;
 
 import editor.Arquivo;
@@ -14,12 +9,13 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  *
- * @author helbe
+ * @author helbert
  */
 public class TelaConArquivo extends javax.swing.JFrame {
 
     private final Usuario usuario;
     private final ArquivoTableModel model;
+    private final List<Arquivo> arquivoList;
 
     public TelaConArquivo(int codigoUsuario) {
         initComponents();
@@ -31,17 +27,33 @@ public class TelaConArquivo extends javax.swing.JFrame {
 
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
+
+        arquivoList = Arquivo.carregar_lista_arquivo(usuario);
     }
 
     private void pesquisar_arquivos() {
-        ArrayList<Arquivo> arquivoList = Arquivo.carregar_lista_arquivo(usuario, txtPesquisar.getText());
-
         model.limpar();
-        model.addArquivoList(arquivoList);
+        for (Arquivo arq : arquivoList) {
+            if (arq.getNome().contains(txtPesquisar.getText())) {
+                model.addArquivo(arq);
+            }
+        }
     }
 
     private void selecionar_arquivo() {
+        int index = tabArquivo.getSelectedRow();
+        Arquivo a;
+        if (index >= 0) {
+            a = model.getArquivo(index);
+            consultar_arquivo(a);
+        }
+    }
 
+    private void consultar_arquivo(Arquivo arquivo) {
+        TelaCadArquivo tela = new TelaCadArquivo(usuario.getCodigo(), arquivo);
+        tela.setVisible(true);
+        tela.setLocationRelativeTo(null);
+        this.dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -117,6 +129,11 @@ public class TelaConArquivo extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tabArquivo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabArquivoMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tabArquivo);
         if (tabArquivo.getColumnModel().getColumnCount() > 0) {
             tabArquivo.getColumnModel().getColumn(0).setResizable(false);
@@ -141,6 +158,11 @@ public class TelaConArquivo extends javax.swing.JFrame {
         );
 
         btnSelecionar.setText("Selecionar");
+        btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelecionarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -215,6 +237,16 @@ public class TelaConArquivo extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtPesquisarKeyPressed
 
+    private void tabArquivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabArquivoMouseClicked
+        if (evt.getClickCount() == 2) {
+            selecionar_arquivo();
+        }
+    }//GEN-LAST:event_tabArquivoMouseClicked
+
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
+        selecionar_arquivo();
+    }//GEN-LAST:event_btnSelecionarActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -242,7 +274,7 @@ public class TelaConArquivo extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaConArquivo(1).setVisible(true);
+                new TelaConArquivo(3).setVisible(true);
             }
         });
     }

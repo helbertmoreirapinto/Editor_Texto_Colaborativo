@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Arquivo {
 
@@ -17,7 +18,7 @@ public class Arquivo {
 
     private String nome;
     private int codigoAutor;
-    private ArrayList<Integer> codigoUsuarioAcesso;
+    private List<Integer> codigoUsuarioAcesso;
     private File file;
     private File fileData;
 
@@ -28,10 +29,10 @@ public class Arquivo {
      * @param codigoAutor
      * @param codigoUsuarioAcesso
      */
-    public Arquivo(String nome, int codigoAutor, ArrayList<Integer> codigoUsuarioAcesso) {
+    public Arquivo(String nome, int codigoAutor, List<Integer> codigoUsuarioAcesso) {
         this.nome = nome;
         this.codigoAutor = codigoAutor;
-        this.codigoUsuarioAcesso = (codigoUsuarioAcesso != null) ? codigoUsuarioAcesso : new ArrayList<>();
+        this.codigoUsuarioAcesso = new ArrayList<>(codigoUsuarioAcesso);
     }
 
     /**
@@ -79,6 +80,13 @@ public class Arquivo {
         }
     }
 
+    public void rename(String novoNome) {
+        File aux_txt = new File(String.format("%s//%s%s", file.getParent(), novoNome, FILE_TEXT));
+        File aux_data = new File(String.format("%s//%s%s", file.getParent(), novoNome, FILE_DATA));
+        file.renameTo(aux_txt);
+        fileData.renameTo(aux_data);
+    }
+
     /**
      * Exclui os arquivos fisicos do disco.
      */
@@ -89,10 +97,8 @@ public class Arquivo {
 
     /**
      * Atualiza as informcoes no arquivo de Data.
-     *
-     * @throws IOException
      */
-    public void updateFileData() throws IOException {
+    public void updateFileData() {
         boolean append_mode = false;
         this.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_DATA));
         try (FileWriter fw = new FileWriter(this.fileData, append_mode);
@@ -102,6 +108,8 @@ public class Arquivo {
                 buffer.append(codUsu + "\n");
             }
             buffer.flush();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -138,11 +146,11 @@ public class Arquivo {
         this.codigoAutor = codigoAutor;
     }
 
-    public ArrayList<Integer> getCodigoUsuarioAcesso() {
+    public List<Integer> getCodigoUsuarioAcesso() {
         return codigoUsuarioAcesso;
     }
 
-    public void setUsuarioAcessoAdm(ArrayList<Integer> codigoUsuarioAcesso) {
+    public void setUsuarioAcessoAdm(List<Integer> codigoUsuarioAcesso) {
         this.codigoUsuarioAcesso = codigoUsuarioAcesso;
     }
 
@@ -167,11 +175,10 @@ public class Arquivo {
      * Carrega para a memoria uma lista de arquivos contidos no diretorio
      * padrao.
      *
-     * @param codigoUsuario
-     * @param filtro
+     * @param usuario
      * @return
      */
-    public static ArrayList<Arquivo> carregar_lista_arquivo(Usuario usuario, String filtro) {
+    public static ArrayList<Arquivo> carregar_lista_arquivo(Usuario usuario) {
         ArrayList<Arquivo> listaRetorno = new ArrayList<>();
         int codigoAutor;
         String nomeArquivo;
@@ -196,7 +203,7 @@ public class Arquivo {
                         usuarioAcesso.add(Integer.parseInt(buffer.readLine()));
                     }
 
-                    if (usuario.isAdm() || (usuarioAcesso.contains(usuario.getCodigo()) && nomeArquivo.contains(filtro))) {
+                    if (usuario.isAdm() || usuarioAcesso.contains(usuario.getCodigo())) {
                         codigoAutor = usuarioAcesso.get(COD_ELEM_AUTOR);
                         arquivo = new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso);
 

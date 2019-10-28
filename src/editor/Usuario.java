@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Usuario extends Pessoa {
 
@@ -94,7 +96,7 @@ public class Usuario extends Pessoa {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static HashMap<Integer, Usuario> carregar_lista_usuario() throws FileNotFoundException, IOException {
+    public static HashMap<Integer, Usuario> carregar_lista_usuario() {
         HashMap<Integer, Usuario> usuarioList = new HashMap<>();
         String registro;
         String campo[];
@@ -110,6 +112,8 @@ public class Usuario extends Pessoa {
                         Boolean.parseBoolean(campo[5]));
                 usuarioList.put(usuario.getCodigo(), usuario);
             }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
         return usuarioList;
     }
@@ -124,17 +128,13 @@ public class Usuario extends Pessoa {
     public static ArrayList<Usuario> consultar_usuario(String campoPesquisa) {
         ArrayList<Usuario> listaRetorno = new ArrayList<>();
 
-        try {
-            HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
-            Usuario u;
-            for (Map.Entry<Integer, Usuario> entry : usuarioList.entrySet()) {
-                u = entry.getValue();
-                if (u.getNome().toLowerCase().contains(campoPesquisa.toLowerCase()) || String.valueOf(u.getCodigo()).contains(campoPesquisa)) {
-                    listaRetorno.add(entry.getValue());
-                }
+        HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
+        Usuario u;
+        for (Map.Entry<Integer, Usuario> entry : usuarioList.entrySet()) {
+            u = entry.getValue();
+            if (u.getNome().toLowerCase().contains(campoPesquisa.toLowerCase()) || String.valueOf(u.getCodigo()).contains(campoPesquisa)) {
+                listaRetorno.add(entry.getValue());
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
         }
 
         return listaRetorno;
@@ -181,13 +181,7 @@ public class Usuario extends Pessoa {
     }
 
     public static Usuario get_usuario_pelo_codigo(int codigo) {
-        Usuario user = null;
-        try {
-            HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
-            user = usuarioList.get(codigo);
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return user;
+        HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
+        return usuarioList.get(codigo);
     }
 }

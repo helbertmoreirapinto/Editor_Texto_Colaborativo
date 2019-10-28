@@ -1,8 +1,14 @@
 package telas;
 
+import editor.Arquivo;
+import editor.Usuario;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.AbstractListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,23 +19,43 @@ public class TelaCadArquivo extends javax.swing.JFrame {
     private final ListUsuarioModel model1;
     private final ListUsuarioModel model2;
 
-    public TelaCadArquivo() {
+    private final Usuario user;
+    private final HashMap<Integer, Usuario> listaUsuario;
+    private final Arquivo arquivo;
+
+    public TelaCadArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
+        this.arquivo = arquivo;
+        user = Usuario.get_usuario_pelo_codigo(codigoUsuario);
         model1 = new ListUsuarioModel();
         model2 = new ListUsuarioModel();
-
         listUsuario.setModel(model1);
         listSelecionados.setModel(model2);
+        listaUsuario = Usuario.carregar_lista_usuario();
 
-        model1.addElem("Teste1");
-        model1.addElem("Teste2");
-        model1.addElem("Teste3");
-        model1.addElem("Teste4");
+        if (arquivo != null) {
+            txtNomeArquivo.setText(arquivo.getNome());
+            txtAutor.setText(Usuario.get_usuario_pelo_codigo(arquivo.getCodigoAutor()).getNome());
+            listaUsuario.remove(arquivo.getCodigoAutor());
+            for (Map.Entry<Integer, Usuario> elem : listaUsuario.entrySet()) {
+                if (arquivo.getCodigoUsuarioAcesso().contains(elem.getKey())) {
+                    model2.addElem(elem.getValue().getNome());
+                } else {
+                    model1.addElem(elem.getValue().getNome());
+                }
+            }
+        } else {
+            txtAutor.setText(Usuario.get_usuario_pelo_codigo(user.getCodigo()).getNome());
+            listaUsuario.remove(codigoUsuario);
 
-        //carrega lista de usuarios e monta lista 
+            for (Map.Entry<Integer, Usuario> elem : listaUsuario.entrySet()) {
+                model1.addElem(elem.getValue().getNome());
+            }
+        }
+
     }
 
-    public void marcar_usuario() {
+    private void marcar_usuario() {
         int i = listUsuario.getSelectedIndex();
         if (i >= 0) {
             String x = listUsuario.getSelectedValue();
@@ -38,13 +64,44 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         }
     }
 
-    public void desmarcar_usuario() {
+    private void desmarcar_usuario() {
         int i = listSelecionados.getSelectedIndex();
         if (i >= 0) {
             String x = listSelecionados.getSelectedValue();
             model2.removeElem(i);
             model1.addElem(x);
         }
+    }
+
+    private ArrayList<Integer> lista_codigos_usuarios_selecionados() {
+        ArrayList<Integer> listaCodigos = new ArrayList<>();
+        List<String> aux = model2.getAllExits();
+        for (Map.Entry<Integer, Usuario> elem : listaUsuario.entrySet()) {
+            if (aux.contains(elem.getValue().getNome())) {
+                listaCodigos.add(elem.getKey());
+            }
+        }
+        return listaCodigos;
+    }
+
+    private void alterar_arquivo() {
+        List<Integer> selecionados = lista_codigos_usuarios_selecionados();
+        arquivo.setUsuarioAcessoAdm(selecionados);
+        arquivo.updateFileData();
+        arquivo.rename(txtNomeArquivo.getText());
+        JOptionPane.showMessageDialog(null, "Arquivo alterado com sucesso");
+    }
+
+    private void incluir_arquivo() {
+        List<Integer> selecionados = lista_codigos_usuarios_selecionados();
+        Arquivo arq;
+        try {
+            arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
+            arq.createFile();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
     }
 
     public static void main(String args[]) {
@@ -74,7 +131,7 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaCadArquivo().setVisible(true);
+                new TelaCadArquivo(2, null).setVisible(true);
             }
         });
     }
@@ -83,19 +140,27 @@ public class TelaCadArquivo extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        panLists = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         listUsuario = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         listSelecionados = new javax.swing.JList<>();
+        jPanel1 = new javax.swing.JPanel();
         btnMarcar = new javax.swing.JButton();
         btnDesmarcar = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        panTxt = new javax.swing.JPanel();
+        lblNomeArquivo = new javax.swing.JLabel();
+        txtNomeArquivo = new javax.swing.JTextField();
+        lblAutor = new javax.swing.JLabel();
+        txtAutor = new javax.swing.JLabel();
+        panButton = new javax.swing.JPanel();
+        btnSalvar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         listUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -129,69 +194,133 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnMarcar)
                     .addComponent(btnDesmarcar))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(btnMarcar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnDesmarcar))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScrollPane2)
-                            .addComponent(jScrollPane1))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 357, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Confirm.gif"))); // NOI18N
-        jButton1.setText("Salvar");
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.gif"))); // NOI18N
-        jButton2.setText("Cancelar");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnMarcar)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2)
+                .addComponent(btnDesmarcar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+
+        jLabel1.setText("Todos Usaurios:");
+
+        jLabel2.setText("Usuarios COM acesso ao arquivo:");
+
+        javax.swing.GroupLayout panListsLayout = new javax.swing.GroupLayout(panLists);
+        panLists.setLayout(panListsLayout);
+        panListsLayout.setHorizontalGroup(
+            panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panListsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                .addGroup(panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panListsLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panListsLayout.setVerticalGroup(
+            panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panListsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panListsLayout.createSequentialGroup()
+                        .addGroup(panListsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panListsLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29))))
+        );
+
+        lblNomeArquivo.setText("Nome:");
+
+        lblAutor.setText("Autor:");
+
+        javax.swing.GroupLayout panTxtLayout = new javax.swing.GroupLayout(panTxt);
+        panTxt.setLayout(panTxtLayout);
+        panTxtLayout.setHorizontalGroup(
+            panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panTxtLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panTxtLayout.createSequentialGroup()
+                        .addComponent(lblNomeArquivo)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNomeArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panTxtLayout.createSequentialGroup()
+                        .addComponent(lblAutor)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAutor)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panTxtLayout.setVerticalGroup(
+            panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panTxtLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblNomeArquivo)
+                    .addComponent(txtNomeArquivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblAutor)
+                    .addComponent(txtAutor))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Confirm.gif"))); // NOI18N
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.gif"))); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panButtonLayout = new javax.swing.GroupLayout(panButton);
+        panButton.setLayout(panButtonLayout);
+        panButtonLayout.setHorizontalGroup(
+            panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panButtonLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnCancelar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panButtonLayout.setVerticalGroup(
+            panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panButtonLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -200,23 +329,27 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 10, Short.MAX_VALUE)
+                        .addComponent(panLists, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(155, 155, 155)
+                .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panLists, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         pack();
@@ -242,18 +375,42 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_listSelecionadosMouseClicked
 
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        if (!txtNomeArquivo.getText().trim().equals("")) {
+            if (arquivo != null) {
+                alterar_arquivo();
+            } else {
+                incluir_arquivo();
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Nome do arquivo invalido");
+        }
+
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnDesmarcar;
     private javax.swing.JButton btnMarcar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnSalvar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblAutor;
+    private javax.swing.JLabel lblNomeArquivo;
     private javax.swing.JList<String> listSelecionados;
     private javax.swing.JList<String> listUsuario;
+    private javax.swing.JPanel panButton;
+    private javax.swing.JPanel panLists;
+    private javax.swing.JPanel panTxt;
+    private javax.swing.JLabel txtAutor;
+    private javax.swing.JTextField txtNomeArquivo;
     // End of variables declaration//GEN-END:variables
 
     public class ListUsuarioModel extends AbstractListModel<String> {

@@ -19,11 +19,7 @@ public class TelaLogin extends javax.swing.JFrame {
     private HashMap<Integer, Usuario> listaUSuario;
 
     public TelaLogin() {
-        try {
-            listaUSuario = Usuario.carregar_lista_usuario();
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
+        listaUSuario = Usuario.carregar_lista_usuario();
         initComponents();
     }
 
@@ -43,11 +39,11 @@ public class TelaLogin extends javax.swing.JFrame {
                     return;
                 }
             }
-            
+
             //Nao logou
             JOptionPane.showMessageDialog(null, "Login/Senha Invalidos");
             txtLogin.selectAll();
-            txtLogin.grabFocus();  
+            txtLogin.grabFocus();
         } catch (NoSuchAlgorithmException ex) {
             System.err.println(ex.getMessage());
         }
@@ -97,6 +93,11 @@ public class TelaLogin extends javax.swing.JFrame {
         txtLogin.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtLoginFocusGained(evt);
+            }
+        });
+        txtLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtLoginKeyPressed(evt);
             }
         });
 
@@ -238,6 +239,13 @@ public class TelaLogin extends javax.swing.JFrame {
             logar();
         }
     }//GEN-LAST:event_txtSenhaKeyPressed
+
+    private void txtLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtLoginKeyPressed
+        char key = evt.getKeyChar();
+        if (key == '\n') {
+            txtSenha.grabFocus();
+        }
+    }//GEN-LAST:event_txtLoginKeyPressed
 
     /**
      * @param args the command line arguments
