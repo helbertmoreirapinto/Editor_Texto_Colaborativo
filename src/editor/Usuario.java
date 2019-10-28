@@ -140,7 +140,7 @@ public class Usuario extends Pessoa {
         return listaRetorno;
     }
 
-    public static boolean alterar_usuario(Usuario usuarioAlterado) {
+    public static void alterar_usuario(Usuario usuarioAlterado) {
         try {
             HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
             usuarioList.put(usuarioAlterado.getCodigo(), usuarioAlterado);
@@ -157,14 +157,12 @@ public class Usuario extends Pessoa {
                     buffer.flush();
                 }
             }
-            return true;
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
-            return false;
         }
     }
 
-    public static boolean inserir_usuario(Usuario usuario) {
+    public static void inserir_usuario(Usuario usuario) {
         boolean append_mode = true;
         try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode); BufferedWriter buffer = new BufferedWriter(writer)) {
 
@@ -173,10 +171,9 @@ public class Usuario extends Pessoa {
                     usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
             buffer.flush();
 
-            return true;
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
-            return false;
+
         }
     }
 

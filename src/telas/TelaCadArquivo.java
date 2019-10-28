@@ -382,6 +382,10 @@ public class TelaCadArquivo extends javax.swing.JFrame {
             } else {
                 incluir_arquivo();
             }
+            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(null, "Nome do arquivo invalido");
         }
@@ -389,12 +393,12 @@ public class TelaCadArquivo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        if(arquivo != null){
+        if (arquivo != null) {
             TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
-            
-        }else{
+
+        } else {
             TelaMenu tela = new TelaMenu(user);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);

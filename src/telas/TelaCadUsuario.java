@@ -43,6 +43,41 @@ public class TelaCadUsuario extends javax.swing.JFrame {
         return true;
     }
 
+    private void incluir_usuario() {
+
+        try {
+            usuario = new Usuario(
+                    txtNome.getText(),
+                    txtLogin.getText(),
+                    Criptografia.criptografar(txtSenha1.getText()),
+                    chkADM.isSelected(), chkAtivo.isSelected());
+            txtCod.setText(String.valueOf(usuario.getCodigo()));
+            Usuario.inserir_usuario(usuario);
+            JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
+
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+    }
+
+    private void alterar_usuario() {
+
+        try {
+            usuario.setNome(txtNome.getText());
+            usuario.setLogin(txtLogin.getText());
+            usuario.setSenha(Criptografia.criptografar(txtSenha1.getText()));
+            usuario.setAdm(chkADM.isSelected());
+            usuario.setAtivo(chkAtivo.isSelected());
+            Usuario.alterar_usuario(usuario);
+            JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
+
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -224,43 +259,21 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        try {
-            boolean ret;
-            if (validar_campos()) {
-                if (usuario != null) {
-                    usuario.setNome(txtNome.getText());
-                    usuario.setLogin(txtLogin.getText());
-                    usuario.setSenha(Criptografia.criptografar(txtSenha1.getText()));
-                    usuario.setAdm(chkADM.isSelected());
-                    usuario.setAtivo(chkAtivo.isSelected());
-                    ret = Usuario.alterar_usuario(usuario);
-                    if (ret) {
-                        JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
-                    }
-                } else {
-                    usuario = new Usuario(
-                            txtNome.getText(),
-                            txtLogin.getText(),
-                            Criptografia.criptografar(txtSenha1.getText()),
-                            chkADM.isSelected(), chkAtivo.isSelected());
-                    txtCod.setText(String.valueOf(usuario.getCodigo()));
-                    ret = Usuario.inserir_usuario(usuario);
-                    if (ret) {
-                        JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
-                    }
-                }
-                if (ret) {
-                    txtLogin.setEditable(false);
-                    txtSenha1.setEditable(false);
-                    txtSenha2.setEditable(false);
-                    txtNome.setEditable(false);
-                    chkADM.setEnabled(false);
-                    chkAtivo.setEnabled(false);
-                }
+
+        if (validar_campos()) {
+            if (usuario != null) {
+                alterar_usuario();
+            } else {
+                incluir_usuario();
             }
-        } catch (NoSuchAlgorithmException ex) {
-            System.err.println(ex.getMessage());
+            TelaConUsuario tela = new TelaConUsuario(usuarioLogado);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Dados invalidos");
         }
+
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed

@@ -1,5 +1,6 @@
 package editor;
 
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Arquivo {
 
@@ -68,15 +71,14 @@ public class Arquivo {
      * inserido no arquivo de texto.
      *
      * @param texto
-     * @throws IOException
      */
-    public void editar(ArrayList<String> texto) throws IOException {
+    public void editar(String texto) {
         boolean append_mode = false;
         try (FileWriter fw = new FileWriter(this.file, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
-            for (String txt : texto) {
-                buffer.append(txt + "\n");
-            }
+            buffer.append(texto);
             buffer.flush();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -117,16 +119,17 @@ public class Arquivo {
      * Retorna o texto contido no arquivo de texto.
      *
      * @return
-     * @throws IOException
      */
-    public ArrayList<String> getTexto() throws IOException {
-        ArrayList<String> texto = new ArrayList<>();
+    public String getTexto() {
+        StringBuilder sb = new StringBuilder();
         try (FileReader reader = new FileReader(this.file); BufferedReader buffer = new BufferedReader(reader)) {
             while (buffer.ready()) {
-                texto.add(buffer.readLine());
+                sb.append(buffer.readLine()).append("\n");
             }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
-        return texto;
+        return sb.toString();
     }
 
     /* GETTER AND SETTER */

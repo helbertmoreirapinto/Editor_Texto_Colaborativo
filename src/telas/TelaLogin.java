@@ -2,7 +2,6 @@ package telas;
 
 import editor.Usuario;
 import editor.crypt.Criptografia;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;

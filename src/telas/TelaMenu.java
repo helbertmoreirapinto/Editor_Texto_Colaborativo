@@ -46,6 +46,7 @@ public class TelaMenu extends javax.swing.JFrame {
         menUsuario = new javax.swing.JMenu();
         itemIncUsuario = new javax.swing.JMenuItem();
         itemConUsuario = new javax.swing.JMenuItem();
+        menLogoff = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -89,6 +90,11 @@ public class TelaMenu extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tabArquivo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabArquivoMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabArquivo);
@@ -154,6 +160,19 @@ public class TelaMenu extends javax.swing.JFrame {
 
         jMenuBar1.add(menUsuario);
 
+        menLogoff.setText("Logoff");
+        menLogoff.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menLogoffMouseClicked(evt);
+            }
+        });
+        menLogoff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menLogoffActionPerformed(evt);
+            }
+        });
+        jMenuBar1.add(menLogoff);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,6 +227,28 @@ public class TelaMenu extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_itemConArquivoActionPerformed
 
+    private void menLogoffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menLogoffActionPerformed
+
+    }//GEN-LAST:event_menLogoffActionPerformed
+
+    private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
+        TelaLogin tela = new TelaLogin();
+        tela.setLocationRelativeTo(null);
+        tela.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_menLogoffMouseClicked
+
+    private void tabArquivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabArquivoMouseClicked
+        Arquivo arquivo;
+        if (evt.getClickCount() == 2 && tabArquivo.getSelectedRow() >= 0) {
+            arquivo = model.getArquivo(tabArquivo.getSelectedRow());
+            TelaEditarArquivo tela = new TelaEditarArquivo(usuario, arquivo);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
+    }//GEN-LAST:event_tabArquivoMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemConArquivo;
@@ -218,6 +259,7 @@ public class TelaMenu extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblUsuario;
     private javax.swing.JMenu menArquivo;
+    private javax.swing.JMenu menLogoff;
     private javax.swing.JMenu menUsuario;
     private javax.swing.JPanel panArquivo;
     private javax.swing.JPanel panUsuario;
