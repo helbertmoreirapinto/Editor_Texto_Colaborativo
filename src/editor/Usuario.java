@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Usuario extends Pessoa {
 
@@ -175,11 +172,22 @@ public class Usuario extends Pessoa {
             out.printf("%d#%s#%s#%s#%s#%s#%n", usuario.getCodigo(), usuario.getNome(), usuario.getLogin(),
                     usuario.getSenha(), String.valueOf(usuario.isAdm()), String.valueOf(usuario.isAtivo()));
             buffer.flush();
-            
+
             return true;
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
             return false;
         }
+    }
+
+    public static Usuario get_usuario_pelo_codigo(int codigo) {
+        Usuario user = null;
+        try {
+            HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
+            user = usuarioList.get(codigo);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return user;
     }
 }

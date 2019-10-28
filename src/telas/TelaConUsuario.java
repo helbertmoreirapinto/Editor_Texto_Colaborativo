@@ -3,16 +3,9 @@ package telas;
 import editor.Usuario;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -34,7 +27,6 @@ public class TelaConUsuario extends javax.swing.JFrame {
         tabUsuario.getColumnModel().getColumn(2).setPreferredWidth(100);
         tabUsuario.getColumnModel().getColumn(3).setPreferredWidth(55);
         tabUsuario.getColumnModel().getColumn(4).setPreferredWidth(55);
-
     }
 
     private void selecionar_usuario() {
@@ -335,7 +327,6 @@ public class TelaConUsuario extends javax.swing.JFrame {
 
         private final List<Usuario> linhas = new ArrayList<>();
         private final String[] colunas = {"Código", "Nome", "Login", "ADM", "Ativo"};
-        private TableRowSorter sorter;
 
         @Override
         public int getRowCount() {
@@ -401,46 +392,8 @@ public class TelaConUsuario extends javax.swing.JFrame {
             fireTableRowsInserted(tamanhoAntigo, getRowCount() - 1);
         }
 
-        public void sorter(JTable table, final JTextField filterText, UsuarioTableModel model) {
-            sorter = new TableRowSorter<>(model);
-            table.setRowSorter(sorter);
-            table.setFillsViewportHeight(true);
-            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            filterText.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    newFilter(filterText);
-                }
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    newFilter(filterText);
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    newFilter(filterText);
-                }
-            });
-        }
-
-        private void newFilter(JTextField filterText) {
-            RowFilter<UsuarioTableModel, Object> rf;
-            try {
-                rf = RowFilter.regexFilter(filterText.getText(), 1);
-                sorter.setRowFilter(rf);
-            } catch (PatternSyntaxException e) {
-            }
-        }
-
         public List<Usuario> getAllExits() {
             return linhas;
-        }
-
-        public String getIdIntoTheRow(JTable table) {
-            int row = table.getSelectedRow();
-            String pk = String.valueOf(table.getValueAt(row, 0));
-            return pk;
         }
 
         public void setValue(int row, Usuario usu) {

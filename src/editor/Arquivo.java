@@ -13,6 +13,7 @@ public class Arquivo {
     public static final String DIR_ARQUIVOS = "ARQUIVOS";
     public static final String FILE_DATA = ".data";
     public static final String FILE_TEXT = ".txt";
+    private static final int COD_ELEM_AUTOR = 0;
 
     private String nome;
     private int codigoAutor;
@@ -111,7 +112,7 @@ public class Arquivo {
      * @throws IOException
      */
     public ArrayList<String> getTexto() throws IOException {
-        ArrayList<String> texto = new ArrayList<String>();
+        ArrayList<String> texto = new ArrayList<>();
         try (FileReader reader = new FileReader(this.file); BufferedReader buffer = new BufferedReader(reader)) {
             while (buffer.ready()) {
                 texto.add(buffer.readLine());
@@ -160,4 +161,62 @@ public class Arquivo {
     public void setFileData(File fileData) {
         this.fileData = fileData;
     }
+
+    /* STATIC METHODS */
+    /**
+     * Carrega para a memoria uma lista de arquivos contidos no diretorio
+     * padrao.
+     *
+     * @param codigoUsuario
+     * @param filtro
+     * @return
+     */
+    public static ArrayList<Arquivo> carregar_lista_arquivo(Usuario usuario, String filtro) {
+        ArrayList<Arquivo> listaRetorno = new ArrayList<>();
+        int codigoAutor;
+        String nomeArquivo;
+        ArrayList<Integer> usuarioAcesso;
+        Arquivo arquivo;
+
+        File diretorioArquivos = new File(DIR_ARQUIVOS);
+        File[] arquivoList = diretorioArquivos.listFiles();
+
+        if (arquivoList == null) {
+            return listaRetorno;
+        }
+
+        for (File fileD : arquivoList) {
+            if (fileD.getName().contains(FILE_DATA)) {
+                nomeArquivo = fileD.getName().substring(0, fileD.getName().indexOf("."));
+                usuarioAcesso = new ArrayList<>();
+
+                try (FileReader reader = new FileReader(fileD); BufferedReader buffer = new BufferedReader(reader)) {
+
+                    while (buffer.ready()) {
+                        usuarioAcesso.add(Integer.parseInt(buffer.readLine()));
+                    }
+
+                    if (usuario.isAdm() || (usuarioAcesso.contains(usuario.getCodigo()) && nomeArquivo.contains(filtro))) {
+                        codigoAutor = usuarioAcesso.get(COD_ELEM_AUTOR);
+                        arquivo = new Arquivo(nomeArquivo, codigoAutor, usuarioAcesso);
+
+                        for (File file : arquivoList) {
+                            if (file.getName().equals(String.format("%s%s", nomeArquivo, FILE_TEXT))) {
+                                arquivo.setFile(file);
+                                break;
+                            }
+                        }
+
+                        arquivo.setFileData(fileD);
+                        listaRetorno.add(arquivo);
+                    }
+                } catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+            }
+        }
+
+        return listaRetorno;
+    }
+
 }
