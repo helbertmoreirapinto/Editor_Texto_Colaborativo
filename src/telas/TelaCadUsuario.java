@@ -3,8 +3,6 @@ package telas;
 import editor.Usuario;
 import editor.crypt.Criptografia;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,10 +12,13 @@ import javax.swing.JOptionPane;
 public class TelaCadUsuario extends javax.swing.JFrame {
 
     private Usuario usuario;
+    private final Usuario usuarioLogado;
 
-    public TelaCadUsuario(Usuario usuario) {
+    public TelaCadUsuario(Usuario usuarioLogado, Usuario userAlterar) {
         initComponents();
-        this.usuario = usuario;
+        this.usuario = userAlterar;
+        this.usuarioLogado = usuarioLogado;
+
         if (usuario != null) {
             txtCod.setText(String.valueOf(usuario.getCodigo()));
             txtLogin.setText(usuario.getLogin());
@@ -263,7 +264,17 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        if (usuario != null) {
+            TelaConUsuario tela = new TelaConUsuario(usuarioLogado);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+        } else {
+            TelaMenu tela = new TelaMenu(usuarioLogado);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+        }
 
+        this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void txtSenha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenha1ActionPerformed
