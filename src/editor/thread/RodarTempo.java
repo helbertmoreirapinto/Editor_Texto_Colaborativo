@@ -1,9 +1,7 @@
 package editor.thread;
 
-import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
 
 /**
  *
@@ -12,21 +10,13 @@ import javax.swing.JLabel;
 public class RodarTempo implements Runnable {
 
     private int delay = 0;
-    private final JLabel lab;
-
-    public RodarTempo(JLabel lab) {
-        this.lab = lab;
-    }
 
     @Override
     public void run() {
         while (true) {
             try {
-                if (delay == 0) {
-                    lab.setText("parou");
-                } else {
+                if (delay > 0) {
                     delay--;
-                    lab.setText("editando");
                 }
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
@@ -37,6 +27,10 @@ public class RodarTempo implements Runnable {
 
     public void reset_time() {
         delay = 1000;
+    }
+
+    public int getDelay() {
+        return delay;
     }
 
 }

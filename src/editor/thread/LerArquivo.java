@@ -1,8 +1,6 @@
 package editor.thread;
 
 import editor.Arquivo;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTextArea;
 
 /**
@@ -21,10 +19,26 @@ public class LerArquivo implements Runnable {
 
     @Override
     public void run() {
+        String texto;
+        int cursor;
+
         while (true) {
             try {
-                campo.setText(arquivo.getTexto());
-                Thread.sleep(1000);
+                texto = arquivo.getTexto();
+
+                if (!texto.equals(campo.getText())) {
+                    cursor = campo.getCaretPosition();
+                    campo.setText(arquivo.getTexto());
+                    try {
+//                    cursor = (cursor > max_text-1) ? max_text : cursor;
+                        campo.setCaretPosition(cursor);
+                    } catch (IllegalArgumentException ex) {
+                        System.err.println(ex.getMessage());
+                    }
+
+                    Thread.sleep(200);
+                }
+                Thread.sleep(10);
             } catch (InterruptedException ex) {
                 System.err.println(ex.getMessage());
             }

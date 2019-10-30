@@ -1,8 +1,6 @@
 package editor.thread;
 
 import editor.Arquivo;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTextArea;
 
 /**
@@ -27,6 +25,7 @@ public class EscreverArquivo implements Runnable {
                 if (escrever) {
                     arquivo.editar(campo.getText());
                     escrever = false;
+                    Thread.sleep(10);
                 }
                 Thread.sleep(1);
             } catch (InterruptedException ex) {

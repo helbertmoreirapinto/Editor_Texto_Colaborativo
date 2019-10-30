@@ -15,7 +15,7 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private String login;
     private String senha;
-    private HashMap<Integer, Usuario> listaUSuario;
+    private final HashMap<Integer, Usuario> listaUSuario;
 
     public TelaLogin() {
         listaUSuario = Usuario.carregar_lista_usuario();

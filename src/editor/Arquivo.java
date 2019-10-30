@@ -123,9 +123,20 @@ public class Arquivo {
     public String getTexto() {
         StringBuilder sb = new StringBuilder();
         try (FileReader reader = new FileReader(this.file); BufferedReader buffer = new BufferedReader(reader)) {
-            while (buffer.ready()) {
-                sb.append(buffer.readLine()).append("\n");
+            String linha = buffer.readLine();
+            if (linha != null && !linha.isEmpty()) {
+                sb.append(linha);
             }
+            do {
+                linha = buffer.readLine();
+                if (linha != null && !linha.isEmpty()) {
+                    sb.append("\n").append(linha);
+                }
+            } while (buffer.ready());
+
+//            while (buffer.ready()) {
+//                
+//            }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }

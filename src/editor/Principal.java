@@ -437,9 +437,9 @@ public class Principal {
      */
     private static void editar_arquivo(Scanner s, Arquivo arq) throws IOException {
         ArrayList<ArrayList<String>> historico_alteracao = new ArrayList<>();
-        historico_alteracao.add(arq.getTexto());
+        historico_alteracao.add(new ArrayList<>());
         ArrayList<String> aux;
-        ArrayList<String> texto = arq.getTexto();
+        ArrayList<String> texto = new ArrayList<>();
         int ind_alteracao = 0;
         int opc = -1;
         int lin;
@@ -505,7 +505,7 @@ public class Principal {
                         }
                         break;
                     case MENU_EDIT_TERMINAR_EDICAO:
-                        arq.editar(texto);
+//                        arq.editar(texto);
                         System.out.print("\n");
                         continue;
                     default:
@@ -650,7 +650,7 @@ public class Principal {
      */
     private static void consultar_arquivo(Scanner s, Arquivo arq) throws IOException {
         System.out.println("--- GERENCIAR ARQUIVO ---");
-        ArrayList<String> texto = arq.getTexto();
+        ArrayList<String> texto = new ArrayList<>();
         ArrayList<Integer> codigoUsuarioAcesso;
         int opc = -1;
         String confirm;
