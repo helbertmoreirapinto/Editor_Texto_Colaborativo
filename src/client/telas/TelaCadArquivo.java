@@ -1,13 +1,16 @@
 package client.telas;
 
+import client.Arquivo;
+import client.Usuario;
 import client.model.ListUsuarioModel;
-import editor.Arquivo;
-import editor.Usuario;
+import editor.exc.ArquivoDuplicadoException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -98,16 +101,26 @@ public class TelaCadArquivo extends javax.swing.JFrame {
      */
     private void incluir_arquivo() {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
-        Arquivo arq;
+        Arquivo arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
         try {
 
-            //verificar se arquivo existe
-            arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
             arq.createFile();
+
+            JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
+        } catch (ArquivoDuplicadoException ex) {
+            int resp = JOptionPane.showConfirmDialog(null, "Arquivo já exsite. Substrituir?");
+            if (resp == JOptionPane.OK_OPTION) {
+                try {
+                    arq.replace();
+                    JOptionPane.showMessageDialog(null, "Arquivo atualizado com sucesso");
+                } catch (IOException ex1) {
+                    System.out.println(ex1.getMessage());
+                }
+            }
+            System.err.println(ex.getMessage());
         }
-        JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
     }
 
     @SuppressWarnings("unchecked")
@@ -150,14 +163,14 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(listSelecionados);
 
-        btnMarcar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Right.gif"))); // NOI18N
+        btnMarcar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Right.gif"))); // NOI18N
         btnMarcar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnMarcarActionPerformed(evt);
             }
         });
 
-        btnDesmarcar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Left.gif"))); // NOI18N
+        btnDesmarcar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Left.gif"))); // NOI18N
         btnDesmarcar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDesmarcarActionPerformed(evt);
@@ -261,7 +274,7 @@ public class TelaCadArquivo extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Confirm.gif"))); // NOI18N
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Confirm.gif"))); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -269,7 +282,7 @@ public class TelaCadArquivo extends javax.swing.JFrame {
             }
         });
 
-        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.gif"))); // NOI18N
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Cancel.gif"))); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -303,16 +316,15 @@ public class TelaCadArquivo extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 10, Short.MAX_VALUE)
-                        .addComponent(panLists, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
                 .addGap(155, 155, 155)
                 .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 10, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panTxt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panLists, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -323,7 +335,7 @@ public class TelaCadArquivo extends javax.swing.JFrame {
                 .addComponent(panLists, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();

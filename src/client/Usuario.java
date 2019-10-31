@@ -1,5 +1,6 @@
-package editor;
+package client;
 
+import editor.Pessoa;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -10,8 +11,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Usuario extends Pessoa {
 

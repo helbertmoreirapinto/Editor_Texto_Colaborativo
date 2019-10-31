@@ -1,6 +1,6 @@
-package src.server.thread;
+package server.thread;
 
-import editor.Arquivo;
+import client.Arquivo;
 import javax.swing.JTextArea;
 
 /**

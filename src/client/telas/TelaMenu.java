@@ -1,8 +1,8 @@
 package client.telas;
 
+import client.Arquivo;
+import client.Usuario;
 import client.model.ArquivoTableModel;
-import editor.Arquivo;
-import editor.Usuario;
 import java.util.List;
 
 /**

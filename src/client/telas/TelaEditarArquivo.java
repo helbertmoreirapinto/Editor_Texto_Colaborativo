@@ -1,8 +1,8 @@
 package client.telas;
 
+import client.Arquivo;
+import client.Usuario;
 import client.model.ListUsuarioModel;
-import editor.Arquivo;
-import editor.Usuario;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -70,9 +70,6 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
         panEditar = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         areaTexto = new javax.swing.JTextArea();
-        panButton = new javax.swing.JPanel();
-        btnSalvar = new javax.swing.JButton();
-        btnFechar = new javax.swing.JButton();
         panArquivo = new javax.swing.JPanel();
         lblUsuarioLogado = new javax.swing.JLabel();
         txtUsuarioLogado = new javax.swing.JLabel();
@@ -83,6 +80,9 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
         panOnline = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         listOnline = new javax.swing.JList<>();
+        jPanel1 = new javax.swing.JPanel();
+        btnFechar = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
         menu = new javax.swing.JMenuBar();
         menArquivo = new javax.swing.JMenu();
         itemNovoArquivo = new javax.swing.JMenuItem();
@@ -133,7 +133,7 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
             panEditarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panEditarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panEditarLayout.setVerticalGroup(
@@ -142,36 +142,6 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1)
                 .addContainerGap())
-        );
-
-        btnSalvar.setText("Salvar");
-
-        btnFechar.setText("Fechar");
-        btnFechar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFecharActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout panButtonLayout = new javax.swing.GroupLayout(panButton);
-        panButton.setLayout(panButtonLayout);
-        panButtonLayout.setHorizontalGroup(
-            panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panButtonLayout.createSequentialGroup()
-                .addContainerGap(344, Short.MAX_VALUE)
-                .addComponent(btnSalvar)
-                .addGap(18, 18, 18)
-                .addComponent(btnFechar)
-                .addGap(310, 310, 310))
-        );
-        panButtonLayout.setVerticalGroup(
-            panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panButtonLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panButtonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnFechar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panArquivo.setBorder(javax.swing.BorderFactory.createTitledBorder("Arquivo"));
@@ -239,6 +209,38 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        btnFechar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Cancel.gif"))); // NOI18N
+        btnFechar.setText("Fechar");
+        btnFechar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFecharActionPerformed(evt);
+            }
+        });
+
+        btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Confirm.gif"))); // NOI18N
+        btnSalvar.setText("Salvar");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnFechar)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnFechar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         menArquivo.setText("Arquivo");
 
         itemNovoArquivo.setText("Novo");
@@ -285,13 +287,16 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panArquivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(306, 306, 306))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,7 +308,7 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
                     .addComponent(panEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(panButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -354,6 +359,7 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
     private javax.swing.JMenuItem itemPopupCopiar;
     private javax.swing.JMenuItem itemRefazer;
     private javax.swing.JMenuItem itemSelecionarTudo;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAutor;
@@ -364,7 +370,6 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
     private javax.swing.JMenu menEditar;
     private javax.swing.JMenuBar menu;
     private javax.swing.JPanel panArquivo;
-    private javax.swing.JPanel panButton;
     private javax.swing.JPanel panEditar;
     private javax.swing.JPanel panOnline;
     private javax.swing.JPopupMenu popup;

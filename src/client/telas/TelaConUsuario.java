@@ -1,7 +1,7 @@
 package client.telas;
 
+import client.Usuario;
 import client.model.UsuarioTableModel;
-import editor.Usuario;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -77,7 +77,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
             }
         });
 
-        btnPequisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Search.gif"))); // NOI18N
+        btnPequisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Search.gif"))); // NOI18N
         btnPequisar.setText("Pesquisar");
         btnPequisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -93,7 +93,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblPesquisar)
                 .addGap(18, 18, 18)
-                .addComponent(txtPesquisar)
+                .addComponent(txtPesquisar, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(btnPequisar)
                 .addContainerGap())
@@ -173,7 +173,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSelecionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Confirm.gif"))); // NOI18N
+        btnSelecionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Confirm.gif"))); // NOI18N
         btnSelecionar.setText("Selecionar");
         btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,7 +181,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
             }
         });
 
-        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Cancel.gif"))); // NOI18N
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Cancel.gif"))); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -220,10 +220,10 @@ public class TelaConUsuario extends javax.swing.JFrame {
                     .addComponent(panConsulta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panPesquisar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(110, 110, 110)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addGap(99, 99, 99))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

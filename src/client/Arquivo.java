@@ -1,6 +1,6 @@
-package editor;
+package client;
 
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
+import editor.exc.ArquivoDuplicadoException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,9 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ *
+ * @author helbert
+ */
 public class Arquivo {
 
     public static final String DIR_ARQUIVOS = "ARQUIVOS";
@@ -43,20 +45,33 @@ public class Arquivo {
      *
      * @return
      * @throws IOException
+     * @throws ArquivoDuplicadoException
      */
-    public boolean createFile() throws IOException {
+    public boolean createFile() throws IOException, ArquivoDuplicadoException {
         File dir = new File(String.format("%s", DIR_ARQUIVOS));
         if (!dir.exists()) {
             dir.mkdirs();
         }
 
         this.file = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_TEXT));
+        if (this.file.exists()) {
+            throw new ArquivoDuplicadoException("Arquivo com este nome encontrado");
+        }
+
+        return c_file();
+
+    }
+
+    public boolean replace() throws IOException {
+        return c_file();
+    }
+
+    private boolean c_file() throws IOException {
         file.createNewFile();
 
         boolean append_mode = false;
         this.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_DATA));
-        try (FileWriter fw = new FileWriter(this.fileData, append_mode);
-                BufferedWriter buffer = new BufferedWriter(fw)) {
+        try (FileWriter fw = new FileWriter(this.fileData, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
             buffer.append(this.codigoAutor + "\n");
             for (Integer codUsu : this.codigoUsuarioAcesso) {
                 buffer.append(codUsu + "\n");
@@ -134,9 +149,6 @@ public class Arquivo {
                 }
             } while (buffer.ready());
 
-//            while (buffer.ready()) {
-//                
-//            }
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
@@ -236,7 +248,6 @@ public class Arquivo {
                 }
             }
         }
-
         return listaRetorno;
     }
 
