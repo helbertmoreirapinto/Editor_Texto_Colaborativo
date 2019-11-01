@@ -1,24 +1,28 @@
 package client.telas;
 
 import client.Arquivo;
+import client.Sessao;
 import client.Usuario;
 import client.model.ArquivoTableModel;
 import java.util.List;
+import javax.swing.JFrame;
 
 /**
  *
  * @author helbert
  */
-public class TelaConArquivo extends javax.swing.JFrame {
+public class TelaConArquivo extends JFrame {
 
-    private final Usuario usuario;
     private final ArquivoTableModel model;
     private final List<Arquivo> arquivoList;
+    private final Sessao sessao;
+    private final Usuario user;
 
-    public TelaConArquivo(int codigoUsuario) {
+    public TelaConArquivo() {
         initComponents();
+        sessao = Sessao.getInstance();
+        user = sessao.getUserLogado();
         model = new ArquivoTableModel();
-        usuario = Usuario.get_usuario_pelo_codigo(codigoUsuario);
 
         tabArquivo.setModel(model);
         txtPesquisar.requestFocus();
@@ -26,7 +30,7 @@ public class TelaConArquivo extends javax.swing.JFrame {
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
 
-        arquivoList = Arquivo.carregar_lista_arquivo(usuario);
+        arquivoList = Arquivo.carregar_lista_arquivo(user);
     }
 
     private void pesquisar_arquivos() {
@@ -48,7 +52,7 @@ public class TelaConArquivo extends javax.swing.JFrame {
     }
 
     private void consultar_arquivo(Arquivo arquivo) {
-        TelaCadArquivo tela = new TelaCadArquivo(usuario.getCodigo(), arquivo);
+        TelaCadArquivo tela = new TelaCadArquivo(arquivo);
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
         this.dispose();
@@ -226,7 +230,7 @@ public class TelaConArquivo extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu(usuario);
+        TelaMenu tela = new TelaMenu();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

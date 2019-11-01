@@ -1,29 +1,43 @@
 package client.telas;
 
 import client.Arquivo;
+import client.Sessao;
 import client.Usuario;
 import client.model.ArquivoTableModel;
 import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import server.thread.AcessoCliente;
+import server.thread.ClienteServidor;
 
 /**
  *
  * @author helbert
  */
-public class TelaMenu extends javax.swing.JFrame {
+public class TelaMenu extends JFrame {
 
-    private final Usuario usuario;
     private final ArquivoTableModel model;
+    private final Sessao sessao;
+    private final AcessoCliente thread;
+    private final Usuario user;
 
-    public TelaMenu(Usuario usuarioLogado) {
+    public TelaMenu() {
         initComponents();
-        usuario = usuarioLogado;
+        sessao = Sessao.getInstance();
+        user = sessao.getUserLogado();
+        thread = sessao.getThread();
+
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
-        txtUsuario.setText(String.format("[%d] %s", usuarioLogado.getCodigo(), usuarioLogado.getNome()));
-        if (!usuarioLogado.isAdm()) {
+        txtUsuario.setText(String.format("[%d] %s", user.getCodigo(), user.getNome()));
+        if (!user.isAdm()) {
             menUsuario.setEnabled(false);
         }
-        List<Arquivo> listaArquivo = Arquivo.carregar_lista_arquivo(usuario);
+        if (!sessao.getT().isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            this.dispose();
+        }
+        List<Arquivo> listaArquivo = thread.carregar_lista_arquivo(user);
         model.addArquivoList(listaArquivo);
     }
 
@@ -193,45 +207,45 @@ public class TelaMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemIncUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncUsuarioActionPerformed
-        TelaCadUsuario tela = new TelaCadUsuario(usuario, null);
+        TelaCadUsuario tela = new TelaCadUsuario(null);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemIncUsuarioActionPerformed
 
     private void itemConUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConUsuarioActionPerformed
-        TelaConUsuario tela = new TelaConUsuario(usuario);
+        TelaConUsuario tela = new TelaConUsuario();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemConUsuarioActionPerformed
 
     private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
-        TelaCadArquivo tela = new TelaCadArquivo(usuario.getCodigo(), null);
+        TelaCadArquivo tela = new TelaCadArquivo(null);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemIncArquivoActionPerformed
 
     private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
-        TelaConArquivo tela = new TelaConArquivo(usuario.getCodigo());
+        TelaConArquivo tela = new TelaConArquivo();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemConArquivoActionPerformed
 
     private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
-        TelaLogin tela = new TelaLogin();
+        TelaLogin tela = new TelaLogin(new ClienteServidor());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menLogoffMouseClicked
 
     private void tabArquivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabArquivoMouseClicked
-        Arquivo arquivo;
+        Arquivo a;
         if (evt.getClickCount() == 2 && tabArquivo.getSelectedRow() >= 0) {
-            arquivo = model.getArquivo(tabArquivo.getSelectedRow());
-            TelaEditarArquivo tela = new TelaEditarArquivo(usuario, arquivo);
+            a = model.getArquivo(tabArquivo.getSelectedRow());
+            TelaEditarArquivo tela = new TelaEditarArquivo(a);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -255,5 +269,5 @@ public class TelaMenu extends javax.swing.JFrame {
     private javax.swing.JTable tabArquivo;
     private javax.swing.JLabel txtUsuario;
     // End of variables declaration//GEN-END:variables
- 
+
 }

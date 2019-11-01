@@ -1,21 +1,95 @@
 package server.thread;
 
+import client.Usuario;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author helbert
  */
 public class ClienteServidor implements Runnable {
 
+    public static final int STATUS_ONLINE = 1;
+    public static final int STATUS_OFFLINE = 2;
+
+    private ComandoEnum comando;
+    private final List<AcessoCliente> threadList;
+
+    private AcessoCliente thread;
+    private boolean executar_comando;
+    private boolean rodar;
+
+    private Usuario user;
+    private int status;
+
+    public ClienteServidor() {
+        threadList = new ArrayList<>();
+        executar_comando = false;
+        status = STATUS_OFFLINE;
+    }
+
     @Override
     public void run() {
+
         while (!Thread.interrupted()) {
-            try {
-                
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-                System.err.println(ex.getMessage());
+
+            if (rodar) {
+                status = STATUS_ONLINE;
+                if (executar_comando) {
+                    executar_comando = false;
+                    switch (comando) {
+                        case NEW_ACESS:
+                            thread = new AcessoCliente(user);
+                            threadList.add(thread);
+                            break;
+                        default:
+                            throw new AssertionError(comando.name());
+                    }
+                }
+
+            } else {
+                status = STATUS_OFFLINE;
             }
+            delay(1);
 
         }
+
     }
+
+    public AcessoCliente getAcesso() {
+        executar_comando = true;
+        comando = ComandoEnum.NEW_ACESS;
+        delay(50);
+        return thread;
+    }
+
+    private void delay(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    public void parar() {
+        rodar = false;
+    }
+
+    public void iniciar() {
+        rodar = true;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public List<AcessoCliente> getThreadList() {
+        return threadList;
+    }
+
+    public void setRodar(boolean a) {
+        rodar = a;
+    }
+
 }

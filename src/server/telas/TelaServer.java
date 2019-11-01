@@ -1,62 +1,74 @@
 package server.telas;
 
-import client.Arquivo;
-import client.Usuario;
 import client.telas.TelaLogin;
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.swing.JFrame;
 import server.model.UsuarioArquivoModel;
+import server.thread.AcessoCliente;
 import server.thread.ClienteServidor;
 
 /**
  *
  * @author helbert
  */
-public class TelaServer extends javax.swing.JFrame {
+public class TelaServer extends JFrame {
 
-    private boolean statusServer;
     private int usuariosLogados;
-    private ClienteServidor cs;
+    private final Thread server;
+    private final ClienteServidor cs;
     private final UsuarioArquivoModel model;
 
     public TelaServer() {
         initComponents();
-
         cs = new ClienteServidor();
-        Thread server = new Thread(cs);
+        server = new Thread(cs);
         server.start();
 
-        statusServer = false;
-        txtStatusServer.setText(String.valueOf(statusServer));
+        txtStatusServer.setText(getStatus());
         model = new UsuarioArquivoModel();
         tabOnline.setModel(model);
-
-//      TESTE
-        int cod_usu = 1;
-        HashMap<Integer, Usuario> listU = Usuario.carregar_lista_usuario();
-        ArrayList<Arquivo> listA = Arquivo.carregar_lista_arquivo(listU.get(cod_usu));
-        model.addUsuarioArquivo(listU.get(cod_usu), listA.get(0));
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
     }
 
     private void iniciar_server() {
-        statusServer = true;
-        txtStatusServer.setText(String.valueOf(statusServer));
-        btnAdicionarCliente.setEnabled(true);
+        cs.setRodar(true);
+        delay(50);
+        txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Reiniciar");
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+        btnAdicionarCliente.setEnabled(true);
+        btnEncerrarServer.setEnabled(true);
+
     }
 
     private void encerrar_server() {
-        statusServer = false;
-        btnAdicionarCliente.setEnabled(false);
-        txtStatusServer.setText(String.valueOf(statusServer));
+
+        for (AcessoCliente acesso : cs.getThreadList()) {
+            acesso.stop();
+        }
+        cs.setRodar(false);
+        delay(50);
+        txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Iniciar");
         model.limpar();
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+        btnAdicionarCliente.setEnabled(false);
+        btnEncerrarServer.setEnabled(false);
+
+    }
+
+    private void delay(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    private String getStatus() {
+        return (cs.getStatus() == ClienteServidor.STATUS_ONLINE) ? "online" : "offline";
     }
 
     @SuppressWarnings("unchecked")
@@ -174,6 +186,7 @@ public class TelaServer extends javax.swing.JFrame {
         });
 
         btnEncerrarServer.setText("Encerrar");
+        btnEncerrarServer.setEnabled(false);
         btnEncerrarServer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEncerrarServerActionPerformed(evt);
@@ -278,13 +291,13 @@ public class TelaServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarClienteActionPerformed
-        TelaLogin tela = new TelaLogin();
+        TelaLogin tela = new TelaLogin(cs);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
     }//GEN-LAST:event_btnAdicionarClienteActionPerformed
 
     private void btnIniciarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServerActionPerformed
-        if (statusServer) {
+        if (cs.getStatus() == ClienteServidor.STATUS_ONLINE) {
             encerrar_server();
         }
         iniciar_server();

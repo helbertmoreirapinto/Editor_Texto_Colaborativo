@@ -3,23 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/server/model/UsuarioArquivoModel.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/server/thread/EscreverArquivo.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaConUsuario.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/model/UsuarioTableModel.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaMenu.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/server/thread/LerArquivo.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaCadUsuario.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaEditarArquivo.java</file>
             <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/server/telas/TelaServer.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaConArquivo.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/Usuario.java</file>
             <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/server/thread/ClienteServidor.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/Principal.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/model/ArquivoTableModel.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/Arquivo.java</file>
+            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaMenu.java</file>
             <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaLogin.java</file>
-            <file>file:/D:/Users/helbert/Google%20Drive/Eng%20Comp/4%20-%20Programação%20Orientada%20a%20Objetos/Trabalho/Parte%20I/Editor_Texto_Colaborativo/src/client/telas/TelaCadArquivo.java</file>
         </group>
     </open-files>
 </project-private>

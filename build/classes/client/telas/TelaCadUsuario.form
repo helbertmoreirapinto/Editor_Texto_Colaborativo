@@ -63,25 +63,23 @@
                               <Component id="lblConfSenha" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="lblSenha" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="txtSenha1" alignment="1" min="-2" pref="170" max="-2" attributes="0"/>
-                              <Component id="txtSenha2" alignment="1" min="-2" pref="170" max="-2" attributes="0"/>
+                              <Component id="txtSenha1" max="32767" attributes="0"/>
+                              <Component id="txtSenha2" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                          <Component id="txtLogin" min="-2" pref="170" max="-2" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblNome" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblCod" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblLogin" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtNome" min="-2" pref="170" max="-2" attributes="0"/>
-                                  <Component id="txtCod" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblNome" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblCod" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblLogin" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="txtNome" min="-2" pref="170" max="-2" attributes="0"/>
+                              <Component id="txtCod" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtLogin" min="-2" pref="170" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -159,6 +157,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="txtCod">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Codigo"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblCod">
           <Properties>

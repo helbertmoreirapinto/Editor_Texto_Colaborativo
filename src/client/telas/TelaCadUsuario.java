@@ -1,32 +1,38 @@
 package client.telas;
 
+import client.Sessao;
 import client.Usuario;
 import editor.crypt.Criptografia;
 import java.security.NoSuchAlgorithmException;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import server.thread.AcessoCliente;
 
 /**
  *
  * @author helbert
  */
-public class TelaCadUsuario extends javax.swing.JFrame {
+public class TelaCadUsuario extends JFrame {
 
-    private Usuario usuario;
-    private final Usuario usuarioLogado;
+    private Usuario user;
+    private final Sessao sessao;
+    private final AcessoCliente thread;
 
-    public TelaCadUsuario(Usuario usuarioLogado, Usuario userAlterar) {
+    public TelaCadUsuario(Usuario userAlterar) {
+        sessao = Sessao.getInstance();
+        thread = sessao.getThread();
+
         initComponents();
-        this.usuario = userAlterar;
-        this.usuarioLogado = usuarioLogado;
+        this.user = userAlterar;
 
-        if (usuario != null) {
-            txtCod.setText(String.valueOf(usuario.getCodigo()));
-            txtLogin.setText(usuario.getLogin());
-            txtNome.setText(usuario.getNome());
+        if (user != null) {
+            txtCod.setText(String.valueOf(user.getCodigo()));
+            txtLogin.setText(user.getLogin());
+            txtNome.setText(user.getNome());
             txtSenha1.setText("");
             txtSenha2.setText("");
-            chkADM.setSelected(usuario.isAdm());
-            chkAtivo.setSelected(usuario.isAtivo());
+            chkADM.setSelected(user.isAdm());
+            chkAtivo.setSelected(user.isAtivo());
         }
     }
 
@@ -46,13 +52,13 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     private void incluir_usuario() {
 
         try {
-            usuario = new Usuario(
+            user = new Usuario(
                     txtNome.getText(),
                     txtLogin.getText(),
                     Criptografia.criptografar(txtSenha1.getText()),
                     chkADM.isSelected(), chkAtivo.isSelected());
-            txtCod.setText(String.valueOf(usuario.getCodigo()));
-            Usuario.inserir_usuario(usuario);
+            txtCod.setText(String.valueOf(user.getCodigo()));
+            Usuario.inserir_usuario(user);
             JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
 
         } catch (NoSuchAlgorithmException ex) {
@@ -64,12 +70,12 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     private void alterar_usuario() {
 
         try {
-            usuario.setNome(txtNome.getText());
-            usuario.setLogin(txtLogin.getText());
-            usuario.setSenha(Criptografia.criptografar(txtSenha1.getText()));
-            usuario.setAdm(chkADM.isSelected());
-            usuario.setAtivo(chkAtivo.isSelected());
-            Usuario.alterar_usuario(usuario);
+            user.setNome(txtNome.getText());
+            user.setLogin(txtLogin.getText());
+            user.setSenha(Criptografia.criptografar(txtSenha1.getText()));
+            user.setAdm(chkADM.isSelected());
+            user.setAtivo(chkAtivo.isSelected());
+            Usuario.alterar_usuario(user);
             JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
 
         } catch (NoSuchAlgorithmException ex) {
@@ -114,6 +120,8 @@ public class TelaCadUsuario extends javax.swing.JFrame {
         chkAtivo.setSelected(true);
         chkAtivo.setText("Usuario Ativo");
 
+        txtCod.setText("Codigo");
+
         lblCod.setText("Código:");
 
         javax.swing.GroupLayout panTxtLayout = new javax.swing.GroupLayout(panTxt);
@@ -129,21 +137,20 @@ public class TelaCadUsuario extends javax.swing.JFrame {
                         .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblConfSenha)
                             .addComponent(lblSenha))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(31, 31, 31)
                         .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtSenha1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSenha2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(panTxtLayout.createSequentialGroup()
-                            .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblNome)
-                                .addComponent(lblCod)
-                                .addComponent(lblLogin))
-                            .addGap(78, 78, 78)
-                            .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtCod)))))
+                            .addComponent(txtSenha1)
+                            .addComponent(txtSenha2)))
+                    .addGroup(panTxtLayout.createSequentialGroup()
+                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNome)
+                            .addComponent(lblCod)
+                            .addComponent(lblLogin))
+                        .addGap(78, 78, 78)
+                        .addGroup(panTxtLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCod)
+                            .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panTxtLayout.setVerticalGroup(
@@ -242,12 +249,12 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
         if (validar_campos()) {
-            if (usuario != null) {
+            if (user != null) {
                 alterar_usuario();
             } else {
                 incluir_usuario();
             }
-            TelaConUsuario tela = new TelaConUsuario(usuarioLogado);
+            TelaConUsuario tela = new TelaConUsuario();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -258,12 +265,12 @@ public class TelaCadUsuario extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        if (usuario != null) {
-            TelaConUsuario tela = new TelaConUsuario(usuarioLogado);
+        if (user != null) {
+            TelaConUsuario tela = new TelaConUsuario();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
         } else {
-            TelaMenu tela = new TelaMenu(usuarioLogado);
+            TelaMenu tela = new TelaMenu();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
         }

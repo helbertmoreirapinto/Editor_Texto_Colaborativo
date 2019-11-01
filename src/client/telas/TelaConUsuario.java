@@ -1,22 +1,25 @@
 package client.telas;
 
+import client.Sessao;
 import client.Usuario;
 import client.model.UsuarioTableModel;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author helbert
  */
-public class TelaConUsuario extends javax.swing.JFrame {
+public class TelaConUsuario extends JFrame {
 
     private static UsuarioTableModel model;
-    private final Usuario usuarioLogado;
+    private final Sessao sessao;
 
-    public TelaConUsuario(Usuario usuarioLogado) {
+    public TelaConUsuario() {
         initComponents();
-        this.usuarioLogado = usuarioLogado;
+        sessao = Sessao.getInstance();
+
         model = new UsuarioTableModel();
 
         tabUsuario.setModel(model);
@@ -46,7 +49,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
     }
 
     private void consultar_usuario(Usuario u) {
-        TelaCadUsuario tela = new TelaCadUsuario(usuarioLogado, u);
+        TelaCadUsuario tela = new TelaCadUsuario(u);
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
         this.dispose();
@@ -269,7 +272,7 @@ public class TelaConUsuario extends javax.swing.JFrame {
     }//GEN-LAST:event_tabUsuarioKeyPressed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu(usuarioLogado);
+        TelaMenu tela = new TelaMenu();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

@@ -1,6 +1,7 @@
 package client.telas;
 
 import client.Arquivo;
+import client.Sessao;
 import client.Usuario;
 import client.model.ListUsuarioModel;
 import java.awt.event.ActionEvent;
@@ -8,6 +9,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -17,22 +19,23 @@ import javax.swing.undo.UndoManager;
  *
  * @author helbert
  */
-public class TelaEditarArquivo extends javax.swing.JFrame {
+public class TelaEditarArquivo extends JFrame {
 
     private final ListUsuarioModel model;
     private final Arquivo arquivo;
-    private final Usuario user;
+    private final Sessao sessao;
+    private Usuario user;
     private String tempText;
     private final UndoAction undoAction;
     private final RedoAction redoAction;
     protected UndoManager undoManager;
 
-    public TelaEditarArquivo(Usuario user, Arquivo arquivo) {
+    public TelaEditarArquivo(Arquivo arquivo) {
         initComponents();
-
+        sessao = Sessao.getInstance();
+        user = sessao.getUserLogado();
 //      INIT PARAM
         this.arquivo = arquivo;
-        this.user = user;
         this.model = new ListUsuarioModel();
 
 //      SET VALUES SCREEN
@@ -54,7 +57,7 @@ public class TelaEditarArquivo extends javax.swing.JFrame {
     }
 
     private void fechar_arquivo() {
-        TelaMenu tela = new TelaMenu(user);
+        TelaMenu tela = new TelaMenu();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
