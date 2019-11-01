@@ -4,6 +4,8 @@ import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
 import client.model.ArquivoTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,6 +35,14 @@ public class TelaConArquivo extends JFrame {
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
         arquivoList = acesso.carregar_lista_arquivo(user);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private void pesquisar_arquivos() {

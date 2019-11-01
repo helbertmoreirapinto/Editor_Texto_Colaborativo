@@ -26,7 +26,7 @@ public class TelaServer extends JFrame {
         model = new ClientTableModel();
         cs = new ClienteServidor();
         tabOnline.setModel(model);
-        tlista = new AtualizarLista(model, cs);
+        tlista = new AtualizarLista(txtUsuariosLogados, model, cs);
         txtStatusServer.setText(getStatus());
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));

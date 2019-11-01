@@ -3,6 +3,8 @@ package client.telas;
 import client.Sessao;
 import client.Usuario;
 import client.crypt.Criptografia;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -36,6 +38,14 @@ public class TelaCadUsuario extends JFrame {
             chkADM.setSelected(userAlt.isAdm());
             chkAtivo.setSelected(userAlt.isAtivo());
         }
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private boolean validar_campos() {

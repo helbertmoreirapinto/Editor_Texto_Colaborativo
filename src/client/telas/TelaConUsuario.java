@@ -3,6 +3,8 @@ package client.telas;
 import client.Sessao;
 import client.Usuario;
 import client.model.UsuarioTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,14 @@ public class TelaConUsuario extends JFrame {
         tabUsuario.getColumnModel().getColumn(2).setPreferredWidth(100);
         tabUsuario.getColumnModel().getColumn(3).setPreferredWidth(55);
         tabUsuario.getColumnModel().getColumn(4).setPreferredWidth(55);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private void selecionar_usuario() {

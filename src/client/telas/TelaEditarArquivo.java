@@ -7,6 +7,8 @@ import client.model.ListUsuarioModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -44,14 +46,12 @@ public class TelaEditarArquivo extends JFrame {
         verifica_server_online();
         areaTexto.setText(acesso.lerTexto(arquivo));
 
-//      SET VALUES SCREEN
         txtNomeArquivo.setText(this.arquivo.getNome());
         txtAutor.setText(Usuario.get_usuario_pelo_codigo(this.arquivo.getCodigoAutor()).getNome());
         txtUsuarioLogado.setText(String.format("[%d] %s", user.getCodigo(), user.getNome()));
         listOnline.setModel(model);
         model.addElem(user.getNome());
 
-//      SET REDO UNDO
         undoManager = new UndoManager();
         areaTexto.getDocument().addUndoableEditListener(new UndoListener());
         undoAction = new UndoAction();
@@ -60,6 +60,15 @@ public class TelaEditarArquivo extends JFrame {
         redoAction = new RedoAction();
         itemRefazer.setAction(redoAction);
         redoAction.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private void fechar_arquivo() {
@@ -157,7 +166,7 @@ public class TelaEditarArquivo extends JFrame {
             panEditarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panEditarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         panEditarLayout.setVerticalGroup(
@@ -222,7 +231,7 @@ public class TelaEditarArquivo extends JFrame {
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panOnlineLayout.setVerticalGroup(
@@ -243,6 +252,11 @@ public class TelaEditarArquivo extends JFrame {
 
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/images/Confirm.gif"))); // NOI18N
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -318,9 +332,9 @@ public class TelaEditarArquivo extends JFrame {
                         .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(320, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(306, 306, 306))
+                .addGap(310, 310, 310))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -371,6 +385,11 @@ public class TelaEditarArquivo extends JFrame {
     private void itemFecharMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_itemFecharMouseReleased
         fechar_arquivo();
     }//GEN-LAST:event_itemFecharMouseReleased
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        JOptionPane.showMessageDialog(null, "Os dados foram dalvos com sucesso");
+        fechar_arquivo();
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaTexto;

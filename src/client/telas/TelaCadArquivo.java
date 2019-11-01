@@ -5,6 +5,8 @@ import client.Sessao;
 import client.Usuario;
 import client.model.ListUsuarioModel;
 import editor.exc.ArquivoDuplicadoException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +30,7 @@ public class TelaCadArquivo extends JFrame {
     private final HashMap<Integer, Usuario> listaUsuario;
     private final Arquivo arquivo;
 
-    public TelaCadArquivo(int codigoUsuario, Arquivo arquivo) {
+    public TelaCadArquivo(int codigoUsuario, Arquivo arquivo){
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUsuario(codigoUsuario);
@@ -60,7 +62,14 @@ public class TelaCadArquivo extends JFrame {
                 model1.addElem(elem.getValue().getNome());
             }
         }
-
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private void marcar_usuario() {

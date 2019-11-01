@@ -4,6 +4,8 @@ import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
 import client.model.ArquivoTableModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -41,6 +43,15 @@ public class TelaMenu extends JFrame {
         verifica_server_online();
         List<Arquivo> listaArquivo = acesso.carregar_lista_arquivo(user);
         model.addArquivoList(listaArquivo);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    acesso.stop();
+                }
+            }
+        });
     }
 
     private boolean verifica_server_online() {

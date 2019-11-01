@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class AcessoCliente implements Runnable {
 
+    private boolean status;
     private Usuario userLogado;
     private HashMap<Integer, Usuario> usuarioList;
     private List<Arquivo> arquivoList;
@@ -28,6 +29,7 @@ public class AcessoCliente implements Runnable {
     @Override
     public void run() {
         while (!Thread.interrupted()) {
+            status = true;
             if (executar_comando) {
                 try {
                     executar_comando = false;
@@ -73,6 +75,11 @@ public class AcessoCliente implements Runnable {
             }
             delay(1);
         }
+        status = false;
+    }
+
+    public boolean isStatus() {
+        return status;
     }
 
     public Usuario getUsuarioLogado() {
