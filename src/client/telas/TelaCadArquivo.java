@@ -5,7 +5,6 @@ import client.Sessao;
 import client.Usuario;
 import client.model.ListUsuarioModel;
 import editor.exc.ArquivoDuplicadoException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +39,7 @@ public class TelaCadArquivo extends JFrame {
         model2 = new ListUsuarioModel();
         listUsuario.setModel(model1);
         listSelecionados.setModel(model2);
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            this.dispose();
-        }
+        verifica_server_online();
         listaUsuario = acesso.carregar_lista_usuario();
 
         if (arquivo != null) {
@@ -100,8 +96,9 @@ public class TelaCadArquivo extends JFrame {
     private void alterar_arquivo() {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
         arquivo.setUsuarioAcessoAdm(selecionados);
-        Arquivo.updateFileData(arquivo);
-        Arquivo.rename(arquivo, txtNomeArquivo.getText());
+        verifica_server_online();
+        acesso.updateFileData(arquivo);
+        acesso.rename(arquivo, txtNomeArquivo.getText());
         JOptionPane.showMessageDialog(null, "Arquivo alterado com sucesso");
     }
 
@@ -113,23 +110,35 @@ public class TelaCadArquivo extends JFrame {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
         Arquivo arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
         try {
-
-            Arquivo.createFile(arq);
+            verifica_server_online();
+            acesso.createFile(arq);
 
             JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        } catch (ArquivoDuplicadoException ex) {
-            int resp = JOptionPane.showConfirmDialog(null, "Arquivo já exsite. Substrituir?");
-            if (resp == JOptionPane.OK_OPTION) {
-                try {
-                    Arquivo.replace(arq);
-                    JOptionPane.showMessageDialog(null, "Arquivo atualizado com sucesso");
-                } catch (IOException ex1) {
-                    System.out.println(ex1.getMessage());
+        } catch (Exception ex) {
+            if (ex instanceof ArquivoDuplicadoException) {
+                int resp = JOptionPane.showConfirmDialog(null, "Arquivo já exsite. Substrituir?");
+                if (resp == JOptionPane.OK_OPTION) {
+                    try {
+                        verifica_server_online();
+                        acesso.replace(arq);
+                        JOptionPane.showMessageDialog(null, "Arquivo atualizado com sucesso");
+                    } catch (Exception ex1) {
+                        System.out.println(ex1.getMessage());
+                    }
                 }
+            } else {
+                System.err.println(ex.getMessage());
             }
-            System.err.println(ex.getMessage());
+        }
+    }
+
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
         }
     }
 

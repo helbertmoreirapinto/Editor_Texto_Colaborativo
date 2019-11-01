@@ -68,8 +68,7 @@ public class Principal {
 
                     if (user == null) {
                         user = logar(entrada);
-                        System.out
-                                .println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
+                        System.out.println(String.format("Usuario Logado: [%d] %s\n", user.getCodigo(), user.getNome()));
                     }
 
 //                  Menu Principal

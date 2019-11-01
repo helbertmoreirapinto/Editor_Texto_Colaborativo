@@ -43,10 +43,7 @@ public class TelaLogin extends JFrame {
         Thread t = new Thread(acesso);
         t.start();
 
-        if (!t.isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            this.dispose();
-        }
+        verifica_server_online();
         HashMap<Integer, Usuario> listaUSuario = acesso.carregar_lista_usuario();
 
         try {
@@ -80,6 +77,13 @@ public class TelaLogin extends JFrame {
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
+    }
+
+    private void verifica_server_online() {
+        if (!server_online()) {
+            JOptionPane.showMessageDialog(null, "Servidor offline");
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -15,7 +15,7 @@ import server.thread.AcessoCliente;
 public class TelaCadUsuario extends JFrame {
 
     private Usuario userAlt;
-    private Usuario user;
+    private final Usuario user;
     private final Sessao sessao;
     private final AcessoCliente acesso;
 
@@ -60,6 +60,7 @@ public class TelaCadUsuario extends JFrame {
                     Criptografia.criptografar(txtSenha1.getText()),
                     chkADM.isSelected(), chkAtivo.isSelected());
             txtCod.setText(String.valueOf(userAlt.getCodigo()));
+            verifica_server_online();
             acesso.inserir_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
 
@@ -77,6 +78,7 @@ public class TelaCadUsuario extends JFrame {
             userAlt.setSenha(Criptografia.criptografar(txtSenha1.getText()));
             userAlt.setAdm(chkADM.isSelected());
             userAlt.setAtivo(chkAtivo.isSelected());
+            verifica_server_online();
             acesso.alterar_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
 
@@ -84,6 +86,16 @@ public class TelaCadUsuario extends JFrame {
             System.err.println(ex.getMessage());
         }
 
+    }
+
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")

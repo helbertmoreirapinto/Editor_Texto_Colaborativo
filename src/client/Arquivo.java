@@ -160,6 +160,7 @@ public class Arquivo {
     /**
      * Retorna o texto contido no arquivo de texto.
      *
+     * @param arquivo
      * @return
      */
     public static String getTexto(Arquivo arquivo) {
@@ -222,9 +223,10 @@ public class Arquivo {
     }
 
     /**
-     * Metodo de edicao do arquivo de texto. Recece o texto completo a ser
+     * Metodo de edicao do arquivo de texto.Recece o texto completo a ser
      * inserido no arquivo de texto.
      *
+     * @param arquivo
      * @param texto
      */
     public static void editar(Arquivo arquivo, String texto) {

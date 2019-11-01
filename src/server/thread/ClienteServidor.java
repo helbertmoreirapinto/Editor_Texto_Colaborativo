@@ -51,7 +51,6 @@ public class ClienteServidor implements Runnable {
                 status = STATUS_OFFLINE;
             }
             delay(1);
-
         }
 
     }
@@ -60,18 +59,6 @@ public class ClienteServidor implements Runnable {
         executar_comando = true;
         comando = ComandoEnum.NEW_ACESS;
         delay(100);
-
-        System.out.println(threadList.size());
-        for (AcessoCliente a : threadList) {
-            System.out.print(a + " -> ");
-            if (a.getUsuarioLogado() != null) {
-                System.out.println(a.getUsuarioLogado().getNome());
-            } else {
-                System.out.println("NULO");
-            }
-        }
-
-        System.out.println("##################");
         return threadList.get(threadList.size() - 1);
     }
 

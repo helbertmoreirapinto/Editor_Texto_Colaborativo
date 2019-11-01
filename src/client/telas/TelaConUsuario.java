@@ -4,8 +4,11 @@ import client.Sessao;
 import client.Usuario;
 import client.model.UsuarioTableModel;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import server.thread.AcessoCliente;
 
 /**
  *
@@ -15,13 +18,14 @@ public class TelaConUsuario extends JFrame {
 
     private static UsuarioTableModel model;
     private final Sessao sessao;
-    private Usuario user;
+    private final Usuario user;
+    private final AcessoCliente acesso;
 
     public TelaConUsuario(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUsuario(codigoUsuario);
-
+        acesso = sessao.getAcesso(codigoUsuario);
         model = new UsuarioTableModel();
 
         tabUsuario.setModel(model);
@@ -44,10 +48,17 @@ public class TelaConUsuario extends JFrame {
     }
 
     private void listar_usuario() {
-        String nomeUsuario = txtPesquisar.getText();
-        ArrayList<Usuario> usuarioList = Usuario.consultar_usuario(nomeUsuario);
+        String campoPesquisa = txtPesquisar.getText();
+        ArrayList<Usuario> lista = new ArrayList<>();
+        verifica_server_online();
+        HashMap<Integer, Usuario> usuarioList = acesso.carregar_lista_usuario();
+        for (Map.Entry<Integer, Usuario> elem : usuarioList.entrySet()) {
+            if (elem.getValue().getNome().contains(campoPesquisa) || String.valueOf(elem.getValue().getCodigo()).contains(campoPesquisa)) {
+                lista.add(elem.getValue());
+            }
+        }
         model.limpar();
-        model.addUsuarioList(usuarioList);
+        model.addUsuarioList(lista);
     }
 
     private void consultar_usuario(Usuario u) {
@@ -55,6 +66,16 @@ public class TelaConUsuario extends JFrame {
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
         this.dispose();
+    }
+
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")

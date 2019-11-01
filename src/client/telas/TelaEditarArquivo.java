@@ -10,10 +10,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
+import server.thread.AcessoCliente;
 
 /**
  *
@@ -24,6 +26,7 @@ public class TelaEditarArquivo extends JFrame {
     private final ListUsuarioModel model;
     private final Arquivo arquivo;
     private final Sessao sessao;
+    private final AcessoCliente acesso;
     private final Usuario user;
     private String tempText;
     private final UndoAction undoAction;
@@ -34,10 +37,12 @@ public class TelaEditarArquivo extends JFrame {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUsuario(codigoUsuario);
+        acesso = sessao.getAcesso(codigoUsuario);
 
-//      INIT PARAM
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();
+        verifica_server_online();
+        areaTexto.setText(acesso.lerTexto(arquivo));
 
 //      SET VALUES SCREEN
         txtNomeArquivo.setText(this.arquivo.getNome());
@@ -62,6 +67,16 @@ public class TelaEditarArquivo extends JFrame {
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
+    }
+
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -320,7 +335,8 @@ public class TelaEditarArquivo extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void areaTextoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_areaTextoKeyReleased
-//      SALVAR ARQUIVO
+        verifica_server_online();
+        acesso.salvarTexto(arquivo, areaTexto.getText());
     }//GEN-LAST:event_areaTextoKeyReleased
 
     private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed

@@ -1,4 +1,4 @@
-package editor;
+package client;
 
 public abstract class Pessoa {
 

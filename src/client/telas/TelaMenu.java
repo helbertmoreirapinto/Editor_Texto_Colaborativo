@@ -18,14 +18,14 @@ public class TelaMenu extends JFrame {
 
     private final ArquivoTableModel model;
     private final Sessao sessao;
-    private final AcessoCliente thread;
+    private final AcessoCliente acesso;
     private final Usuario user;
 
     public TelaMenu(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUsuario(codigoUsuario);
-        thread = sessao.getAcesso(codigoUsuario);
+        acesso = sessao.getAcesso(codigoUsuario);
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
@@ -33,12 +33,25 @@ public class TelaMenu extends JFrame {
         if (!user.isAdm()) {
             menUsuario.setEnabled(false);
         }
+
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             this.dispose();
         }
-        List<Arquivo> listaArquivo = thread.carregar_lista_arquivo(user);
+
+        verifica_server_online();
+        List<Arquivo> listaArquivo = acesso.carregar_lista_arquivo(user);
         model.addArquivoList(listaArquivo);
+    }
+
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -1,3 +1,4 @@
+
 package client.telas;
 
 import client.Arquivo;
@@ -6,6 +7,8 @@ import client.Usuario;
 import client.model.ArquivoTableModel;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import server.thread.AcessoCliente;
 
 /**
  *
@@ -17,18 +20,22 @@ public class TelaConArquivo extends JFrame {
     private final List<Arquivo> arquivoList;
     private final Sessao sessao;
     private final Usuario user;
+    private final AcessoCliente acesso;
 
     public TelaConArquivo(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUsuario(codigoUsuario);
+        acesso = sessao.getAcesso(codigoUsuario);
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
         txtPesquisar.requestFocus();
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
-        arquivoList = Arquivo.carregar_lista_arquivo(user);
+        
+        verifica_server_online();
+        arquivoList = acesso.carregar_lista_arquivo(user);
     }
 
     private void pesquisar_arquivos() {
@@ -56,6 +63,16 @@ public class TelaConArquivo extends JFrame {
         this.dispose();
     }
 
+    private void verifica_server_online() {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

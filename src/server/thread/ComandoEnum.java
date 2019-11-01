@@ -10,7 +10,13 @@ public enum ComandoEnum {
     NEW_USER(1),
     EDIT_USER(2),
     LIST_USER(3),
-    LIST_FILE(4);
+    LIST_FILE(4),
+    UPDATE_FILE_DATA(5),
+    RENAME_FILE(6),
+    NEW_FILE(7),
+    REPLACE_FILE(8),
+    READ_FILE(9),
+    WRITE_FILE(10);
 
     private final int codigo;
 
