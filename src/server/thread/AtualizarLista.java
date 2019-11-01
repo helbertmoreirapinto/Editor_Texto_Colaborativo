@@ -5,9 +5,7 @@
  */
 package server.thread;
 
-import client.Usuario;
-import client.model.ListUsuarioModel;
-import java.util.ArrayList;
+import client.model.ClientTableModel;
 import java.util.List;
 
 /**
@@ -16,10 +14,10 @@ import java.util.List;
  */
 public class AtualizarLista implements Runnable {
 
-    private final ListUsuarioModel model;
+    private final ClientTableModel model;
     private final ClienteServidor cs;
 
-    public AtualizarLista(ListUsuarioModel model, ClienteServidor cs) {
+    public AtualizarLista(ClientTableModel model, ClienteServidor cs) {
         this.model = model;
         this.cs = cs;
     }
@@ -35,19 +33,15 @@ public class AtualizarLista implements Runnable {
     @Override
     public void run() {
         List<AcessoCliente> acessoList;
-        List<String> nomeUusuarioList = new ArrayList<>();
         while (!Thread.interrupted()) {
             model.limpar();
             acessoList = cs.getThreadList();
             for (AcessoCliente a : acessoList) {
                 if (a != null && a.getUsuarioLogado() != null) {
-                    nomeUusuarioList.add(a.getUsuarioLogado().getNome());
+                    model.addUsuario(a.getUsuarioLogado());
                 }
             }
-            if (nomeUusuarioList.size() > 0) {
-                model.addListAll(nomeUusuarioList);
-            }
-            delay(1500);
+            delay(1000);
         }
     }
 }

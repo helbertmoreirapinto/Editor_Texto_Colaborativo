@@ -1,6 +1,8 @@
 package server.telas;
 
-import client.model.ListUsuarioModel;
+//import client.model.UsuarioTableModel;
+import client.model.ClientTableModel;
+import client.model.UsuarioTableModel;
 import client.telas.TelaLogin;
 import javax.swing.JFrame;
 import server.thread.AcessoCliente;
@@ -16,17 +18,17 @@ public class TelaServer extends JFrame {
     private int usuariosLogados;
     private Thread server;
     private final ClienteServidor cs;
-    private final ListUsuarioModel model;
+    private final ClientTableModel model;
     private final AtualizarLista tlista;
 
     public TelaServer() {
         initComponents();
-        model = new ListUsuarioModel();
+        model = new ClientTableModel();
         cs = new ClienteServidor();
+        tabOnline.setModel(model);
         tlista = new AtualizarLista(model, cs);
         txtStatusServer.setText(getStatus());
-        listOnline.setModel(model);
-        usuariosLogados = model.getSize();
+        usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
         inciar_threads();
     }
@@ -43,7 +45,7 @@ public class TelaServer extends JFrame {
         delay(50);
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Reiniciar");
-        usuariosLogados = model.getSize();
+        usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
         btnAdicionarCliente.setEnabled(true);
         btnEncerrarServer.setEnabled(true);
@@ -59,7 +61,7 @@ public class TelaServer extends JFrame {
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Iniciar");
         model.limpar();
-        usuariosLogados = model.getSize();
+        usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
         btnAdicionarCliente.setEnabled(false);
         btnEncerrarServer.setEnabled(false);
@@ -87,15 +89,15 @@ public class TelaServer extends JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtUsuariosLogados = new javax.swing.JLabel();
         panOnline = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        listOnline = new javax.swing.JList<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabOnline = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnIniciarServer = new javax.swing.JButton();
         btnEncerrarServer = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         btnAdicionarCliente = new javax.swing.JButton();
-        txtFecharProcessos = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnEncerrar = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -143,7 +145,15 @@ public class TelaServer extends JFrame {
 
         panOnline.setBorder(javax.swing.BorderFactory.createTitledBorder("Online"));
 
-        jScrollPane2.setViewportView(listOnline);
+        tabOnline.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5"
+            }
+        ));
+        jScrollPane1.setViewportView(tabOnline);
 
         javax.swing.GroupLayout panOnlineLayout = new javax.swing.GroupLayout(panOnline);
         panOnline.setLayout(panOnlineLayout);
@@ -151,14 +161,13 @@ public class TelaServer extends JFrame {
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panOnlineLayout.setVerticalGroup(
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -210,11 +219,8 @@ public class TelaServer extends JFrame {
             }
         });
 
-        txtFecharProcessos.setText("Encerrar Todos");
-        txtFecharProcessos.setEnabled(false);
-
-        jButton1.setText("Encerrar");
-        jButton1.setEnabled(false);
+        btnEncerrar.setText("Encerrar");
+        btnEncerrar.setEnabled(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -223,11 +229,8 @@ public class TelaServer extends JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdicionarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(txtFecharProcessos)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnAdicionarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                    .addComponent(btnEncerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -236,10 +239,19 @@ public class TelaServer extends JFrame {
                 .addContainerGap()
                 .addComponent(btnAdicionarCliente)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addGap(18, 18, 18)
-                .addComponent(txtFecharProcessos)
+                .addComponent(btnEncerrar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 298, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 102, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -248,28 +260,32 @@ public class TelaServer extends JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panOnline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -280,6 +296,7 @@ public class TelaServer extends JFrame {
         TelaLogin tela = new TelaLogin(cs);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
+        btnEncerrar.setVisible(true);
     }//GEN-LAST:event_btnAdicionarClienteActionPerformed
 
     private void btnIniciarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServerActionPerformed
@@ -331,18 +348,18 @@ public class TelaServer extends JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarCliente;
+    private javax.swing.JButton btnEncerrar;
     private javax.swing.JButton btnEncerrarServer;
     private javax.swing.JButton btnIniciarServer;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JList<String> listOnline;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panOnline;
-    private javax.swing.JButton txtFecharProcessos;
+    private javax.swing.JTable tabOnline;
     private javax.swing.JLabel txtStatusServer;
     private javax.swing.JLabel txtUsuariosLogados;
     // End of variables declaration//GEN-END:variables

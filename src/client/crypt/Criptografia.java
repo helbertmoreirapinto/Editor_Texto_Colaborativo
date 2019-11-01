@@ -1,4 +1,4 @@
-package editor.crypt;
+package client.crypt;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -10,9 +10,10 @@ public class Criptografia {
 //    private static final int BIN = 02;
 //    private static final int DEC = 10;
     private static final int HEX = 16;
-    
+
     /**
-     * Retorna uma String de entrada criptografada. 
+     * Retorna uma String de entrada criptografada.
+     *
      * @param senha
      * @return
      * @throws NoSuchAlgorithmException

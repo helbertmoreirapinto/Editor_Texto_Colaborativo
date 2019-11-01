@@ -40,9 +40,8 @@ public class ListUsuarioModel extends AbstractListModel<String> {
     }
 
     public void limpar() {
-        while (!isEmpty()) {
-            removeElem(0);
-        }
+        lista.clear();
+        fireIntervalRemoved(this, 0, getSize() - 1);
     }
 
     public boolean isEmpty() {

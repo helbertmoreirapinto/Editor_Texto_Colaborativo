@@ -1,5 +1,6 @@
 package client;
 
+import client.crypt.Criptografia;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,8 +15,6 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map.Entry;
 import java.util.Scanner;
-
-import editor.crypt.Criptografia;
 import editor.exc.ArquivoDuplicadoException;
 import editor.exc.CriarDiretorioException;
 import editor.exc.LoginInvalidoException;

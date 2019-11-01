@@ -128,7 +128,7 @@ public class TelaEditarArquivo extends JFrame {
         });
         popup.add(itemPopupColar);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         panEditar.setBorder(javax.swing.BorderFactory.createTitledBorder("Editar"));
 

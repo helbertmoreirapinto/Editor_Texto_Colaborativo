@@ -2,7 +2,7 @@ package client.telas;
 
 import client.Sessao;
 import client.Usuario;
-import editor.crypt.Criptografia;
+import client.crypt.Criptografia;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -115,7 +115,7 @@ public class TelaCadUsuario extends JFrame {
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lblNome.setText("Nome:");
 

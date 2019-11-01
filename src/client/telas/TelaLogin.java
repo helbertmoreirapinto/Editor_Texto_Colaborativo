@@ -2,7 +2,7 @@ package client.telas;
 
 import client.Sessao;
 import client.Usuario;
-import editor.crypt.Criptografia;
+import client.crypt.Criptografia;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;

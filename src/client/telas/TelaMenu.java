@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import server.thread.AcessoCliente;
-import server.thread.ClienteServidor;
 
 /**
  *
@@ -73,7 +72,7 @@ public class TelaMenu extends JFrame {
         itemConUsuario = new javax.swing.JMenuItem();
         menLogoff = new javax.swing.JMenu();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         lblUsuario.setText("Usuário Logado:");
