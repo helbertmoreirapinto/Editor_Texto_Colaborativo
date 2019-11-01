@@ -18,18 +18,16 @@ public class TelaConArquivo extends JFrame {
     private final Sessao sessao;
     private final Usuario user;
 
-    public TelaConArquivo() {
+    public TelaConArquivo(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
-        model = new ArquivoTableModel();
+        user = sessao.getUsuario(codigoUsuario);
 
+        model = new ArquivoTableModel();
         tabArquivo.setModel(model);
         txtPesquisar.requestFocus();
-
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
-
         arquivoList = Arquivo.carregar_lista_arquivo(user);
     }
 
@@ -52,7 +50,7 @@ public class TelaConArquivo extends JFrame {
     }
 
     private void consultar_arquivo(Arquivo arquivo) {
-        TelaCadArquivo tela = new TelaCadArquivo(arquivo);
+        TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), arquivo);
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
         this.dispose();
@@ -230,7 +228,7 @@ public class TelaConArquivo extends JFrame {
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu();
+        TelaMenu tela = new TelaMenu(user.getCodigo());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

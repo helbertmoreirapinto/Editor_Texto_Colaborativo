@@ -40,121 +40,6 @@ public class Arquivo {
         this.codigoUsuarioAcesso = new ArrayList<>(codigoUsuarioAcesso);
     }
 
-    /**
-     * Retorna true se criou arquivos fisicos e false se ocorreu algum problema.
-     *
-     * @return
-     * @throws IOException
-     * @throws ArquivoDuplicadoException
-     */
-    public boolean createFile() throws IOException, ArquivoDuplicadoException {
-        File dir = new File(String.format("%s", DIR_ARQUIVOS));
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        this.file = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_TEXT));
-        if (this.file.exists()) {
-            throw new ArquivoDuplicadoException("Arquivo com este nome encontrado");
-        }
-
-        return c_file();
-
-    }
-
-    public boolean replace() throws IOException {
-        return c_file();
-    }
-
-    private boolean c_file() throws IOException {
-        file.createNewFile();
-
-        boolean append_mode = false;
-        this.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_DATA));
-        try (FileWriter fw = new FileWriter(this.fileData, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
-            buffer.append(this.codigoAutor + "\n");
-            for (Integer codUsu : this.codigoUsuarioAcesso) {
-                buffer.append(codUsu + "\n");
-            }
-            buffer.flush();
-        }
-        return this.file.exists() && this.fileData.exists();
-    }
-
-    /**
-     * Metodo de edicao do arquivo de texto. Recece o texto completo a ser
-     * inserido no arquivo de texto.
-     *
-     * @param texto
-     */
-    public void editar(String texto) {
-        boolean append_mode = false;
-        try (FileWriter fw = new FileWriter(this.file, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
-            buffer.append(texto);
-            buffer.flush();
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
-    public void rename(String novoNome) {
-        File aux_txt = new File(String.format("%s//%s%s", file.getParent(), novoNome, FILE_TEXT));
-        File aux_data = new File(String.format("%s//%s%s", file.getParent(), novoNome, FILE_DATA));
-        file.renameTo(aux_txt);
-        fileData.renameTo(aux_data);
-    }
-
-    /**
-     * Exclui os arquivos fisicos do disco.
-     */
-    public void excluir() {
-        file.delete();
-        fileData.delete();
-    }
-
-    /**
-     * Atualiza as informcoes no arquivo de Data.
-     */
-    public void updateFileData() {
-        boolean append_mode = false;
-        this.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, this.nome, FILE_DATA));
-        try (FileWriter fw = new FileWriter(this.fileData, append_mode);
-                BufferedWriter buffer = new BufferedWriter(fw)) {
-            buffer.append(this.codigoAutor + "\n");
-            for (Integer codUsu : this.codigoUsuarioAcesso) {
-                buffer.append(codUsu + "\n");
-            }
-            buffer.flush();
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
-    /**
-     * Retorna o texto contido no arquivo de texto.
-     *
-     * @return
-     */
-    public String getTexto() {
-        StringBuilder sb = new StringBuilder();
-        try (FileReader reader = new FileReader(this.file); BufferedReader buffer = new BufferedReader(reader)) {
-            String linha = buffer.readLine();
-            if (linha != null && !linha.isEmpty()) {
-                sb.append(linha);
-            }
-            do {
-                linha = buffer.readLine();
-                if (linha != null && !linha.isEmpty()) {
-                    sb.append("\n").append(linha);
-                }
-            } while (buffer.ready());
-
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return sb.toString();
-    }
-
     /* GETTER AND SETTER */
     public String getNome() {
         return nome;
@@ -249,6 +134,130 @@ public class Arquivo {
             }
         }
         return listaRetorno;
+    }
+
+    /**
+     * Retorna true se criou arquivos fisicos e false se ocorreu algum problema.
+     *
+     * @param arquivo
+     * @return
+     * @throws IOException
+     * @throws ArquivoDuplicadoException
+     */
+    public static boolean createFile(Arquivo arquivo) throws IOException, ArquivoDuplicadoException {
+        File dir = new File(String.format("%s", DIR_ARQUIVOS));
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        arquivo.file = new File(String.format("%s//%s%s", DIR_ARQUIVOS, arquivo.nome, FILE_TEXT));
+        if (arquivo.file.exists()) {
+            throw new ArquivoDuplicadoException("Arquivo com este nome encontrado");
+        }
+        return c_file(arquivo);
+    }
+
+    /**
+     * Retorna o texto contido no arquivo de texto.
+     *
+     * @return
+     */
+    public static String getTexto(Arquivo arquivo) {
+        StringBuilder sb = new StringBuilder();
+        try (FileReader reader = new FileReader(arquivo.file); BufferedReader buffer = new BufferedReader(reader)) {
+            String linha = buffer.readLine();
+            if (linha != null && !linha.isEmpty()) {
+                sb.append(linha);
+            }
+            do {
+                linha = buffer.readLine();
+                if (linha != null && !linha.isEmpty()) {
+                    sb.append("\n").append(linha);
+                }
+            } while (buffer.ready());
+
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Atualiza as informcoes no arquivo de Data.
+     *
+     * @param arquivo
+     */
+    public static void updateFileData(Arquivo arquivo) {
+        boolean append_mode = false;
+        arquivo.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, arquivo.nome, FILE_DATA));
+        try (FileWriter fw = new FileWriter(arquivo.fileData, append_mode);
+                BufferedWriter buffer = new BufferedWriter(fw)) {
+            buffer.append(arquivo.codigoAutor + "\n");
+            for (Integer codUsu : arquivo.codigoUsuarioAcesso) {
+                buffer.append(codUsu + "\n");
+            }
+            buffer.flush();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    public static boolean replace(Arquivo arquivo) throws IOException {
+        return c_file(arquivo);
+    }
+
+    private static boolean c_file(Arquivo arquivo) throws IOException {
+        arquivo.file.createNewFile();
+
+        boolean append_mode = false;
+        arquivo.fileData = new File(String.format("%s//%s%s", DIR_ARQUIVOS, arquivo.nome, FILE_DATA));
+        try (FileWriter fw = new FileWriter(arquivo.fileData, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
+            buffer.append(arquivo.codigoAutor + "\n");
+            for (Integer codUsu : arquivo.codigoUsuarioAcesso) {
+                buffer.append(codUsu + "\n");
+            }
+            buffer.flush();
+        }
+        return arquivo.file.exists() && arquivo.fileData.exists();
+    }
+
+    /**
+     * Metodo de edicao do arquivo de texto. Recece o texto completo a ser
+     * inserido no arquivo de texto.
+     *
+     * @param texto
+     */
+    public static void editar(Arquivo arquivo, String texto) {
+        boolean append_mode = false;
+        try (FileWriter fw = new FileWriter(arquivo.file, append_mode); BufferedWriter buffer = new BufferedWriter(fw)) {
+            buffer.append(texto);
+            buffer.flush();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    /**
+     * Renomear arquivo em disco
+     *
+     * @param arquivo
+     * @param novoNome
+     */
+    public static void rename(Arquivo arquivo, String novoNome) {
+        File aux_txt = new File(String.format("%s//%s%s", arquivo.file.getParent(), novoNome, FILE_TEXT));
+        File aux_data = new File(String.format("%s//%s%s", arquivo.file.getParent(), novoNome, FILE_DATA));
+        arquivo.file.renameTo(aux_txt);
+        arquivo.fileData.renameTo(aux_data);
+    }
+
+    /**
+     * Exclui os arquivos fisicos do disco.
+     *
+     * @param arquivo
+     */
+    public static void excluir(Arquivo arquivo) {
+        arquivo.file.delete();
+        arquivo.fileData.delete();
     }
 
 }

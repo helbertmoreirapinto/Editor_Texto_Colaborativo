@@ -7,15 +7,10 @@ package server.thread;
 public enum ComandoEnum {
 
     NEW_ACESS(0),
-    WRITE_FILE(1),
-    READ_FILE(2),
-    NEW_FILE(3),
-    DELETE_FILE(4),
-    RENAME_FILE(5),
-    NEW_USER(6),
-    EDIT_USER(7),
-    LIST_USER(8),
-    LIST_FILE(9);
+    NEW_USER(1),
+    EDIT_USER(2),
+    LIST_USER(3),
+    LIST_FILE(4);
 
     private final int codigo;
 

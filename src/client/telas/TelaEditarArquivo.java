@@ -24,16 +24,17 @@ public class TelaEditarArquivo extends JFrame {
     private final ListUsuarioModel model;
     private final Arquivo arquivo;
     private final Sessao sessao;
-    private Usuario user;
+    private final Usuario user;
     private String tempText;
     private final UndoAction undoAction;
     private final RedoAction redoAction;
     protected UndoManager undoManager;
 
-    public TelaEditarArquivo(Arquivo arquivo) {
+    public TelaEditarArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
+        user = sessao.getUsuario(codigoUsuario);
+
 //      INIT PARAM
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();
@@ -57,7 +58,7 @@ public class TelaEditarArquivo extends JFrame {
     }
 
     private void fechar_arquivo() {
-        TelaMenu tela = new TelaMenu();
+        TelaMenu tela = new TelaMenu(user.getCodigo());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

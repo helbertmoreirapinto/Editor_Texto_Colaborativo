@@ -3,7 +3,6 @@ package client;
 import editor.Pessoa;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -92,8 +91,6 @@ public class Usuario extends Pessoa {
      * arquivo de dados.
      *
      * @return
-     * @throws FileNotFoundException
-     * @throws IOException
      */
     public static HashMap<Integer, Usuario> carregar_lista_usuario() {
         HashMap<Integer, Usuario> usuarioList = new HashMap<>();

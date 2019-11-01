@@ -15,10 +15,12 @@ public class TelaConUsuario extends JFrame {
 
     private static UsuarioTableModel model;
     private final Sessao sessao;
+    private Usuario user;
 
-    public TelaConUsuario() {
+    public TelaConUsuario(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
+        user = sessao.getUsuario(codigoUsuario);
 
         model = new UsuarioTableModel();
 
@@ -49,7 +51,7 @@ public class TelaConUsuario extends JFrame {
     }
 
     private void consultar_usuario(Usuario u) {
-        TelaCadUsuario tela = new TelaCadUsuario(u);
+        TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), u);
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
         this.dispose();
@@ -272,7 +274,7 @@ public class TelaConUsuario extends JFrame {
     }//GEN-LAST:event_tabUsuarioKeyPressed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu();
+        TelaMenu tela = new TelaMenu(user.getCodigo());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

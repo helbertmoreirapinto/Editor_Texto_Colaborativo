@@ -14,25 +14,27 @@ import server.thread.AcessoCliente;
  */
 public class TelaCadUsuario extends JFrame {
 
+    private Usuario userAlt;
     private Usuario user;
     private final Sessao sessao;
-    private final AcessoCliente thread;
+    private final AcessoCliente acesso;
 
-    public TelaCadUsuario(Usuario userAlterar) {
+    public TelaCadUsuario(int codigoUsuario, Usuario userAlterar) {
         sessao = Sessao.getInstance();
-        thread = sessao.getThread();
+        user = sessao.getUsuario(codigoUsuario);
+        acesso = sessao.getAcesso(codigoUsuario);
 
         initComponents();
-        this.user = userAlterar;
-
-        if (user != null) {
-            txtCod.setText(String.valueOf(user.getCodigo()));
-            txtLogin.setText(user.getLogin());
-            txtNome.setText(user.getNome());
+        this.userAlt = userAlterar;
+        txtCod.setText("");
+        if (userAlt != null) {
+            txtCod.setText(String.valueOf(userAlt.getCodigo()));
+            txtLogin.setText(userAlt.getLogin());
+            txtNome.setText(userAlt.getNome());
             txtSenha1.setText("");
             txtSenha2.setText("");
-            chkADM.setSelected(user.isAdm());
-            chkAtivo.setSelected(user.isAtivo());
+            chkADM.setSelected(userAlt.isAdm());
+            chkAtivo.setSelected(userAlt.isAtivo());
         }
     }
 
@@ -52,13 +54,13 @@ public class TelaCadUsuario extends JFrame {
     private void incluir_usuario() {
 
         try {
-            user = new Usuario(
+            userAlt = new Usuario(
                     txtNome.getText(),
                     txtLogin.getText(),
                     Criptografia.criptografar(txtSenha1.getText()),
                     chkADM.isSelected(), chkAtivo.isSelected());
-            txtCod.setText(String.valueOf(user.getCodigo()));
-            Usuario.inserir_usuario(user);
+            txtCod.setText(String.valueOf(userAlt.getCodigo()));
+            acesso.inserir_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
 
         } catch (NoSuchAlgorithmException ex) {
@@ -70,12 +72,12 @@ public class TelaCadUsuario extends JFrame {
     private void alterar_usuario() {
 
         try {
-            user.setNome(txtNome.getText());
-            user.setLogin(txtLogin.getText());
-            user.setSenha(Criptografia.criptografar(txtSenha1.getText()));
-            user.setAdm(chkADM.isSelected());
-            user.setAtivo(chkAtivo.isSelected());
-            Usuario.alterar_usuario(user);
+            userAlt.setNome(txtNome.getText());
+            userAlt.setLogin(txtLogin.getText());
+            userAlt.setSenha(Criptografia.criptografar(txtSenha1.getText()));
+            userAlt.setAdm(chkADM.isSelected());
+            userAlt.setAtivo(chkAtivo.isSelected());
+            acesso.alterar_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
 
         } catch (NoSuchAlgorithmException ex) {
@@ -249,12 +251,12 @@ public class TelaCadUsuario extends JFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
         if (validar_campos()) {
-            if (user != null) {
+            if (userAlt != null) {
                 alterar_usuario();
             } else {
                 incluir_usuario();
             }
-            TelaConUsuario tela = new TelaConUsuario();
+            TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -265,12 +267,12 @@ public class TelaCadUsuario extends JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        if (user != null) {
-            TelaConUsuario tela = new TelaConUsuario();
+        if (userAlt != null) {
+            TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
         } else {
-            TelaMenu tela = new TelaMenu();
+            TelaMenu tela = new TelaMenu(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
         }

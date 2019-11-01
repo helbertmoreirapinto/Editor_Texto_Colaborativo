@@ -21,11 +21,11 @@ public class TelaMenu extends JFrame {
     private final AcessoCliente thread;
     private final Usuario user;
 
-    public TelaMenu() {
+    public TelaMenu(int codigoUsuario) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
-        thread = sessao.getThread();
+        user = sessao.getUsuario(codigoUsuario);
+        thread = sessao.getAcesso(codigoUsuario);
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
@@ -33,7 +33,7 @@ public class TelaMenu extends JFrame {
         if (!user.isAdm()) {
             menUsuario.setEnabled(false);
         }
-        if (!sessao.getT().isAlive()) {
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             this.dispose();
         }
@@ -207,28 +207,28 @@ public class TelaMenu extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemIncUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncUsuarioActionPerformed
-        TelaCadUsuario tela = new TelaCadUsuario(null);
+        TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), null);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemIncUsuarioActionPerformed
 
     private void itemConUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConUsuarioActionPerformed
-        TelaConUsuario tela = new TelaConUsuario();
+        TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemConUsuarioActionPerformed
 
     private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
-        TelaCadArquivo tela = new TelaCadArquivo(null);
+        TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), null);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_itemIncArquivoActionPerformed
 
     private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
-        TelaConArquivo tela = new TelaConArquivo();
+        TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
@@ -245,7 +245,7 @@ public class TelaMenu extends JFrame {
         Arquivo a;
         if (evt.getClickCount() == 2 && tabArquivo.getSelectedRow() >= 0) {
             a = model.getArquivo(tabArquivo.getSelectedRow());
-            TelaEditarArquivo tela = new TelaEditarArquivo(a);
+            TelaEditarArquivo tela = new TelaEditarArquivo(user.getCodigo(), a);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();

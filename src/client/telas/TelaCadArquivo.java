@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import server.thread.AcessoCliente;
 
 /**
  *
@@ -24,20 +25,26 @@ public class TelaCadArquivo extends JFrame {
 
     private final Sessao sessao;
     private final Usuario user;
-
+    private final AcessoCliente acesso;
     private final HashMap<Integer, Usuario> listaUsuario;
     private final Arquivo arquivo;
 
-    public TelaCadArquivo(Arquivo arquivo) {
+    public TelaCadArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
+        user = sessao.getUsuario(codigoUsuario);
+        acesso = sessao.getAcesso(codigoUsuario);
+
         this.arquivo = arquivo;
         model1 = new ListUsuarioModel();
         model2 = new ListUsuarioModel();
         listUsuario.setModel(model1);
         listSelecionados.setModel(model2);
-        listaUsuario = Usuario.carregar_lista_usuario();
+        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+            this.dispose();
+        }
+        listaUsuario = acesso.carregar_lista_usuario();
 
         if (arquivo != null) {
             txtNomeArquivo.setText(arquivo.getNome());
@@ -93,8 +100,8 @@ public class TelaCadArquivo extends JFrame {
     private void alterar_arquivo() {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
         arquivo.setUsuarioAcessoAdm(selecionados);
-        arquivo.updateFileData();
-        arquivo.rename(txtNomeArquivo.getText());
+        Arquivo.updateFileData(arquivo);
+        Arquivo.rename(arquivo, txtNomeArquivo.getText());
         JOptionPane.showMessageDialog(null, "Arquivo alterado com sucesso");
     }
 
@@ -107,7 +114,7 @@ public class TelaCadArquivo extends JFrame {
         Arquivo arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
         try {
 
-            arq.createFile();
+            Arquivo.createFile(arq);
 
             JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
         } catch (IOException ex) {
@@ -116,7 +123,7 @@ public class TelaCadArquivo extends JFrame {
             int resp = JOptionPane.showConfirmDialog(null, "Arquivo já exsite. Substrituir?");
             if (resp == JOptionPane.OK_OPTION) {
                 try {
-                    arq.replace();
+                    Arquivo.replace(arq);
                     JOptionPane.showMessageDialog(null, "Arquivo atualizado com sucesso");
                 } catch (IOException ex1) {
                     System.out.println(ex1.getMessage());
@@ -359,7 +366,7 @@ public class TelaCadArquivo extends JFrame {
             } else {
                 incluir_arquivo();
             }
-            TelaConArquivo tela = new TelaConArquivo();
+            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -371,12 +378,12 @@ public class TelaCadArquivo extends JFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         if (arquivo != null) {
-            TelaConArquivo tela = new TelaConArquivo();
+            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
 
         } else {
-            TelaMenu tela = new TelaMenu();
+            TelaMenu tela = new TelaMenu(user.getCodigo());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
         }

@@ -681,7 +681,7 @@ public class Principal {
                         codigoUsuarioAcesso = selecionar_usuario_acesso(s);
                         if (codigoUsuarioAcesso != null && codigoUsuarioAcesso.size() > 0) {
                             arq.setUsuarioAcessoAdm(codigoUsuarioAcesso);
-                            arq.updateFileData();
+//                            arq.updateFileData();
                             System.out.println("Acessos do arquivo alterados com sucesso!\n");
                         }
                         return;
@@ -689,7 +689,7 @@ public class Principal {
                         System.out.print("Deseja mesmo remover arquivo? [S/n] ");
                         confirm = s.nextLine();
                         if (confirm.equalsIgnoreCase(SIM)) {
-                            arq.excluir();
+//                            arq.excluir();
                             System.out.println("Arquivo removido com sucesso!\n");
                         }
                         return;
@@ -789,11 +789,11 @@ public class Principal {
                 codigoUsuarioAcesso = selecionar_usuario_acesso(s);
                 arquivo.setUsuarioAcessoAdm(codigoUsuarioAcesso);
             }
-            if (arquivo.createFile()) {
-                System.out.println("Arquivo inserido com sucesso!\n");
-            } else {
-                throw new NewFileException("Problema ao criar arquivo!");
-            }
+//            if (arquivo.createFile()) {
+//                System.out.println("Arquivo inserido com sucesso!\n");
+//            } else {
+//                throw new NewFileException("Problema ao criar arquivo!");
+//            }
         }
 
         editar_arquivo(s, arquivo);

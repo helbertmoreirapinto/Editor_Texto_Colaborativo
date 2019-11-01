@@ -17,15 +17,16 @@ import server.thread.ClienteServidor;
  */
 public class TelaLogin extends JFrame {
 
+    private final Sessao sessao;
+    private final ClienteServidor server;
+    private AcessoCliente acesso;
     private String login;
     private String senha;
-    private final ClienteServidor server;
-    private AcessoCliente thread;
-    private final Sessao sessao;
 
     public TelaLogin(ClienteServidor server) {
         initComponents();
         sessao = Sessao.getInstance();
+        sessao.setServer(server);
         this.server = server;
     }
 
@@ -38,16 +39,15 @@ public class TelaLogin extends JFrame {
             JOptionPane.showMessageDialog(null, "Servidor offline");
             return;
         }
-        thread = server.getAcesso();
-        Thread t = new Thread(thread);
+        acesso = server.getAcesso();
+        Thread t = new Thread(acesso);
         t.start();
-        sessao.setT(t);
 
         if (!t.isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             this.dispose();
         }
-        HashMap<Integer, Usuario> listaUSuario = thread.carregar_lista_usuario();
+        HashMap<Integer, Usuario> listaUSuario = acesso.carregar_lista_usuario();
 
         try {
             StringBuilder sb = new StringBuilder();
@@ -58,8 +58,10 @@ public class TelaLogin extends JFrame {
             senha = Criptografia.criptografar(sb.toString());
             for (Map.Entry<Integer, Usuario> elem : listaUSuario.entrySet()) {
                 if (elem.getValue().getLogin().equals(login) && elem.getValue().getSenha().equals(senha)) {
-                    sessao.setUserLogado(elem.getValue());
-                    iniciar_menu();
+                    sessao.putUsuarioMap(elem.getKey(), elem.getValue());
+                    sessao.putAcessoMap(elem.getKey(), acesso);
+                    sessao.putThreadMap(elem.getKey(), t);
+                    iniciar_menu(elem.getKey());
                     return;
                 }
             }
@@ -73,9 +75,8 @@ public class TelaLogin extends JFrame {
         }
     }
 
-    private void iniciar_menu() {
-        sessao.setThread(thread);
-        TelaMenu tela = new TelaMenu();
+    private void iniciar_menu(int codigoUsuario) {
+        TelaMenu tela = new TelaMenu(codigoUsuario);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

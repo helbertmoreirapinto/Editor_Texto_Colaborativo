@@ -1,5 +1,6 @@
 package server.thread;
 
+import client.Arquivo;
 import client.Usuario;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +16,12 @@ public class ClienteServidor implements Runnable {
 
     private ComandoEnum comando;
     private final List<AcessoCliente> threadList;
-
-    private AcessoCliente thread;
     private boolean executar_comando;
     private boolean rodar;
+    private int status;
 
     private Usuario user;
-    private int status;
+    private Arquivo arquivoTemp;
 
     public ClienteServidor() {
         threadList = new ArrayList<>();
@@ -40,8 +40,7 @@ public class ClienteServidor implements Runnable {
                     executar_comando = false;
                     switch (comando) {
                         case NEW_ACESS:
-                            thread = new AcessoCliente(user);
-                            threadList.add(thread);
+                            threadList.add(new AcessoCliente());
                             break;
                         default:
                             throw new AssertionError(comando.name());
@@ -60,8 +59,20 @@ public class ClienteServidor implements Runnable {
     public AcessoCliente getAcesso() {
         executar_comando = true;
         comando = ComandoEnum.NEW_ACESS;
-        delay(50);
-        return thread;
+        delay(100);
+
+        System.out.println(threadList.size());
+        for (AcessoCliente a : threadList) {
+            System.out.print(a + " -> ");
+            if (a.getUsuarioLogado() != null) {
+                System.out.println(a.getUsuarioLogado().getNome());
+            } else {
+                System.out.println("NULO");
+            }
+        }
+
+        System.out.println("##################");
+        return threadList.get(threadList.size() - 1);
     }
 
     private void delay(int i) {

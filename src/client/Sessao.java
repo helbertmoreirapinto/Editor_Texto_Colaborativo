@@ -1,6 +1,9 @@
 package client;
 
+import java.util.HashMap;
+import java.util.Map;
 import server.thread.AcessoCliente;
+import server.thread.ClienteServidor;
 
 /**
  *
@@ -9,12 +12,28 @@ import server.thread.AcessoCliente;
 public class Sessao {
 
     private static Sessao instance;
-    private AcessoCliente thread;
-    private Usuario userLogado;
+    private final Map<Integer, AcessoCliente> acessoMap;
+    private final Map<Integer, Thread> threadMap;
+    private final Map<Integer, Usuario> usuarioMap;
     private Arquivo arquivo;
-    private Thread t;
+    private ClienteServidor server;
 
     private Sessao() {
+        this.acessoMap = new HashMap<>();
+        this.threadMap = new HashMap<>();
+        this.usuarioMap = new HashMap<>();
+    }
+
+    public ClienteServidor getServer() {
+        return server;
+    }
+
+    public void setServer(ClienteServidor server) {
+        this.server = server;
+    }
+
+    public static void setInstance(Sessao instance) {
+        instance = new Sessao();
     }
 
     public static Sessao getInstance() {
@@ -24,36 +43,36 @@ public class Sessao {
         return instance;
     }
 
-    public Thread getT() {
-        return t;
+    public AcessoCliente getAcesso(int codigo) {
+        return acessoMap.get(codigo);
     }
 
-    public void setT(Thread t) {
-        this.t = t;
+    public void putAcessoMap(int codigo, AcessoCliente acesso) {
+        this.acessoMap.put(codigo, acesso);
     }
 
-    public void setThread(AcessoCliente thread) {
-        this.thread = thread;
+    public Thread getThread(int codigo) {
+        return threadMap.get(codigo);
     }
 
-    public void setUserLogado(Usuario userLogado) {
-        this.userLogado = userLogado;
+    public void putThreadMap(int codigo, Thread thread) {
+        this.threadMap.put(codigo, thread);
     }
 
-    public void setArquivo(Arquivo arquivo) {
-        this.arquivo = arquivo;
+    public Usuario getUsuario(int codigo) {
+        return usuarioMap.get(codigo);
     }
 
-    public AcessoCliente getThread() {
-        return thread;
-    }
-
-    public Usuario getUserLogado() {
-        return userLogado;
+    public void putUsuarioMap(int codigo, Usuario usuario) {
+        this.usuarioMap.put(codigo, usuario);
     }
 
     public Arquivo getArquivo() {
         return arquivo;
+    }
+
+    public void setArquivo(Arquivo arquivo) {
+        this.arquivo = arquivo;
     }
 
 }
