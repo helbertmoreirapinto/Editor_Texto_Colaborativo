@@ -62,20 +62,25 @@ public class TelaConUsuario extends JFrame {
     }
 
     private void consultar_usuario(Usuario u) {
-        TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), u);
-        tela.setVisible(true);
-        tela.setLocationRelativeTo(null);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), u);
+            tela.setVisible(true);
+            tela.setLocationRelativeTo(null);
+            this.dispose();
+        }
     }
 
-    private void verifica_server_online() {
+    private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             TelaLogin tela = new TelaLogin(sessao.getServer());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
+            return false;
         }
+        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -295,10 +300,13 @@ public class TelaConUsuario extends JFrame {
     }//GEN-LAST:event_tabUsuarioKeyPressed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu(user.getCodigo());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaMenu tela = new TelaMenu(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

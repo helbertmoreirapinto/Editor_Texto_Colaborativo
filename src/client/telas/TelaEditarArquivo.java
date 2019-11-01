@@ -63,20 +63,25 @@ public class TelaEditarArquivo extends JFrame {
     }
 
     private void fechar_arquivo() {
-        TelaMenu tela = new TelaMenu(user.getCodigo());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaMenu tela = new TelaMenu(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }
 
-    private void verifica_server_online() {
+    private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             TelaLogin tela = new TelaLogin(sessao.getServer());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
+            return false;
         }
+        return true;
     }
 
     @SuppressWarnings("unchecked")

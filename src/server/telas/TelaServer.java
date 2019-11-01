@@ -1,8 +1,8 @@
 package server.telas;
 
 //import client.model.UsuarioTableModel;
+import client.Usuario;
 import client.model.ClientTableModel;
-import client.model.UsuarioTableModel;
 import client.telas.TelaLogin;
 import javax.swing.JFrame;
 import server.thread.AcessoCliente;
@@ -53,8 +53,13 @@ public class TelaServer extends JFrame {
     }
 
     private void encerrar_server() {
-        for (AcessoCliente acesso : cs.getThreadList()) {
-            acesso.stop();
+        try {
+            for (AcessoCliente acesso : cs.getThreadList()) {
+                acesso.stop();
+                cs.getThreadList().remove(acesso);
+            }
+        } catch (Exception e) {
+            System.err.println();
         }
         cs.setRodar(false);
         delay(50);
@@ -221,6 +226,11 @@ public class TelaServer extends JFrame {
 
         btnEncerrar.setText("Encerrar");
         btnEncerrar.setEnabled(false);
+        btnEncerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEncerrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -296,7 +306,7 @@ public class TelaServer extends JFrame {
         TelaLogin tela = new TelaLogin(cs);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
-        btnEncerrar.setVisible(true);
+        btnEncerrar.setEnabled(true);
     }//GEN-LAST:event_btnAdicionarClienteActionPerformed
 
     private void btnIniciarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServerActionPerformed
@@ -310,6 +320,22 @@ public class TelaServer extends JFrame {
     private void btnEncerrarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarServerActionPerformed
         encerrar_server();
     }//GEN-LAST:event_btnEncerrarServerActionPerformed
+
+    private void btnEncerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarActionPerformed
+        int sel = tabOnline.getSelectedRow();
+        Usuario u;
+        if (sel >= 0) {
+            u = model.getUsuario(sel);
+            for (AcessoCliente acesso : cs.getThreadList()) {
+                if (acesso.getUsuarioLogado().getCodigo() == u.getCodigo()) {
+                    acesso.stop();
+                    model.removeUsuario(sel);
+                    cs.getThreadList().remove(acesso);
+                    break;
+                }
+            }
+        }
+    }//GEN-LAST:event_btnEncerrarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

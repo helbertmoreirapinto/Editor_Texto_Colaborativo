@@ -39,7 +39,6 @@ public class TelaCadArquivo extends JFrame {
         model2 = new ListUsuarioModel();
         listUsuario.setModel(model1);
         listSelecionados.setModel(model2);
-        verifica_server_online();
         listaUsuario = acesso.carregar_lista_usuario();
 
         if (arquivo != null) {
@@ -132,14 +131,16 @@ public class TelaCadArquivo extends JFrame {
         }
     }
 
-    private void verifica_server_online() {
+    private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             TelaLogin tela = new TelaLogin(sessao.getServer());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
+            return false;
         }
+        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -375,10 +376,13 @@ public class TelaCadArquivo extends JFrame {
             } else {
                 incluir_arquivo();
             }
-            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
+            boolean s = verifica_server_online();
+            if (s) {
+                TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+                tela.setLocationRelativeTo(null);
+                tela.setVisible(true);
+                this.dispose();
+            }
         } else {
             JOptionPane.showMessageDialog(null, "Nome do arquivo invalido");
         }
@@ -387,14 +391,19 @@ public class TelaCadArquivo extends JFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         if (arquivo != null) {
-            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-
+            boolean s = verifica_server_online();
+            if (s) {
+                TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+                tela.setLocationRelativeTo(null);
+                tela.setVisible(true);
+            }
         } else {
-            TelaMenu tela = new TelaMenu(user.getCodigo());
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
+            boolean s = verifica_server_online();
+            if (s) {
+                TelaMenu tela = new TelaMenu(user.getCodigo());
+                tela.setLocationRelativeTo(null);
+                tela.setVisible(true);
+            }
         }
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed

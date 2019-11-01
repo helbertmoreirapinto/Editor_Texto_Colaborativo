@@ -1,4 +1,3 @@
-
 package client.telas;
 
 import client.Arquivo;
@@ -33,8 +32,6 @@ public class TelaConArquivo extends JFrame {
         txtPesquisar.requestFocus();
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
-        
-        verifica_server_online();
         arquivoList = acesso.carregar_lista_arquivo(user);
     }
 
@@ -57,22 +54,27 @@ public class TelaConArquivo extends JFrame {
     }
 
     private void consultar_arquivo(Arquivo arquivo) {
-        TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), arquivo);
-        tela.setVisible(true);
-        tela.setLocationRelativeTo(null);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), arquivo);
+            tela.setVisible(true);
+            tela.setLocationRelativeTo(null);
+            this.dispose();
+        }
     }
 
-    private void verifica_server_online() {
+    private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             TelaLogin tela = new TelaLogin(sessao.getServer());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
+            return false;
         }
+        return true;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -245,10 +247,13 @@ public class TelaConArquivo extends JFrame {
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        TelaMenu tela = new TelaMenu(user.getCodigo());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaMenu tela = new TelaMenu(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void txtPesquisarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarKeyPressed

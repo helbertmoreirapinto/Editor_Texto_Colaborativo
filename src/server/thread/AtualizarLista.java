@@ -41,7 +41,7 @@ public class AtualizarLista implements Runnable {
                     model.addUsuario(a.getUsuarioLogado());
                 }
             }
-            delay(1000);
+            delay(5000);
         }
     }
 }

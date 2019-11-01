@@ -43,14 +43,16 @@ public class TelaMenu extends JFrame {
         model.addArquivoList(listaArquivo);
     }
 
-    private void verifica_server_online() {
+    private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
             TelaLogin tela = new TelaLogin(sessao.getServer());
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
+            return false;
         }
+        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -219,48 +221,66 @@ public class TelaMenu extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemIncUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncUsuarioActionPerformed
-        TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), null);
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), null);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_itemIncUsuarioActionPerformed
 
     private void itemConUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConUsuarioActionPerformed
-        TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_itemConUsuarioActionPerformed
 
     private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
-        TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), null);
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), null);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_itemIncArquivoActionPerformed
 
     private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
-        TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_itemConArquivoActionPerformed
 
     private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
-        TelaLogin tela = new TelaLogin(sessao.getServer());
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-        this.dispose();
+        boolean s = verifica_server_online();
+        if (s) {
+            TelaLogin tela = new TelaLogin(sessao.getServer());
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_menLogoffMouseClicked
 
     private void tabArquivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabArquivoMouseClicked
         Arquivo a;
         if (evt.getClickCount() == 2 && tabArquivo.getSelectedRow() >= 0) {
             a = model.getArquivo(tabArquivo.getSelectedRow());
-            TelaEditarArquivo tela = new TelaEditarArquivo(user.getCodigo(), a);
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
+            boolean s = verifica_server_online();
+            if (s) {
+                TelaEditarArquivo tela = new TelaEditarArquivo(user.getCodigo(), a);
+                tela.setLocationRelativeTo(null);
+                tela.setVisible(true);
+                this.dispose();
+            }
         }
     }//GEN-LAST:event_tabArquivoMouseClicked
 
