@@ -248,7 +248,7 @@ public class TelaMenu extends JFrame {
     }//GEN-LAST:event_itemConArquivoActionPerformed
 
     private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
-        TelaLogin tela = new TelaLogin(new ClienteServidor());
+        TelaLogin tela = new TelaLogin(sessao.getServer());
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

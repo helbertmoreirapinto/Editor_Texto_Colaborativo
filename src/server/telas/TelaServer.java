@@ -1,9 +1,10 @@
 package server.telas;
 
+import client.model.ListUsuarioModel;
 import client.telas.TelaLogin;
 import javax.swing.JFrame;
-import server.model.UsuarioArquivoModel;
 import server.thread.AcessoCliente;
+import server.thread.AtualizarLista;
 import server.thread.ClienteServidor;
 
 /**
@@ -13,21 +14,28 @@ import server.thread.ClienteServidor;
 public class TelaServer extends JFrame {
 
     private int usuariosLogados;
-    private final Thread server;
+    private Thread server;
     private final ClienteServidor cs;
-    private final UsuarioArquivoModel model;
+    private final ListUsuarioModel model;
+    private final AtualizarLista tlista;
 
     public TelaServer() {
         initComponents();
+        model = new ListUsuarioModel();
         cs = new ClienteServidor();
+        tlista = new AtualizarLista(model, cs);
+        txtStatusServer.setText(getStatus());
+        listOnline.setModel(model);
+        usuariosLogados = model.getSize();
+        txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+        inciar_threads();
+    }
+
+    private void inciar_threads() {
         server = new Thread(cs);
         server.start();
-
-        txtStatusServer.setText(getStatus());
-        model = new UsuarioArquivoModel();
-        tabOnline.setModel(model);
-        usuariosLogados = model.getRowCount();
-        txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+        Thread t = new Thread(tlista);
+        t.start();
     }
 
     private void iniciar_server() {
@@ -35,7 +43,7 @@ public class TelaServer extends JFrame {
         delay(50);
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Reiniciar");
-        usuariosLogados = model.getRowCount();
+        usuariosLogados = model.getSize();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
         btnAdicionarCliente.setEnabled(true);
         btnEncerrarServer.setEnabled(true);
@@ -43,7 +51,6 @@ public class TelaServer extends JFrame {
     }
 
     private void encerrar_server() {
-
         for (AcessoCliente acesso : cs.getThreadList()) {
             acesso.stop();
         }
@@ -52,11 +59,10 @@ public class TelaServer extends JFrame {
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Iniciar");
         model.limpar();
-        usuariosLogados = model.getRowCount();
+        usuariosLogados = model.getSize();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
         btnAdicionarCliente.setEnabled(false);
         btnEncerrarServer.setEnabled(false);
-
     }
 
     private void delay(int i) {
@@ -81,8 +87,8 @@ public class TelaServer extends JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtUsuariosLogados = new javax.swing.JLabel();
         panOnline = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tabOnline = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listOnline = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
         btnIniciarServer = new javax.swing.JButton();
         btnEncerrarServer = new javax.swing.JButton();
@@ -137,27 +143,7 @@ public class TelaServer extends JFrame {
 
         panOnline.setBorder(javax.swing.BorderFactory.createTitledBorder("Online"));
 
-        tabOnline.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Usuario", "Arquivo"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tabOnline);
-        if (tabOnline.getColumnModel().getColumnCount() > 0) {
-            tabOnline.getColumnModel().getColumn(0).setResizable(false);
-            tabOnline.getColumnModel().getColumn(1).setResizable(false);
-        }
+        jScrollPane2.setViewportView(listOnline);
 
         javax.swing.GroupLayout panOnlineLayout = new javax.swing.GroupLayout(panOnline);
         panOnline.setLayout(panOnlineLayout);
@@ -165,14 +151,14 @@ public class TelaServer extends JFrame {
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panOnlineLayout.setVerticalGroup(
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
@@ -268,7 +254,7 @@ public class TelaServer extends JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -353,9 +339,9 @@ public class TelaServer extends JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList<String> listOnline;
     private javax.swing.JPanel panOnline;
-    private javax.swing.JTable tabOnline;
     private javax.swing.JButton txtFecharProcessos;
     private javax.swing.JLabel txtStatusServer;
     private javax.swing.JLabel txtUsuariosLogados;

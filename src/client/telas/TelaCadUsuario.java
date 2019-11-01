@@ -52,7 +52,6 @@ public class TelaCadUsuario extends JFrame {
     }
 
     private void incluir_usuario() {
-
         try {
             userAlt = new Usuario(
                     txtNome.getText(),
@@ -67,11 +66,9 @@ public class TelaCadUsuario extends JFrame {
         } catch (NoSuchAlgorithmException ex) {
             System.err.println(ex.getMessage());
         }
-
     }
 
     private void alterar_usuario() {
-
         try {
             userAlt.setNome(txtNome.getText());
             userAlt.setLogin(txtLogin.getText());
@@ -85,7 +82,6 @@ public class TelaCadUsuario extends JFrame {
         } catch (NoSuchAlgorithmException ex) {
             System.err.println(ex.getMessage());
         }
-
     }
 
     private void verifica_server_online() {
@@ -261,7 +257,6 @@ public class TelaCadUsuario extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-
         if (validar_campos()) {
             if (userAlt != null) {
                 alterar_usuario();
@@ -275,7 +270,6 @@ public class TelaCadUsuario extends JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Dados invalidos");
         }
-
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed

@@ -1,14 +1,12 @@
 package server.thread;
 
+import server.ComandoEnum;
 import client.Arquivo;
 import client.Usuario;
 import editor.exc.ArquivoDuplicadoException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -26,9 +24,6 @@ public class AcessoCliente implements Runnable {
     private Usuario userTemp;
     private Arquivo arqTemp;
     private String textTemp;
-
-    public AcessoCliente() {
-    }
 
     @Override
     public void run() {
@@ -91,7 +86,10 @@ public class AcessoCliente implements Runnable {
             System.out.println(ex.getMessage());
         }
     }
-
+    
+    public Arquivo getArqTemp() {
+        return arqTemp;
+    }
     /**
      * Metodo responsavel em carregar para a memoria os usuarios salvos no
      * arquivo de dados.

@@ -1,7 +1,6 @@
 package server.thread;
 
-import client.Arquivo;
-import client.Usuario;
+import server.ComandoEnum;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,13 +19,11 @@ public class ClienteServidor implements Runnable {
     private boolean rodar;
     private int status;
 
-    private Usuario user;
-    private Arquivo arquivoTemp;
-
     public ClienteServidor() {
         threadList = new ArrayList<>();
         executar_comando = false;
         status = STATUS_OFFLINE;
+//        this.model = model;
     }
 
     @Override
@@ -59,6 +56,7 @@ public class ClienteServidor implements Runnable {
         executar_comando = true;
         comando = ComandoEnum.NEW_ACESS;
         delay(100);
+//        model.addUsuarioArquivo(new Usuario("Helbert", "", "", false, true), new Arquivo("Teste", 2, new ArrayList<>()));
         return threadList.get(threadList.size() - 1);
     }
 

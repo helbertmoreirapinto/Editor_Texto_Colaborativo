@@ -24,6 +24,13 @@ public class Sessao {
         this.usuarioMap = new HashMap<>();
     }
 
+    public static Sessao getInstance() {
+        if (instance == null) {
+            instance = new Sessao();
+        }
+        return instance;
+    }
+
     public ClienteServidor getServer() {
         return server;
     }
@@ -34,13 +41,6 @@ public class Sessao {
 
     public static void setInstance(Sessao instance) {
         instance = new Sessao();
-    }
-
-    public static Sessao getInstance() {
-        if (instance == null) {
-            instance = new Sessao();
-        }
-        return instance;
     }
 
     public AcessoCliente getAcesso(int codigo) {

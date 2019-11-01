@@ -54,7 +54,7 @@ public class TelaLogin extends JFrame {
             }
             senha = Criptografia.criptografar(sb.toString());
             for (Map.Entry<Integer, Usuario> elem : listaUSuario.entrySet()) {
-                if (elem.getValue().getLogin().equals(login) && elem.getValue().getSenha().equals(senha)) {
+                if (elem.getValue().isAtivo() && elem.getValue().getLogin().equals(login) && elem.getValue().getSenha().equals(senha)) {
                     sessao.putUsuarioMap(elem.getKey(), elem.getValue());
                     sessao.putAcessoMap(elem.getKey(), acesso);
                     sessao.putThreadMap(elem.getKey(), t);
