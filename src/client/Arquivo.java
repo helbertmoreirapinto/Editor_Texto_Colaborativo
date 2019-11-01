@@ -203,6 +203,12 @@ public class Arquivo {
         }
     }
 
+    /**
+     * Substitui um arquivo com mesmo nome
+     * @param arquivo
+     * @return
+     * @throws IOException 
+     */
     public static boolean replace(Arquivo arquivo) throws IOException {
         return c_file(arquivo);
     }

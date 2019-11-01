@@ -6,6 +6,8 @@ import server.thread.AcessoCliente;
 import server.thread.ClienteServidor;
 
 /**
+ * Classe Sessao. Contem variaveis comuns ao sistema. Evita de passa-las por
+ * parametro.
  *
  * @author helbert
  */
@@ -24,6 +26,11 @@ public class Sessao {
         this.usuarioMap = new HashMap<>();
     }
 
+    /**
+     * Se nao houver, inicia uma instancia da classe Sessao
+     *
+     * @return
+     */
     public static Sessao getInstance() {
         if (instance == null) {
             instance = new Sessao();

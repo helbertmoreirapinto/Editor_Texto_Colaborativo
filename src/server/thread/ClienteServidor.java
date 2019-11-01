@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Classe ClienteServidor. Thread do servidor.
  *
  * @author helbert
  */
@@ -19,6 +20,9 @@ public class ClienteServidor implements Runnable {
     private boolean rodar;
     private int status;
 
+    /**
+     * 
+     */
     public ClienteServidor() {
         threadList = new ArrayList<>();
         executar_comando = false;
@@ -26,6 +30,9 @@ public class ClienteServidor implements Runnable {
 //        this.model = model;
     }
 
+    /**
+     * 
+     */
     @Override
     public void run() {
 
@@ -52,14 +59,21 @@ public class ClienteServidor implements Runnable {
 
     }
 
+    /**
+     * 
+     * @return 
+     */
     public AcessoCliente getAcesso() {
         executar_comando = true;
         comando = ComandoEnum.NEW_ACESS;
         delay(100);
-//        model.addUsuarioArquivo(new Usuario("Helbert", "", "", false, true), new Arquivo("Teste", 2, new ArrayList<>()));
         return threadList.get(threadList.size() - 1);
     }
 
+    /**
+     * 
+     * @param i 
+     */
     private void delay(int i) {
         try {
             Thread.sleep(i);
@@ -68,10 +82,16 @@ public class ClienteServidor implements Runnable {
         }
     }
 
+    /**
+     * 
+     */
     public void parar() {
         rodar = false;
     }
 
+    /**
+     * 
+     */
     public void iniciar() {
         rodar = true;
     }

@@ -5,11 +5,12 @@
  */
 package server.thread;
 
-import client.model.ClientTableModel;
+import server.ClientTableModel;
 import java.util.List;
 import javax.swing.JLabel;
 
 /**
+ * Class AtualizarLista. Thread responsavel em atualizar a lista do servidor
  *
  * @author helbert
  */
@@ -19,12 +20,22 @@ public class AtualizarLista implements Runnable {
     private final ClienteServidor cs;
     private final JLabel num;
 
+    /**
+     *
+     * @param num
+     * @param model
+     * @param cs
+     */
     public AtualizarLista(JLabel num, ClientTableModel model, ClienteServidor cs) {
         this.model = model;
         this.cs = cs;
         this.num = num;
     }
 
+    /**
+     *
+     * @param i
+     */
     private void delay(int i) {
         try {
             Thread.sleep(i);
@@ -33,6 +44,9 @@ public class AtualizarLista implements Runnable {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         List<AcessoCliente> acessoList;

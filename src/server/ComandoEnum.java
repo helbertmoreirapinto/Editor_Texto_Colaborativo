@@ -1,6 +1,7 @@
 package server;
 
 /**
+ * ENUM ComandoEnum. POssui os comandos que os clientes podem fazer ao servidor.
  *
  * @author helbert
  */

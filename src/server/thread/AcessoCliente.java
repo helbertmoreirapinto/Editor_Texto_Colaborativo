@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Classe AcessoCliente. Thread utilizada pelo cliente para requisitar acoes do
+ * servidor.
  *
  * @author helbert
  */
@@ -78,14 +80,27 @@ public class AcessoCliente implements Runnable {
         status = false;
     }
 
+    /**
+     * Retorna o status da thread
+     *
+     * @return
+     */
     public boolean isStatus() {
         return status;
     }
 
+    /**
+     *
+     * @return
+     */
     public Usuario getUsuarioLogado() {
         return userLogado;
     }
 
+    /**
+     *
+     * @param i
+     */
     private void delay(int i) {
         try {
             Thread.sleep(i);
@@ -93,10 +108,15 @@ public class AcessoCliente implements Runnable {
             System.out.println(ex.getMessage());
         }
     }
-    
+
+    /**
+     *
+     * @return
+     */
     public Arquivo getArqTemp() {
         return arqTemp;
     }
+
     /**
      * Metodo responsavel em carregar para a memoria os usuarios salvos no
      * arquivo de dados.
@@ -110,6 +130,11 @@ public class AcessoCliente implements Runnable {
         return usuarioList;
     }
 
+    /**
+     *
+     * @param user
+     * @return
+     */
     public List<Arquivo> carregar_lista_arquivo(Usuario user) {
         executar_comando = true;
         this.userLogado = user;
@@ -118,6 +143,10 @@ public class AcessoCliente implements Runnable {
         return arquivoList;
     }
 
+    /**
+     *
+     * @param usuario
+     */
     public void inserir_usuario(Usuario usuario) {
         executar_comando = true;
         userTemp = usuario;
@@ -125,6 +154,10 @@ public class AcessoCliente implements Runnable {
         delay(100);
     }
 
+    /**
+     *
+     * @param usuarioAlterado
+     */
     public void alterar_usuario(Usuario usuarioAlterado) {
         executar_comando = true;
         userTemp = usuarioAlterado;
@@ -132,6 +165,10 @@ public class AcessoCliente implements Runnable {
         delay(100);
     }
 
+    /**
+     *
+     * @param arquivo
+     */
     public void updateFileData(Arquivo arquivo) {
         executar_comando = true;
         arqTemp = arquivo;
@@ -139,6 +176,11 @@ public class AcessoCliente implements Runnable {
         delay(100);
     }
 
+    /**
+     *
+     * @param arquivo
+     * @param text
+     */
     public void rename(Arquivo arquivo, String text) {
         executar_comando = true;
         arqTemp = arquivo;
@@ -147,6 +189,11 @@ public class AcessoCliente implements Runnable {
         delay(100);
     }
 
+    /**
+     *
+     * @param arq
+     * @throws Exception
+     */
     public void createFile(Arquivo arq) throws Exception {
         executar_comando = true;
         arqTemp = arq;
@@ -157,6 +204,11 @@ public class AcessoCliente implements Runnable {
         }
     }
 
+    /**
+     *
+     * @param arq
+     * @throws Exception
+     */
     public void replace(Arquivo arq) throws Exception {
         executar_comando = true;
         arqTemp = arq;
@@ -167,10 +219,18 @@ public class AcessoCliente implements Runnable {
         }
     }
 
+    /**
+     *
+     */
     public void stop() {
         stopT = true;
     }
 
+    /**
+     *
+     * @param arquivo
+     * @param text
+     */
     public void salvarTexto(Arquivo arquivo, String text) {
         executar_comando = true;
         arqTemp = arquivo;
@@ -179,6 +239,11 @@ public class AcessoCliente implements Runnable {
         delay(100);
     }
 
+    /**
+     *
+     * @param arquivo
+     * @return
+     */
     public String lerTexto(Arquivo arquivo) {
         executar_comando = true;
         arqTemp = arquivo;

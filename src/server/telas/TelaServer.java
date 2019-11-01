@@ -2,7 +2,7 @@ package server.telas;
 
 //import client.model.UsuarioTableModel;
 import client.Usuario;
-import client.model.ClientTableModel;
+import server.ClientTableModel;
 import client.telas.TelaLogin;
 import javax.swing.JFrame;
 import server.thread.AcessoCliente;

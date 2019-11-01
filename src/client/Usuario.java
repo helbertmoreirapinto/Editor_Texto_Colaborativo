@@ -9,6 +9,11 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe Usuario. Contem infomrçãoes e metodos de manipulação do usuario.
+ *
+ * @author helbert
+ */
 public class Usuario extends Pessoa {
 
     private static final String NOME_ARQUIVO_USUARIOS = "USU_DB//USUARIOS.txt";
@@ -112,6 +117,11 @@ public class Usuario extends Pessoa {
         return usuarioList;
     }
 
+    /**
+     * Altera os dados de um usuario no arquivo de dados.
+     *
+     * @param usuarioAlterado
+     */
     public static void alterar_usuario(Usuario usuarioAlterado) {
         try {
             HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
@@ -134,6 +144,11 @@ public class Usuario extends Pessoa {
         }
     }
 
+    /**
+     * Insere um usuario novo ao sistema
+     *
+     * @param usuario
+     */
     public static void inserir_usuario(Usuario usuario) {
         boolean append_mode = true;
         try (FileWriter writer = new FileWriter(NOME_ARQUIVO_USUARIOS, append_mode); BufferedWriter buffer = new BufferedWriter(writer)) {
@@ -149,8 +164,21 @@ public class Usuario extends Pessoa {
         }
     }
 
+    /**
+     * Retorna o usuario que possui o codigo de usuario correspondente ao
+     * parametro.
+     *
+     * @param codigo
+     * @return
+     */
     public static Usuario get_usuario_pelo_codigo(int codigo) {
         HashMap<Integer, Usuario> usuarioList = carregar_lista_usuario();
-        return usuarioList.get(codigo);
+        Usuario u = null;
+        try {
+            u = usuarioList.get(codigo);
+        } catch (Exception err) {
+            System.out.println(err.getMessage());
+        }
+        return u;
     }
 }

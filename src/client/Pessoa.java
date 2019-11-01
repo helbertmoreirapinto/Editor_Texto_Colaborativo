@@ -1,5 +1,9 @@
 package client;
 
+/**
+ * Classe abstrata Pessoa, contem informações adicionais de Usuario
+ * @author helbert
+ */
 public abstract class Pessoa {
 
     private String nome;
