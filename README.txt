@@ -46,6 +46,8 @@ necessariamente deve estar disponivel.
 >No momento eh que o usuario perde o acesso ao servidor, aparentemente nao ocorre nada. Prem ao tentar executar qualquer
 funcao que dependa de requisicoes ao servidor, é informado ao usuario que ele foi desconectado.
 
+> O usuario solicita um acesso ao client que se estiver disponivel lhe retorna um acesso aos arquivos(thread)
+
 > O tempo maximo de atualizacao das informações da tela do server sao de 5 segundos.
 
 > Em varias tabelas a funcao de duplo clique diretamente nas linhas tabela estao implementadas.
