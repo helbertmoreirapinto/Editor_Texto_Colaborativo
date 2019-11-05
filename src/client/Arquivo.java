@@ -21,6 +21,7 @@ public class Arquivo {
     public static final String FILE_TEXT = ".txt";
     private static final int COD_ELEM_AUTOR = 0;
 
+    
     private String nome;
     private int codigoAutor;
     private List<Integer> codigoUsuarioAcesso;
