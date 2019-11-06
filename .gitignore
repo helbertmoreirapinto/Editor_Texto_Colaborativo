@@ -1,3 +1,2 @@
-
-*.class
-*.form
+/Editor_Client/build/
+/Editor_Server/build/

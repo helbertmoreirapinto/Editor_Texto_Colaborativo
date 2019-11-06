@@ -4,7 +4,7 @@ NOME			NUSP
 Antonio Sebastian	10797781
 Helbert Moreira		10716504
 
-O projeto fo desenvolvido na IDE Apache NeatBeans 11.1, no sistema operacional windows 10.
+O projeto foi desenvolvido na IDE Apache NeatBeans 11.1, no sistema operacional windows 10.
 
 USER ADMIN
 User: adm
@@ -43,7 +43,7 @@ NomeDoArquivo.txt  -> contem o texto do arquivo.
 > Foi adicionado uma implementação de servidor, onde para poder logar e realizar as funções do sistema, o servidor
 necessariamente deve estar disponivel.
 
->No momento eh que o usuario perde o acesso ao servidor, aparentemente nao ocorre nada. Prem ao tentar executar qualquer
+> No momento eh que o usuario perde o acesso ao servidor, aparentemente nao ocorre nada. Prem ao tentar executar qualquer
 funcao que dependa de requisicoes ao servidor, é informado ao usuario que ele foi desconectado.
 
 > O usuario solicita um acesso ao client que se estiver disponivel lhe retorna um acesso aos arquivos(thread)
