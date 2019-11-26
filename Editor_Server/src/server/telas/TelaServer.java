@@ -1,7 +1,9 @@
 package server.telas;
 
 import java.io.IOException;
+import java.util.HashMap;
 import javax.swing.JFrame;
+import server.Usuario;
 import server.connect.Server;
 import server.model.ClientTableModel;
 
@@ -16,15 +18,13 @@ public class TelaServer extends JFrame {
 
     public TelaServer() {
         initComponents();
-
+        HashMap<Integer, Usuario> userList = Usuario.carregar_lista_usuario();
         model = new ClientTableModel();
         tabOnline.setModel(model);
         txtStatusServer.setText(getStatus());
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
     }
-
-    
 
     private void iniciar_server() {
         try {
@@ -39,7 +39,7 @@ public class TelaServer extends JFrame {
         }
 
     }
-    
+
     private void encerrar_server() {
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Iniciar");

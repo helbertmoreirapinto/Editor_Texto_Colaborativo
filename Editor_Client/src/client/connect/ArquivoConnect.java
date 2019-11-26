@@ -1,6 +1,7 @@
 package client.connect;
 
 import client.Arquivo;
+import client.Usuario;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -51,6 +52,26 @@ public class ArquivoConnect extends Connect {
             }
         }
         return list;
+    }
+
+    public void updateFileData(Arquivo arquivo) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void rename(Arquivo arquivo, String text) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void createFile(Arquivo arq) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void replace(Arquivo arq) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public List<Arquivo> carregar_lista_arquivo(Usuario user) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -17,7 +17,6 @@ import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.UndoManager;
-import client.thread.AcessoCliente;
 
 /**
  *
@@ -28,7 +27,6 @@ public class TelaEditarArquivo extends JFrame {
     private final ListUsuarioModel model;
     private final Arquivo arquivo;
     private final Sessao sessao;
-    private final AcessoCliente acesso;
     private final Usuario user;
     private String tempText;
     private final UndoAction undoAction;
@@ -38,8 +36,7 @@ public class TelaEditarArquivo extends JFrame {
     public TelaEditarArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUsuario(codigoUsuario);
-        acesso = sessao.getAcesso(codigoUsuario);
+        user = sessao.getUserLogado();
 
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();

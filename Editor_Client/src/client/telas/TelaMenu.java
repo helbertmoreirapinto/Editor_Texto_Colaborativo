@@ -216,7 +216,7 @@ public class TelaMenu extends JFrame {
     private void itemIncUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncUsuarioActionPerformed
         boolean s = verifica_server_online();
         if (s) {
-            TelaCadUsuario tela = new TelaCadUsuario(user.getCodigo(), null);
+            TelaCadUsuario tela = new TelaCadUsuario(null);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -226,7 +226,7 @@ public class TelaMenu extends JFrame {
     private void itemConUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConUsuarioActionPerformed
         boolean s = verifica_server_online();
         if (s) {
-            TelaConUsuario tela = new TelaConUsuario(user.getCodigo());
+            TelaConUsuario tela = new TelaConUsuario();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -236,7 +236,7 @@ public class TelaMenu extends JFrame {
     private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
         boolean s = verifica_server_online();
         if (s) {
-            TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), null);
+            TelaCadArquivo tela = new TelaCadArquivo(null);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -246,7 +246,7 @@ public class TelaMenu extends JFrame {
     private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
         boolean s = verifica_server_online();
         if (s) {
-            TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+            TelaConArquivo tela = new TelaConArquivo();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();

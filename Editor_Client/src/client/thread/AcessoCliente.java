@@ -29,54 +29,54 @@ public class AcessoCliente implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
-            status = true;
-            if (executar_comando) {
-                try {
-                    executar_comando = false;
-                    switch (comando) {
-                        case NEW_USER:
-                            Usuario.inserir_usuario(userTemp);
-                            break;
-                        case EDIT_USER:
-                            Usuario.alterar_usuario(userTemp);
-                            break;
-                        case LIST_USER:
-                            usuarioList = Usuario.carregar_lista_usuario();
-                            break;
-                        case LIST_FILE:
-                            arquivoList = Arquivo.carregar_lista_arquivo(userLogado);
-                            break;
-                        case UPDATE_FILE_DATA:
-                            Arquivo.updateFileData(arqTemp);
-                            break;
-                        case RENAME_FILE:
-                            Arquivo.rename(arqTemp, textTemp);
-                            break;
-                        case NEW_FILE:
-                            Arquivo.createFile(arqTemp);
-                            break;
-                        case REPLACE_FILE:
-                            Arquivo.replace(arqTemp);
-                            break;
-                        case READ_FILE:
-                            textTemp = Arquivo.getTexto(arqTemp);
-                            break;
-                        case WRITE_FILE:
-                            Arquivo.editar(arqTemp, textTemp);
-                            break;
-                        default:
-                            throw new AssertionError(comando.name());
-                    }
-                } catch (ArquivoDuplicadoException | IOException ex) {
-                    e = ex;
-                }
-            } else if (stopT) {
-                break;
-            }
-            delay(1);
-        }
-        status = false;
+//        while (!Thread.interrupted()) {
+//            status = true;
+//            if (executar_comando) {
+//                try {
+//                    executar_comando = false;
+//                    switch (comando) {
+//                        case NEW_USER:
+//                            Usuario.inserir_usuario(userTemp);
+//                            break;
+//                        case EDIT_USER:
+//                            Usuario.alterar_usuario(userTemp);
+//                            break;
+//                        case LIST_USER:
+//                            usuarioList = Usuario.carregar_lista_usuario();
+//                            break;
+//                        case LIST_FILE:
+//                            arquivoList = Arquivo.carregar_lista_arquivo(userLogado);
+//                            break;
+//                        case UPDATE_FILE_DATA:
+//                            Arquivo.updateFileData(arqTemp);
+//                            break;
+//                        case RENAME_FILE:
+//                            Arquivo.rename(arqTemp, textTemp);
+//                            break;
+//                        case NEW_FILE:
+//                            Arquivo.createFile(arqTemp);
+//                            break;
+//                        case REPLACE_FILE:
+//                            Arquivo.replace(arqTemp);
+//                            break;
+//                        case READ_FILE:
+//                            textTemp = Arquivo.getTexto(arqTemp);
+//                            break;
+//                        case WRITE_FILE:
+//                            Arquivo.editar(arqTemp, textTemp);
+//                            break;
+//                        default:
+//                            throw new AssertionError(comando.name());
+//                    }
+//                } catch (ArquivoDuplicadoException | IOException ex) {
+//                    e = ex;
+//                }
+//            } else if (stopT) {
+//                break;
+//            }
+//            delay(1);
+//        }
+//        status = false;
     }
 
     /**

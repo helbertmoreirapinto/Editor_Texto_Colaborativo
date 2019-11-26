@@ -3,13 +3,14 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.ArquivoConnect;
+import client.connect.UsuarioConnect;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import client.thread.AcessoCliente;
 
 /**
  *
@@ -21,25 +22,27 @@ public class TelaConArquivo extends JFrame {
     private final List<Arquivo> arquivoList;
     private final Sessao sessao;
     private final Usuario user;
-    private final AcessoCliente acesso;
+    private final ArquivoConnect connFile;
+    private final UsuarioConnect connUser;
 
-    public TelaConArquivo(int codigoUsuario) {
+    public TelaConArquivo() {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUsuario(codigoUsuario);
-        acesso = sessao.getAcesso(codigoUsuario);
+        user = sessao.getUserLogado();
+        connFile = new ArquivoConnect();
+        connUser = new UsuarioConnect();
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
         txtPesquisar.requestFocus();
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
-        arquivoList = acesso.carregar_lista_arquivo(user);
+        arquivoList = connFile.carregar_lista_arquivo(user);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-                    acesso.stop();
+//                    acesso.stop();
                 }
             }
         });
@@ -66,7 +69,7 @@ public class TelaConArquivo extends JFrame {
     private void consultar_arquivo(Arquivo arquivo) {
         boolean s = verifica_server_online();
         if (s) {
-            TelaCadArquivo tela = new TelaCadArquivo(user.getCodigo(), arquivo);
+            TelaCadArquivo tela = new TelaCadArquivo(arquivo);
             tela.setVisible(true);
             tela.setLocationRelativeTo(null);
             this.dispose();
@@ -74,14 +77,6 @@ public class TelaConArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            TelaLogin tela = new TelaLogin();
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
-            return false;
-        }
         return true;
     }
 
@@ -259,7 +254,7 @@ public class TelaConArquivo extends JFrame {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         boolean s = verifica_server_online();
         if (s) {
-            TelaMenu tela = new TelaMenu(user.getCodigo());
+            TelaMenu tela = new TelaMenu();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();

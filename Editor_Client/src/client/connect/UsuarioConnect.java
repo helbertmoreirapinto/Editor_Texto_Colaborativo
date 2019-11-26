@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  *
@@ -39,7 +40,7 @@ public class UsuarioConnect extends Connect {
         String[] campos;
         try (Socket socket = new Socket(IP_SERVER, PORT_SERVER_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
-            comando.append(COMANDO_GETUSER).append(SEP_CAMPOS).append(codigoUsuario);
+            comando.append(COMANDO_GET_USER).append(SEP_CAMPOS).append(codigoUsuario);
             output.writeUTF(comando.toString());
             output.flush();
             delay(50);
@@ -52,5 +53,38 @@ public class UsuarioConnect extends Connect {
             }
         }
         return usuario;
+    }
+
+    public void inserir_usuario(Usuario userAlt) throws IOException {
+        try (Socket socket = new Socket(IP_SERVER, PORT_SERVER_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
+            StringBuilder comando = new StringBuilder();
+            comando.append(COMANDO_SAVE_USER).append(SEP_CAMPOS)
+                    .append(userAlt.getNome()).append(SEP_CAMPOS)
+                    .append(userAlt.getLogin()).append(SEP_CAMPOS)
+                    .append(userAlt.getSenha()).append(SEP_CAMPOS)
+                    .append(userAlt.isAtivo()).append(SEP_CAMPOS)
+                    .append(userAlt.isAdm()).append(SEP_CAMPOS);
+            output.writeUTF(comando.toString());
+            output.flush();
+        }
+    }
+
+    public void alterar_usuario(Usuario userAlt) throws IOException {
+        try (Socket socket = new Socket(IP_SERVER, PORT_SERVER_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
+            StringBuilder comando = new StringBuilder();
+            comando.append(COMANDO_SAVE_USER).append(SEP_CAMPOS)
+                    .append(userAlt.getCodigo()).append(SEP_CAMPOS)
+                    .append(userAlt.getNome()).append(SEP_CAMPOS)
+                    .append(userAlt.getLogin()).append(SEP_CAMPOS)
+                    .append(userAlt.getSenha()).append(SEP_CAMPOS)
+                    .append(userAlt.isAtivo()).append(SEP_CAMPOS)
+                    .append(userAlt.isAdm()).append(SEP_CAMPOS);
+            output.writeUTF(comando.toString());
+            output.flush();
+        }
+    }
+
+    public HashMap<Integer, Usuario> carregar_lista_usuario() {
+        return null;
     }
 }

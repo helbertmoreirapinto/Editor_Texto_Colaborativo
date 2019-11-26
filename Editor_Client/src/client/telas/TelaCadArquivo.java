@@ -3,11 +3,13 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.ArquivoConnect;
+import client.connect.UsuarioConnect;
 import client.model.ListUsuarioModel;
-import client.thread.AcessoCliente;
 import editor.exc.ArquivoDuplicadoException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,26 +28,37 @@ public class TelaCadArquivo extends JFrame {
 
     private final Sessao sessao;
     private final Usuario user;
-    private final AcessoCliente acesso;
     private final HashMap<Integer, Usuario> listaUsuario;
     private final Arquivo arquivo;
+    private final ArquivoConnect connFile;
+    private final UsuarioConnect connUser;
 
-    public TelaCadArquivo(int codigoUsuario, Arquivo arquivo){
+    public TelaCadArquivo(Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUsuario(codigoUsuario);
-        acesso = sessao.getAcesso(codigoUsuario);
+        user = sessao.getUserLogado();
+        connFile = new ArquivoConnect();
+        connUser = new UsuarioConnect();
 
         this.arquivo = arquivo;
         model1 = new ListUsuarioModel();
         model2 = new ListUsuarioModel();
         listUsuario.setModel(model1);
         listSelecionados.setModel(model2);
-        listaUsuario = acesso.carregar_lista_usuario();
+        listaUsuario = connUser.carregar_lista_usuario();
 
         if (arquivo != null) {
             txtNomeArquivo.setText(arquivo.getNome());
-            txtAutor.setText(Usuario.get_usuario_pelo_codigo(arquivo.getCodigoAutor()).getNome());
+            try {
+                Usuario u = connUser.get_usuario_pelo_codigo(arquivo.getCodigoAutor());
+                if (u != null) {
+                    txtAutor.setText(u.getNome());
+                } else {
+                    txtAutor.setText("");
+                }
+            } catch (IOException | InterruptedException ex) {
+                System.out.println(ex.getMessage());
+            }
             listaUsuario.remove(arquivo.getCodigoAutor());
             for (Map.Entry<Integer, Usuario> elem : listaUsuario.entrySet()) {
                 if (arquivo.getCodigoUsuarioAcesso().contains(elem.getKey())) {
@@ -66,7 +79,7 @@ public class TelaCadArquivo extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-                    acesso.stop();
+//                    acesso.stop();
                 }
             }
         });
@@ -105,8 +118,8 @@ public class TelaCadArquivo extends JFrame {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
         arquivo.setUsuarioAcessoAdm(selecionados);
         verifica_server_online();
-        acesso.updateFileData(arquivo);
-        acesso.rename(arquivo, txtNomeArquivo.getText());
+        connFile.updateFileData(arquivo);
+        connFile.rename(arquivo, txtNomeArquivo.getText());
         JOptionPane.showMessageDialog(null, "Arquivo alterado com sucesso");
     }
 
@@ -119,7 +132,7 @@ public class TelaCadArquivo extends JFrame {
         Arquivo arq = new Arquivo(txtNomeArquivo.getText(), user.getCodigo(), selecionados);
         try {
             verifica_server_online();
-            acesso.createFile(arq);
+            connFile.createFile(arq);
 
             JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
         } catch (Exception ex) {
@@ -128,7 +141,7 @@ public class TelaCadArquivo extends JFrame {
                 if (resp == JOptionPane.OK_OPTION) {
                     try {
                         verifica_server_online();
-                        acesso.replace(arq);
+                        connFile.replace(arq);
                         JOptionPane.showMessageDialog(null, "Arquivo atualizado com sucesso");
                     } catch (Exception ex1) {
                         System.out.println(ex1.getMessage());
@@ -141,14 +154,6 @@ public class TelaCadArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            TelaLogin tela = new TelaLogin();
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
-            return false;
-        }
         return true;
     }
 
@@ -387,7 +392,7 @@ public class TelaCadArquivo extends JFrame {
             }
             boolean s = verifica_server_online();
             if (s) {
-                TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+                TelaConArquivo tela = new TelaConArquivo();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);
                 this.dispose();
@@ -402,14 +407,14 @@ public class TelaCadArquivo extends JFrame {
         if (arquivo != null) {
             boolean s = verifica_server_online();
             if (s) {
-                TelaConArquivo tela = new TelaConArquivo(user.getCodigo());
+                TelaConArquivo tela = new TelaConArquivo();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);
             }
         } else {
             boolean s = verifica_server_online();
             if (s) {
-                TelaMenu tela = new TelaMenu(user.getCodigo());
+                TelaMenu tela = new TelaMenu();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);
             }
