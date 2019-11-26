@@ -11,7 +11,8 @@ public abstract class Connect {
     protected final int PORT_SERVER_FILE = 3131;
     protected final int EDIT_FILE = 3132;
 
-    protected final String SEPARADOR = "##";
+    protected final String SEP_CAMPOS = "!!";
+    protected final String SEP_REGS = "!_!";
     protected final String COMANDO_LOGAR = "01";
     protected final String COMANDO_USERLIST = "02";
     protected final String COMANDO_FILELIST = "03";

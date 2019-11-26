@@ -2,6 +2,8 @@ package client.model;
 
 import client.Arquivo;
 import client.Usuario;
+import client.connect.UsuarioConnect;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
@@ -15,6 +17,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ArquivoTableModel extends AbstractTableModel {
 
+    private final UsuarioConnect connUser = new UsuarioConnect();
     private static final int COL_NOME = 0;
     private static final int COL_AUTOR = 1;
 
@@ -55,7 +58,14 @@ public class ArquivoTableModel extends AbstractTableModel {
             case COL_NOME:
                 return arquivo.getNome();
             case COL_AUTOR:
-                return Usuario.get_usuario_pelo_codigo(arquivo.getCodigoAutor()).getNome();
+                try {
+                    Usuario u = connUser.get_usuario_pelo_codigo(arquivo.getCodigoAutor());
+                    return (u != null) ? u.getNome() : "";
+                } catch (InterruptedException | IOException ex) {
+                    System.err.println(ex.getMessage());
+                    return "";
+                }
+
             default:
                 return "";
         }

@@ -1,12 +1,15 @@
 package client.telas;
 
+import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.ArquivoConnect;
 import client.crypt.Criptografia;
 import client.connect.UsuarioConnect;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.JFrame;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,16 +18,15 @@ import javax.swing.JOptionPane;
  */
 public class TelaLogin extends JFrame {
 
-    private final static String IP_SERVER = "127.0.0.1";
-    private final static int PORT_SERVER = 3131;
-
     private final Sessao sessao;
-    private final UsuarioConnect conn;
+    private final UsuarioConnect conn_usu;
+    private final ArquivoConnect conn_file;
 
     public TelaLogin() {
         initComponents();
         sessao = Sessao.getInstance();
-        conn = new UsuarioConnect();
+        conn_usu = new UsuarioConnect();
+        conn_file = new ArquivoConnect();
     }
 
     private void logar() {
@@ -37,7 +39,7 @@ public class TelaLogin extends JFrame {
                 sb.append(c);
             }
             String senha = Criptografia.criptografar(sb.toString());
-            user = conn.logar(login, senha);
+            user = conn_usu.logar(login, senha);
             if (user == null) {
                 JOptionPane.showMessageDialog(null, "Login/Senha invalidos");
             } else {
@@ -57,8 +59,10 @@ public class TelaLogin extends JFrame {
 
     }
 
-    private void iniciar_menu(int codigoUsuario) {
-        TelaMenu tela = new TelaMenu(codigoUsuario);
+    private void iniciar_menu(int codigoUsuario) throws IOException, InterruptedException {
+        List<Arquivo> arquivoList = conn_file.getArquivosUsuario(codigoUsuario);
+        sessao.setArquivoList(arquivoList);
+        TelaMenu tela = new TelaMenu();
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();

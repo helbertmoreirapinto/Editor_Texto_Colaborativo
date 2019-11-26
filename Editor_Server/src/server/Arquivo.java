@@ -21,7 +21,6 @@ public class Arquivo {
     public static final String FILE_TEXT = ".txt";
     private static final int COD_ELEM_AUTOR = 0;
 
-    
     private String nome;
     private int codigoAutor;
     private List<Integer> codigoUsuarioAcesso;
@@ -83,6 +82,10 @@ public class Arquivo {
     }
 
     /* STATIC METHODS */
+    public static ArrayList<Arquivo> carregar_lista_arquivo(int codUsuario) {
+        return carregar_lista_arquivo(Usuario.get_usuario_pelo_codigo(codUsuario));
+    }
+
     /**
      * Carrega para a memoria uma lista de arquivos contidos no diretorio
      * padrao.
@@ -206,9 +209,10 @@ public class Arquivo {
 
     /**
      * Substitui um arquivo com mesmo nome
+     *
      * @param arquivo
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public static boolean replace(Arquivo arquivo) throws IOException {
         return c_file(arquivo);

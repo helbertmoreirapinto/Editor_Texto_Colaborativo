@@ -1,9 +1,6 @@
 package client;
 
-import client.thread.ClienteServidor;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.util.List;
 
 /**
  * Classe Sessao. Contem variaveis comuns ao sistema. Evita de passa-las por
@@ -15,6 +12,7 @@ public class Sessao {
 
     private static Sessao instance;
     private Usuario userLogado;
+    private List<Arquivo> arquivoList;
     
 
     /**
@@ -39,5 +37,13 @@ public class Sessao {
 
     public void setUserLogado(Usuario userLogado) {
         this.userLogado = userLogado;
+    }
+
+    public List<Arquivo> getArquivoList() {
+        return arquivoList;
+    }
+
+    public void setArquivoList(List<Arquivo> arquivoList) {
+        this.arquivoList = arquivoList;
     }
 }

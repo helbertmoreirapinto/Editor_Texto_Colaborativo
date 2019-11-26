@@ -6,9 +6,9 @@ import client.Usuario;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import client.thread.AcessoCliente;
 
 /**
  *
@@ -19,23 +19,20 @@ public class TelaMenu extends JFrame {
     private final ArquivoTableModel model;
     private final Sessao sessao;
     private final Usuario user;
+    private final List<Arquivo> fileList;
 
-    public TelaMenu(int codigoUsuario) {
+    public TelaMenu() {
         initComponents();
-        System.out.println("chegou aq");
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
-
+        fileList = sessao.getArquivoList();
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
+        model.addArquivoList(fileList);
         txtUsuario.setText(String.format("[%d] %s", user.getCodigo(), user.getNome()));
         if (!user.isAdm()) {
             menUsuario.setEnabled(false);
         }
-
-//        verifica_server_online();
-//        List<Arquivo> listaArquivo = acesso.carregar_lista_arquivo(user);
-//        model.addArquivoList(listaArquivo);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -48,14 +45,6 @@ public class TelaMenu extends JFrame {
     }
 
     private boolean verifica_server_online() {
-//        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-//            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-//            TelaLogin tela = new TelaLogin();
-//            tela.setLocationRelativeTo(null);
-//            tela.setVisible(true);
-//            this.dispose();
-//            return false;
-//        }
         return true;
     }
 

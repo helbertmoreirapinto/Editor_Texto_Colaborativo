@@ -18,21 +18,39 @@ public class UsuarioConnect extends Connect {
         String[] campos;
         try (Socket socket = new Socket(IP_SERVER, PORT_SERVER_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
-            comando.append(COMANDO_LOGAR);
-            comando.append(SEPARADOR);
-            comando.append(login);
-            comando.append(SEPARADOR);
-            comando.append(senha);
+            comando.append(COMANDO_LOGAR).append(SEP_CAMPOS).append(login).append(SEP_CAMPOS).append(senha);
             output.writeUTF(comando.toString());
             output.flush();
             delay(50);
+
             if (input.readBoolean()) {
                 resp_serv = input.readUTF();
-                campos = resp_serv.split(SEPARADOR);
+                campos = resp_serv.split(SEP_CAMPOS);
                 usuarioLogado = new Usuario(campos[1], campos[2], campos[3], Boolean.parseBoolean(campos[4]), Boolean.parseBoolean(campos[5]));
                 usuarioLogado.setCodigo(Integer.parseInt(campos[0]));
             }
         }
         return usuarioLogado;
+    }
+
+    public Usuario get_usuario_pelo_codigo(int codigoUsuario) throws IOException, InterruptedException {
+        Usuario usuario = null;
+        String resp_serv;
+        String[] campos;
+        try (Socket socket = new Socket(IP_SERVER, PORT_SERVER_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
+            StringBuilder comando = new StringBuilder();
+            comando.append(COMANDO_GETUSER).append(SEP_CAMPOS).append(codigoUsuario);
+            output.writeUTF(comando.toString());
+            output.flush();
+            delay(50);
+
+            if (input.readBoolean()) {
+                resp_serv = input.readUTF();
+                campos = resp_serv.split(SEP_CAMPOS);
+                usuario = new Usuario(campos[1], campos[2], campos[3], Boolean.parseBoolean(campos[4]), Boolean.parseBoolean(campos[5]));
+                usuario.setCodigo(Integer.parseInt(campos[0]));
+            }
+        }
+        return usuario;
     }
 }
