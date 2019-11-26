@@ -3,13 +3,11 @@ package client.telas;
 import client.Sessao;
 import client.Usuario;
 import client.crypt.Criptografia;
+import client.connect.UsuarioConnect;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.JFrame;
+import java.io.IOException;
 import javax.swing.JOptionPane;
-import client.thread.AcessoCliente;
-import client.thread.ClienteServidor;
 
 /**
  *
@@ -17,59 +15,46 @@ import client.thread.ClienteServidor;
  */
 public class TelaLogin extends JFrame {
 
-    private final Sessao sessao;
-    private final ClienteServidor server;
-    private AcessoCliente acesso;
-    private String login;
-    private String senha;
+    private final static String IP_SERVER = "127.0.0.1";
+    private final static int PORT_SERVER = 3131;
 
-    public TelaLogin(ClienteServidor server) {
+    private final Sessao sessao;
+    private final UsuarioConnect conn;
+
+    public TelaLogin() {
         initComponents();
         sessao = Sessao.getInstance();
-        sessao.setServer(server);
-        this.server = server;
-    }
-
-    private boolean server_online() {
-        return (server.getStatus() == ClienteServidor.STATUS_ONLINE);
+        conn = new UsuarioConnect();
     }
 
     private void logar() {
-        if (!server_online()) {
-            JOptionPane.showMessageDialog(null, "Servidor offline");
-            return;
-        }
-        acesso = server.getAcesso();
-        Thread t = new Thread(acesso);
-        t.start();
-
-        verifica_server_online();
-        HashMap<Integer, Usuario> listaUSuario = acesso.carregar_lista_usuario();
-
         try {
+            Usuario user;
+            String login = txtLogin.getText();
+
             StringBuilder sb = new StringBuilder();
-            login = txtLogin.getText();
             for (char c : txtSenha.getPassword()) {
                 sb.append(c);
             }
-            senha = Criptografia.criptografar(sb.toString());
-            for (Map.Entry<Integer, Usuario> elem : listaUSuario.entrySet()) {
-                if (elem.getValue().isAtivo() && elem.getValue().getLogin().equals(login) && elem.getValue().getSenha().equals(senha)) {
-                    sessao.putUsuarioMap(elem.getKey(), elem.getValue());
-                    sessao.putAcessoMap(elem.getKey(), acesso);
-                    sessao.putThreadMap(elem.getKey(), t);
-                    iniciar_menu(elem.getKey());
-                    return;
-                }
+            String senha = Criptografia.criptografar(sb.toString());
+            user = conn.logar(login, senha);
+            if (user == null) {
+                JOptionPane.showMessageDialog(null, "Login/Senha invalidos");
+            } else {
+                sessao.setUserLogado(user);
+                iniciar_menu(user.getCodigo());
             }
-
-            //Nao logou
-            JOptionPane.showMessageDialog(null, "Login/Senha Invalidos");
-            txtLogin.selectAll();
-            txtLogin.grabFocus();
         } catch (NoSuchAlgorithmException ex) {
-            System.err.println(ex.getMessage());
+            System.err.println("Erro crypto " + ex.getMessage());
+        } catch (InterruptedException | ClassNotFoundException ex) {
+            System.err.println("Erro parsing object " + ex.getMessage());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.err.println("Server offline " + ex.getMessage());
+        } finally {
+            txtLogin.grabFocus();
         }
+
     }
 
     private void iniciar_menu(int codigoUsuario) {
@@ -77,13 +62,6 @@ public class TelaLogin extends JFrame {
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
         this.dispose();
-    }
-
-    private void verifica_server_online() {
-        if (!server_online()) {
-            JOptionPane.showMessageDialog(null, "Servidor offline");
-            this.dispose();
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -304,7 +282,7 @@ public class TelaLogin extends JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TelaLogin tela = new TelaLogin(null);
+                TelaLogin tela = new TelaLogin();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);
             }

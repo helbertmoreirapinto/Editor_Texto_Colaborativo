@@ -89,6 +89,16 @@ public class Usuario extends Pessoa {
     }
 
     /* STATIC METHODS */
+    public static Usuario logar(String login, String senha) {
+        HashMap<Integer, Usuario> list = carregar_lista_usuario();
+        for (Map.Entry<Integer, Usuario> elem : list.entrySet()) {
+            if (elem.getValue().isAtivo() && elem.getValue().getLogin().equalsIgnoreCase(login) && elem.getValue().getSenha().equals(senha)) {
+                return elem.getValue();
+            }
+        }
+        return null;
+    }
+
     /**
      * Metodo responsavel em carregar para a memoria os usuarios salvaos no
      * arquivo de dados.

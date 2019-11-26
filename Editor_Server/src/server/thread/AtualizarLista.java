@@ -1,6 +1,6 @@
 package server.thread;
 
-import server.ClientTableModel;
+import server.model.ClientTableModel;
 import java.util.List;
 import javax.swing.JLabel;
 

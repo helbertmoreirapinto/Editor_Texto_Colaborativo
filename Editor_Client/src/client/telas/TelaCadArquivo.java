@@ -143,7 +143,7 @@ public class TelaCadArquivo extends JFrame {
     private boolean verifica_server_online() {
         if (!sessao.getThread(user.getCodigo()).isAlive()) {
             JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            TelaLogin tela = new TelaLogin(sessao.getServer());
+            TelaLogin tela = new TelaLogin();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();

@@ -1,9 +1,10 @@
-package server;
+package server.model;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import server.Usuario;
 
 /**
  * Classe ClientTableModel. Model utilizado na tabela onde se exibe os clientes

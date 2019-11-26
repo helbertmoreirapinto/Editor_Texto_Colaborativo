@@ -1,12 +1,9 @@
 package server.telas;
 
-//import client.model.UsuarioTableModel;
-import server.Usuario;
-import server.ClientTableModel;
+import java.io.IOException;
 import javax.swing.JFrame;
-import server.thread.AcessoCliente;
-import server.thread.AtualizarLista;
-import server.thread.ClienteServidor;
+import server.connect.Server;
+import server.model.ClientTableModel;
 
 /**
  *
@@ -15,72 +12,46 @@ import server.thread.ClienteServidor;
 public class TelaServer extends JFrame {
 
     private int usuariosLogados;
-    private Thread server;
-    private final ClienteServidor cs;
     private final ClientTableModel model;
-    private final AtualizarLista tlista;
 
     public TelaServer() {
         initComponents();
+
         model = new ClientTableModel();
-        cs = new ClienteServidor();
         tabOnline.setModel(model);
-        tlista = new AtualizarLista(txtUsuariosLogados, model, cs);
         txtStatusServer.setText(getStatus());
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
-        inciar_threads();
     }
 
-    private void inciar_threads() {
-        server = new Thread(cs);
-        server.start();
-        Thread t = new Thread(tlista);
-        t.start();
-    }
+    
 
     private void iniciar_server() {
-        cs.setRodar(true);
-        delay(50);
-        txtStatusServer.setText(getStatus());
-        btnIniciarServer.setText("Reiniciar");
-        usuariosLogados = model.getRowCount();
-        txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
-        btnAdicionarCliente.setEnabled(true);
-        btnEncerrarServer.setEnabled(true);
+        try {
+            Server.init_application();
+            txtStatusServer.setText(getStatus());
+            btnIniciarServer.setText("Reiniciar");
+            usuariosLogados = model.getRowCount();
+            txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+            btnEncerrarServer.setEnabled(true);
+        } catch (IOException ex) {
+            System.err.println("Erro application user " + ex.getMessage());
+        }
 
     }
-
+    
     private void encerrar_server() {
-        try {
-            for (AcessoCliente acesso : cs.getThreadList()) {
-                acesso.stop();
-                cs.getThreadList().remove(acesso);
-            }
-        } catch (Exception e) {
-            System.err.println();
-        }
-        cs.setRodar(false);
-        delay(50);
         txtStatusServer.setText(getStatus());
         btnIniciarServer.setText("Iniciar");
         model.limpar();
         usuariosLogados = model.getRowCount();
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
-        btnAdicionarCliente.setEnabled(false);
         btnEncerrarServer.setEnabled(false);
     }
 
-    private void delay(int i) {
-        try {
-            Thread.sleep(i);
-        } catch (InterruptedException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
     private String getStatus() {
-        return (cs.getStatus() == ClienteServidor.STATUS_ONLINE) ? "online" : "offline";
+//        return (cs.getStatus() == ClienteServidor.STATUS_ONLINE) ? "online" : "offline";
+        return "online";
     }
 
     @SuppressWarnings("unchecked")
@@ -98,10 +69,6 @@ public class TelaServer extends JFrame {
         jPanel2 = new javax.swing.JPanel();
         btnIniciarServer = new javax.swing.JButton();
         btnEncerrarServer = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        btnAdicionarCliente = new javax.swing.JButton();
-        btnEncerrar = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -165,8 +132,8 @@ public class TelaServer extends JFrame {
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panOnlineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                .addContainerGap())
         );
         panOnlineLayout.setVerticalGroup(
             panOnlineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,9 +166,9 @@ public class TelaServer extends JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnIniciarServer, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEncerrarServer, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnIniciarServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEncerrarServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,105 +180,39 @@ public class TelaServer extends JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
-
-        btnAdicionarCliente.setText("Adicionar");
-        btnAdicionarCliente.setEnabled(false);
-        btnAdicionarCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdicionarClienteActionPerformed(evt);
-            }
-        });
-
-        btnEncerrar.setText("Encerrar");
-        btnEncerrar.setEnabled(false);
-        btnEncerrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEncerrarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdicionarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(btnEncerrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnAdicionarCliente)
-                .addGap(18, 18, 18)
-                .addComponent(btnEncerrar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 298, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 102, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(panOnline, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panOnline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panOnline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(panOnline, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAdicionarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarClienteActionPerformed
-//        TelaLogin tela = new TelaLogin(cs);
-//        tela.setLocationRelativeTo(null);
-//        tela.setVisible(true);
-//        btnEncerrar.setEnabled(true);
-    }//GEN-LAST:event_btnAdicionarClienteActionPerformed
-
     private void btnIniciarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServerActionPerformed
-        if (cs.getStatus() == ClienteServidor.STATUS_ONLINE) {
-            encerrar_server();
-        }
+//        if (cs.getStatus() == ClienteServidor.STATUS_ONLINE) {
+//            encerrar_server();
+//        }
         iniciar_server();
 
     }//GEN-LAST:event_btnIniciarServerActionPerformed
@@ -319,22 +220,6 @@ public class TelaServer extends JFrame {
     private void btnEncerrarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarServerActionPerformed
         encerrar_server();
     }//GEN-LAST:event_btnEncerrarServerActionPerformed
-
-    private void btnEncerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarActionPerformed
-        int sel = tabOnline.getSelectedRow();
-        Usuario u;
-        if (sel >= 0) {
-            u = model.getUsuario(sel);
-            for (AcessoCliente acesso : cs.getThreadList()) {
-                if (acesso.getUsuarioLogado().getCodigo() == u.getCodigo()) {
-                    acesso.stop();
-                    model.removeUsuario(sel);
-                    cs.getThreadList().remove(acesso);
-                    break;
-                }
-            }
-        }
-    }//GEN-LAST:event_btnEncerrarActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -372,20 +257,17 @@ public class TelaServer extends JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionarCliente;
-    private javax.swing.JButton btnEncerrar;
     private javax.swing.JButton btnEncerrarServer;
     private javax.swing.JButton btnIniciarServer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panOnline;
     private javax.swing.JTable tabOnline;
     private javax.swing.JLabel txtStatusServer;
     private javax.swing.JLabel txtUsuariosLogados;
     // End of variables declaration//GEN-END:variables
+
 }

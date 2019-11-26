@@ -6,7 +6,6 @@ import client.Usuario;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import client.thread.AcessoCliente;
@@ -19,14 +18,13 @@ public class TelaMenu extends JFrame {
 
     private final ArquivoTableModel model;
     private final Sessao sessao;
-    private final AcessoCliente acesso;
     private final Usuario user;
 
     public TelaMenu(int codigoUsuario) {
         initComponents();
+        System.out.println("chegou aq");
         sessao = Sessao.getInstance();
-        user = sessao.getUsuario(codigoUsuario);
-        acesso = sessao.getAcesso(codigoUsuario);
+        user = sessao.getUserLogado();
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
@@ -35,34 +33,29 @@ public class TelaMenu extends JFrame {
             menUsuario.setEnabled(false);
         }
 
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            this.dispose();
-        }
-
-        verifica_server_online();
-        List<Arquivo> listaArquivo = acesso.carregar_lista_arquivo(user);
-        model.addArquivoList(listaArquivo);
+//        verifica_server_online();
+//        List<Arquivo> listaArquivo = acesso.carregar_lista_arquivo(user);
+//        model.addArquivoList(listaArquivo);
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-                    acesso.stop();
+//                    acesso.stop();
                 }
             }
         });
     }
 
     private boolean verifica_server_online() {
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            TelaLogin tela = new TelaLogin(sessao.getServer());
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
-            return false;
-        }
+//        if (!sessao.getThread(user.getCodigo()).isAlive()) {
+//            JOptionPane.showMessageDialog(null, "Usuario desconectado");
+//            TelaLogin tela = new TelaLogin();
+//            tela.setLocationRelativeTo(null);
+//            tela.setVisible(true);
+//            this.dispose();
+//            return false;
+//        }
         return true;
     }
 
@@ -274,7 +267,7 @@ public class TelaMenu extends JFrame {
     private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
         boolean s = verifica_server_online();
         if (s) {
-            TelaLogin tela = new TelaLogin(sessao.getServer());
+            TelaLogin tela = new TelaLogin();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
