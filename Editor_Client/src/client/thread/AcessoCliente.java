@@ -2,8 +2,6 @@ package client.thread;
 
 import client.Arquivo;
 import client.Usuario;
-import editor.exc.ArquivoDuplicadoException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 

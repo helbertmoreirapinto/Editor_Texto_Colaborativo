@@ -60,7 +60,7 @@ public class TelaLogin extends JFrame {
     }
 
     private void iniciar_menu(int codigoUsuario) throws IOException, InterruptedException {
-        List<Arquivo> arquivoList = conn_file.getArquivosUsuario(codigoUsuario);
+        List<Arquivo> arquivoList = conn_file.carregar_lista_arquivo(codigoUsuario);
         sessao.setArquivoList(arquivoList);
         TelaMenu tela = new TelaMenu();
         tela.setLocationRelativeTo(null);
@@ -272,24 +272,18 @@ public class TelaLogin extends JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TelaLogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
+        //</editor-fold>
+
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                TelaLogin tela = new TelaLogin();
-                tela.setLocationRelativeTo(null);
-                tela.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            TelaLogin tela = new TelaLogin();
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
         });
     }
 

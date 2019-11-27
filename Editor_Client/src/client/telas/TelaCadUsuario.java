@@ -19,14 +19,12 @@ import javax.swing.JOptionPane;
 public class TelaCadUsuario extends JFrame {
 
     private Usuario userAlt;
-    private final Usuario user;
-    private final Sessao sessao;
     private final UsuarioConnect conn;
+    private final Sessao sessao;
 
     public TelaCadUsuario(Usuario userAlterar) {
         initComponents();
         sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
         conn = new UsuarioConnect();
         this.userAlt = userAlterar;
         txtCod.setText("");
@@ -43,7 +41,7 @@ public class TelaCadUsuario extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-//                    acesso.stop();
+                    System.exit(0);
                 }
             }
         });
@@ -65,6 +63,7 @@ public class TelaCadUsuario extends JFrame {
     private void incluir_usuario() throws IOException {
         try {
             userAlt = new Usuario(
+                    -1,
                     txtNome.getText(),
                     txtLogin.getText(),
                     Criptografia.criptografar(txtSenha1.getText()),
@@ -73,8 +72,8 @@ public class TelaCadUsuario extends JFrame {
             verifica_server_online();
             conn.inserir_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Usuario incluido com sucesso");
-
-        } catch (NoSuchAlgorithmException ex) {
+            sessao.setUsuarioList(conn.carregar_lista_usuario());
+        } catch (InterruptedException | NoSuchAlgorithmException ex) {
             System.err.println(ex.getMessage());
         }
     }
@@ -86,7 +85,6 @@ public class TelaCadUsuario extends JFrame {
             userAlt.setSenha(Criptografia.criptografar(txtSenha1.getText()));
             userAlt.setAdm(chkADM.isSelected());
             userAlt.setAtivo(chkAtivo.isSelected());
-            verifica_server_online();
             conn.alterar_usuario(userAlt);
             JOptionPane.showMessageDialog(null, "Dados alterados com sucesso");
 
@@ -96,7 +94,13 @@ public class TelaCadUsuario extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        return true;
+        boolean online;
+        try {
+            online = conn.get_status_server();
+        } catch (IOException | InterruptedException ex) {
+            return false;
+        }
+        return online;
     }
 
     @SuppressWarnings("unchecked")
@@ -269,8 +273,7 @@ public class TelaCadUsuario extends JFrame {
                 } else {
                     incluir_usuario();
                 }
-                boolean s = verifica_server_online();
-                if (s) {
+                if (verifica_server_online()) {
                     TelaConUsuario tela = new TelaConUsuario();
                     tela.setLocationRelativeTo(null);
                     tela.setVisible(true);
@@ -287,15 +290,13 @@ public class TelaCadUsuario extends JFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         if (userAlt != null) {
-            boolean s = verifica_server_online();
-            if (s) {
+            if (verifica_server_online()) {
                 TelaConUsuario tela = new TelaConUsuario();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);
             }
         } else {
-            boolean s = verifica_server_online();
-            if (s) {
+            if (verifica_server_online()) {
                 TelaMenu tela = new TelaMenu();
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);

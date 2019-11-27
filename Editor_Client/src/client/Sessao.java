@@ -1,5 +1,6 @@
 package client;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class Sessao {
     private static Sessao instance;
     private Usuario userLogado;
     private List<Arquivo> arquivoList;
-    
+    private HashMap<Integer, Usuario> usuarioList;
 
     /**
      * Se nao houver, inicia uma instancia da classe Sessao
@@ -45,5 +46,13 @@ public class Sessao {
 
     public void setArquivoList(List<Arquivo> arquivoList) {
         this.arquivoList = arquivoList;
+    }
+
+    public HashMap<Integer, Usuario> getUsuarioList() {
+        return usuarioList;
+    }
+
+    public void setUsuarioList(HashMap<Integer, Usuario> usuarioList) {
+        this.usuarioList = usuarioList;
     }
 }

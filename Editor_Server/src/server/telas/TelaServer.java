@@ -1,9 +1,11 @@
 package server.telas;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import server.Usuario;
+import server.connect.Connect;
 import server.connect.Server;
 import server.model.ClientTableModel;
 
@@ -15,10 +17,13 @@ public class TelaServer extends JFrame {
 
     private int usuariosLogados;
     private final ClientTableModel model;
+    private Server s_file;
+    private Server s_user;
 
     public TelaServer() {
         initComponents();
         HashMap<Integer, Usuario> userList = Usuario.carregar_lista_usuario();
+        init();
         model = new ClientTableModel();
         tabOnline.setModel(model);
         txtStatusServer.setText(getStatus());
@@ -26,32 +31,54 @@ public class TelaServer extends JFrame {
         txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
     }
 
+    private void init() {
+        try {
+            ServerSocket server_file = new ServerSocket(Connect.PORT_FILE);
+            s_file = new Server(server_file);
+            Thread t_file = new Thread(s_file);
+            t_file.start();
+
+            ServerSocket server_user = new ServerSocket(Connect.PORT_USUARIO);
+            s_user = new Server(server_user);
+            Thread t_user = new Thread(s_user);
+            t_user.start();
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+
     private void iniciar_server() {
         try {
-            Server.init_application();
+            s_file.init_application();
+            s_user.init_application();
             txtStatusServer.setText(getStatus());
             btnIniciarServer.setText("Reiniciar");
             usuariosLogados = model.getRowCount();
             txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
             btnEncerrarServer.setEnabled(true);
         } catch (IOException ex) {
-            System.err.println("Erro application user " + ex.getMessage());
+            System.err.println("Erro init application " + ex.getMessage());
         }
 
     }
 
     private void encerrar_server() {
-        txtStatusServer.setText(getStatus());
-        btnIniciarServer.setText("Iniciar");
-        model.limpar();
-        usuariosLogados = model.getRowCount();
-        txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
-        btnEncerrarServer.setEnabled(false);
+        try {
+            s_file.close_application();
+            s_user.close_application();
+            txtStatusServer.setText(getStatus());
+            btnIniciarServer.setText("Iniciar");
+            model.limpar();
+            usuariosLogados = model.getRowCount();
+            txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+            btnEncerrarServer.setEnabled(false);
+        } catch (IOException ex) {
+            System.err.println("Erro close application " + ex.getMessage());
+        }
     }
 
     private String getStatus() {
-//        return (cs.getStatus() == ClienteServidor.STATUS_ONLINE) ? "online" : "offline";
-        return "online";
+        return (s_file.isOnline()) ? "online" : "offline";
     }
 
     @SuppressWarnings("unchecked")
@@ -210,9 +237,9 @@ public class TelaServer extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarServerActionPerformed
-//        if (cs.getStatus() == ClienteServidor.STATUS_ONLINE) {
-//            encerrar_server();
-//        }
+        if (s_file.isOnline()) {
+            encerrar_server();
+        }
         iniciar_server();
 
     }//GEN-LAST:event_btnIniciarServerActionPerformed
@@ -234,21 +261,18 @@ public class TelaServer extends JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TelaServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             TelaServer tela = new TelaServer();
 
+            @Override
             public void run() {
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);

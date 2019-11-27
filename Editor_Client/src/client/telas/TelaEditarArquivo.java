@@ -3,12 +3,14 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.UsuarioConnect;
 import client.model.ListUsuarioModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -32,11 +34,13 @@ public class TelaEditarArquivo extends JFrame {
     private final UndoAction undoAction;
     private final RedoAction redoAction;
     protected UndoManager undoManager;
+    private UsuarioConnect connUser;
 
     public TelaEditarArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
+        connUser = new UsuarioConnect();
 
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();
@@ -44,7 +48,14 @@ public class TelaEditarArquivo extends JFrame {
         areaTexto.setText(acesso.lerTexto(arquivo));
 
         txtNomeArquivo.setText(this.arquivo.getNome());
-        txtAutor.setText(Usuario.get_usuario_pelo_codigo(this.arquivo.getCodigoAutor()).getNome());
+        try {
+            Usuario autor = connUser.get_usuario_pelo_codigo(this.arquivo.getCodigoAutor());
+            String nomeAutor = (autor != null) ? autor.getNome() : "";
+            txtAutor.setText(nomeAutor);
+        } catch (IOException | InterruptedException ex) {
+            txtAutor.setText("");
+        }
+
         txtUsuarioLogado.setText(String.format("[%d] %s", user.getCodigo(), user.getNome()));
         listOnline.setModel(model);
         model.addElem(user.getNome());
@@ -62,16 +73,15 @@ public class TelaEditarArquivo extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-                    acesso.stop();
+                    System.exit(0);
                 }
             }
         });
     }
 
     private void fechar_arquivo() {
-        boolean s = verifica_server_online();
-        if (s) {
-            TelaMenu tela = new TelaMenu(user.getCodigo());
+        if (verifica_server_online()) {
+            TelaMenu tela = new TelaMenu();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
             this.dispose();
@@ -79,15 +89,13 @@ public class TelaEditarArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-            TelaLogin tela = new TelaLogin();
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
+        boolean online;
+        try {
+            online = connUser.get_status_server();
+        } catch (IOException | InterruptedException ex) {
             return false;
         }
-        return true;
+        return online;
     }
 
     @SuppressWarnings("unchecked")

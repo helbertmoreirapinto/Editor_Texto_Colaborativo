@@ -191,4 +191,15 @@ public class Usuario extends Pessoa {
         }
         return u;
     }
+
+    public static int get_ultimo_codigo_usuario() {
+        HashMap<Integer, Usuario> list = carregar_lista_usuario();
+        int last_cod = -1;
+        for (Map.Entry<Integer, Usuario> elem : list.entrySet()) {
+            if (elem.getKey() > last_cod) {
+                last_cod = elem.getKey();
+            }
+        }
+        return last_cod;
+    }
 }

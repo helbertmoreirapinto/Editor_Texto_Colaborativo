@@ -16,14 +16,16 @@ public class Usuario extends Pessoa {
     /**
      * Construtor da classe Usuario(String, String, String, boolean, boolean).
      *
+     * @param codigo
      * @param nome
      * @param login
      * @param senha
      * @param adm
      * @param ativo
      */
-    public Usuario(String nome, String login, String senha, boolean adm, boolean ativo) {
+    public Usuario(int codigo, String nome, String login, String senha, boolean adm, boolean ativo) {
         super(nome);
+        this.codigo = codigo;
         this.login = login;
         this.senha = senha;
         this.adm = adm;

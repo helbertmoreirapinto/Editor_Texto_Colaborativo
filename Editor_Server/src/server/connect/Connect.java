@@ -6,19 +6,27 @@ package server.connect;
  */
 public abstract class Connect {
 
-    protected static final int PORT_USER = 3130;
-    protected static final int PORT_FILE = 3131;
-    protected static final int PORT_EDIT_FILE = 3132;
+    public static final int PORT_USUARIO = 6060;
+    public static final int PORT_FILE = 6160;
+    public static final int EDIT_FILE = 6260;
 
     protected final String SEP_CAMPOS = "!!";
     protected final String SEP_REGS = "!_!";
-    protected final String COMANDO_LOGAR = "01";
-    protected final String COMANDO_USERLIST = "02";
-    protected final String COMANDO_FILELIST = "03";
-    protected final String COMANDO_GET_USER = "04";
-    protected final String COMANDO_GET_FILE = "05";
-    protected final String COMANDO_SAVE_USER = "06";
-    protected final String COMANDO_UPD_USER = "07";
+
+    protected final String COMANDO_STATUS = "00";
+
+    protected final String COMAND_FILELIST = "11";
+    protected final String COMAND_GET_FILE = "12";
+    protected final String COMAND_NEW_FILE = "13";
+    protected final String COMAND_REPLACE_FILE = "14";
+    protected final String COMAND_FILE_DATA_UPD = "15";
+    protected final String COMAND_RENAME_FILE = "16";
+
+    protected final String COMANDO_LOGAR = "21";
+    protected final String COMAND_USERLIST = "22";
+    protected final String COMAND_GET_USER = "23";
+    protected final String COMAND_SAVE_USER = "24";
+    protected final String COMAND_UPD_USER = "25";
 
     protected void delay(int delay) throws InterruptedException {
         Thread.sleep(delay);

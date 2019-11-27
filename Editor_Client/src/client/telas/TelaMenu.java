@@ -3,10 +3,16 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.ArquivoConnect;
+import client.connect.UsuarioConnect;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -20,11 +26,13 @@ public class TelaMenu extends JFrame {
     private final Sessao sessao;
     private final Usuario user;
     private final List<Arquivo> fileList;
+    private final UsuarioConnect conn;
 
     public TelaMenu() {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
+        conn = new UsuarioConnect();
         fileList = sessao.getArquivoList();
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
@@ -38,14 +46,20 @@ public class TelaMenu extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-//                    acesso.stop();
+                    System.exit(0);
                 }
             }
         });
     }
 
     private boolean verifica_server_online() {
-        return true;
+        boolean online;
+        try {
+            online = conn.get_status_server();
+        } catch (IOException | InterruptedException ex) {
+            return false;
+        }
+        return online;
     }
 
     @SuppressWarnings("unchecked")
@@ -214,8 +228,7 @@ public class TelaMenu extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void itemIncUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncUsuarioActionPerformed
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaCadUsuario tela = new TelaCadUsuario(null);
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
@@ -224,8 +237,7 @@ public class TelaMenu extends JFrame {
     }//GEN-LAST:event_itemIncUsuarioActionPerformed
 
     private void itemConUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConUsuarioActionPerformed
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaConUsuario tela = new TelaConUsuario();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
@@ -234,18 +246,22 @@ public class TelaMenu extends JFrame {
     }//GEN-LAST:event_itemConUsuarioActionPerformed
 
     private void itemIncArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemIncArquivoActionPerformed
-        boolean s = verifica_server_online();
-        if (s) {
-            TelaCadArquivo tela = new TelaCadArquivo(null);
-            tela.setLocationRelativeTo(null);
-            tela.setVisible(true);
-            this.dispose();
+        if (verifica_server_online()) {
+            try {
+                sessao.setUsuarioList(conn.carregar_lista_usuario());
+                TelaCadArquivo tela = new TelaCadArquivo(null);
+                tela.setLocationRelativeTo(null);
+                tela.setVisible(true);
+                this.dispose();
+            } catch (IOException | InterruptedException ex) {
+                System.err.println(ex.getMessage());
+            }
+
         }
     }//GEN-LAST:event_itemIncArquivoActionPerformed
 
     private void itemConArquivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemConArquivoActionPerformed
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaConArquivo tela = new TelaConArquivo();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
@@ -254,8 +270,7 @@ public class TelaMenu extends JFrame {
     }//GEN-LAST:event_itemConArquivoActionPerformed
 
     private void menLogoffMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menLogoffMouseClicked
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaLogin tela = new TelaLogin();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
@@ -276,7 +291,6 @@ public class TelaMenu extends JFrame {
             }
         }
     }//GEN-LAST:event_tabArquivoMouseClicked
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemConArquivo;

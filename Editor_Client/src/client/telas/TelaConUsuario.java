@@ -1,11 +1,12 @@
 package client.telas;
 
-import client.Sessao;
 import client.Usuario;
+import client.connect.ArquivoConnect;
 import client.connect.UsuarioConnect;
 import client.model.UsuarioTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,14 +20,10 @@ import javax.swing.JOptionPane;
 public class TelaConUsuario extends JFrame {
 
     private static UsuarioTableModel model;
-    private final Sessao sessao;
-    private final Usuario user;
     private final UsuarioConnect conn;
 
     public TelaConUsuario() {
         initComponents();
-        sessao = Sessao.getInstance();
-        user = sessao.getUserLogado();
         model = new UsuarioTableModel();
         conn = new UsuarioConnect();
 
@@ -42,7 +39,7 @@ public class TelaConUsuario extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-//                    acesso.stop();
+                    System.exit(0);
                 }
             }
         });
@@ -58,17 +55,21 @@ public class TelaConUsuario extends JFrame {
     }
 
     private void listar_usuario() {
-        String campoPesquisa = txtPesquisar.getText();
-        ArrayList<Usuario> lista = new ArrayList<>();
-        verifica_server_online();
-        HashMap<Integer, Usuario> usuarioList = conn.carregar_lista_usuario();
-        for (Map.Entry<Integer, Usuario> elem : usuarioList.entrySet()) {
-            if (elem.getValue().getNome().contains(campoPesquisa) || String.valueOf(elem.getValue().getCodigo()).contains(campoPesquisa)) {
-                lista.add(elem.getValue());
+        try {
+            String campoPesquisa = txtPesquisar.getText();
+            ArrayList<Usuario> lista = new ArrayList<>();
+            verifica_server_online();
+            HashMap<Integer, Usuario> usuarioList = conn.carregar_lista_usuario();
+            for (Map.Entry<Integer, Usuario> elem : usuarioList.entrySet()) {
+                if (elem.getValue().getNome().contains(campoPesquisa) || String.valueOf(elem.getValue().getCodigo()).contains(campoPesquisa)) {
+                    lista.add(elem.getValue());
+                }
             }
+            model.limpar();
+            model.addUsuarioList(lista);
+        } catch (InterruptedException | IOException ex) {
+            System.err.println(ex.getMessage());
         }
-        model.limpar();
-        model.addUsuarioList(lista);
     }
 
     private void consultar_usuario(Usuario u) {
@@ -82,15 +83,13 @@ public class TelaConUsuario extends JFrame {
     }
 
     private boolean verifica_server_online() {
-//        if (!sessao.getThread(user.getCodigo()).isAlive()) {
-//            JOptionPane.showMessageDialog(null, "Usuario desconectado");
-//            TelaLogin tela = new TelaLogin();
-//            tela.setLocationRelativeTo(null);
-//            tela.setVisible(true);
-//            this.dispose();
-//            return false;
-//        }
-        return true;
+        boolean online;
+        try {
+            online = conn.get_status_server();
+        } catch (IOException | InterruptedException ex) {
+            return false;
+        }
+        return online;
     }
 
     @SuppressWarnings("unchecked")

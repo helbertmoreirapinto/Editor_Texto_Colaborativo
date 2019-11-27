@@ -4,10 +4,10 @@ import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
 import client.connect.ArquivoConnect;
-import client.connect.UsuarioConnect;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -19,41 +19,44 @@ import javax.swing.JOptionPane;
 public class TelaConArquivo extends JFrame {
 
     private final ArquivoTableModel model;
-    private final List<Arquivo> arquivoList;
+    private List<Arquivo> arquivoList;
+    private final ArquivoConnect conn;
     private final Sessao sessao;
     private final Usuario user;
-    private final ArquivoConnect connFile;
-    private final UsuarioConnect connUser;
 
     public TelaConArquivo() {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
-        connFile = new ArquivoConnect();
-        connUser = new UsuarioConnect();
+        conn = new ArquivoConnect();
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
         txtPesquisar.requestFocus();
         tabArquivo.getColumnModel().getColumn(0).setPreferredWidth(100);
         tabArquivo.getColumnModel().getColumn(1).setPreferredWidth(100);
-        arquivoList = connFile.carregar_lista_arquivo(user);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
-//                    acesso.stop();
+                    System.exit(0);
                 }
             }
         });
     }
 
     private void pesquisar_arquivos() {
-        model.limpar();
-        for (Arquivo arq : arquivoList) {
-            if (arq.getNome().contains(txtPesquisar.getText())) {
-                model.addArquivo(arq);
+        try {
+            model.limpar();
+            arquivoList = conn.carregar_lista_arquivo(user.getCodigo());
+            for (Arquivo arq : arquivoList) {
+                if (arq.getNome().contains(txtPesquisar.getText())) {
+                    model.addArquivo(arq);
+                }
             }
+        } catch (IOException | InterruptedException ex) {
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -67,8 +70,7 @@ public class TelaConArquivo extends JFrame {
     }
 
     private void consultar_arquivo(Arquivo arquivo) {
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaCadArquivo tela = new TelaCadArquivo(arquivo);
             tela.setVisible(true);
             tela.setLocationRelativeTo(null);
@@ -77,7 +79,13 @@ public class TelaConArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        return true;
+        boolean online;
+        try {
+            online = conn.get_status_server();
+        } catch (IOException | InterruptedException ex) {
+            return false;
+        }
+        return online;
     }
 
     @SuppressWarnings("unchecked")
@@ -252,8 +260,7 @@ public class TelaConArquivo extends JFrame {
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        boolean s = verifica_server_online();
-        if (s) {
+        if (verifica_server_online()) {
             TelaMenu tela = new TelaMenu();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
