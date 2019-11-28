@@ -1,6 +1,7 @@
 package client.connect;
 
 import client.Arquivo;
+import editor.exc.ArquivoDuplicadoException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -123,11 +124,12 @@ public class ArquivoConnect extends Connect {
 
     }
 
-    public Arquivo createFile(Arquivo arquivo) throws IOException, InterruptedException {
+    public Arquivo createFile(Arquivo arquivo) throws IOException, InterruptedException, ArquivoDuplicadoException {
         try (Socket socket = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
             StringBuilder userList = new StringBuilder();
             ArrayList<Integer> codigoUsuarioAcesso = new ArrayList<>();
+            String retorno;
 
             for (int cod : arquivo.getCodigoUsuarioAcesso()) {
                 userList.append(cod).append(",");
@@ -141,8 +143,8 @@ public class ArquivoConnect extends Connect {
             output.flush();
             delay(50);
 
+            retorno = input.readUTF();
             if (input.readBoolean()) {
-                String retorno = input.readUTF();
                 String[] campo = retorno.split(SEP_CAMPOS);
                 if (campo.length > 2 && !campo[2].trim().isEmpty()) {
                     String[] listUsers = campo[2].split(",");
@@ -151,6 +153,9 @@ public class ArquivoConnect extends Connect {
                     }
                 }
                 return new Arquivo(campo[0], Integer.parseInt(campo[1]), codigoUsuarioAcesso);
+            }
+            if (retorno.equals(FILE_DUPLICADO)) {
+                throw new ArquivoDuplicadoException("");
             }
         }
         return null;

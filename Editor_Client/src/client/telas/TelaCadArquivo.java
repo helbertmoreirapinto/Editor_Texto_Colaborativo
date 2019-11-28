@@ -135,7 +135,7 @@ public class TelaCadArquivo extends JFrame {
             connFile.createFile(arq);
             JOptionPane.showMessageDialog(null, "Arquivo criado com sucesso");
             sessao.setArquivoList(connFile.carregar_lista_arquivo(user.getCodigo()));
-        } catch (HeadlessException | IOException ex) {
+        } catch (HeadlessException | IOException | ArquivoDuplicadoException ex) {
             if (ex instanceof ArquivoDuplicadoException) {
                 int resp = JOptionPane.showConfirmDialog(null, "Arquivo já exsite. Substrituir?");
                 if (resp == JOptionPane.OK_OPTION) {

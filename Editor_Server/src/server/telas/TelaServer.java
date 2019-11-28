@@ -6,8 +6,9 @@ import java.util.HashMap;
 import javax.swing.JFrame;
 import server.Usuario;
 import server.connect.Connect;
-import server.connect.Server;
-import server.model.ClientTableModel;
+import server.connect.ServerApplication;
+import server.connect.ThreadEdit;
+import server.model.UsuarioFileTableModel;
 
 /**
  *
@@ -15,33 +16,39 @@ import server.model.ClientTableModel;
  */
 public class TelaServer extends JFrame {
 
-    private int usuariosLogados;
-    private final ClientTableModel model;
-    private Server s_file;
-    private Server s_user;
+    private final UsuarioFileTableModel model;
+    private ThreadEdit s_edit;
+    private ServerApplication s_file;
+    private ServerApplication s_user;
 
     public TelaServer() {
         initComponents();
         HashMap<Integer, Usuario> userList = Usuario.carregar_lista_usuario();
-        init();
-        model = new ClientTableModel();
+        model = new UsuarioFileTableModel();
         tabOnline.setModel(model);
+        init();
+        txtUsuariosLogados.setText(String.valueOf(model.getRowCount()));
         txtStatusServer.setText(getStatus());
-        usuariosLogados = model.getRowCount();
-        txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+
     }
 
     private void init() {
         try {
             ServerSocket server_file = new ServerSocket(Connect.PORT_FILE);
-            s_file = new Server(server_file);
+            s_file = new ServerApplication(server_file);
             Thread t_file = new Thread(s_file);
             t_file.start();
 
             ServerSocket server_user = new ServerSocket(Connect.PORT_USUARIO);
-            s_user = new Server(server_user);
+            s_user = new ServerApplication(server_user);
             Thread t_user = new Thread(s_user);
             t_user.start();
+
+            ServerSocket serv = new ServerSocket(Connect.PORT_EDIT_FILE);
+            s_edit = new ThreadEdit(serv, model, txtUsuariosLogados);
+            Thread t_edit = new Thread(s_edit);
+            t_edit.start();
+
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
@@ -51,10 +58,10 @@ public class TelaServer extends JFrame {
         try {
             s_file.init_application();
             s_user.init_application();
+            s_edit.init_application();
             txtStatusServer.setText(getStatus());
             btnIniciarServer.setText("Reiniciar");
-            usuariosLogados = model.getRowCount();
-            txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+            txtUsuariosLogados.setText(String.valueOf(model.getRowCount()));
             btnEncerrarServer.setEnabled(true);
         } catch (IOException ex) {
             System.err.println("Erro init application " + ex.getMessage());
@@ -66,11 +73,11 @@ public class TelaServer extends JFrame {
         try {
             s_file.close_application();
             s_user.close_application();
+            s_edit.close_application();
             txtStatusServer.setText(getStatus());
             btnIniciarServer.setText("Iniciar");
             model.limpar();
-            usuariosLogados = model.getRowCount();
-            txtUsuariosLogados.setText(String.valueOf(usuariosLogados));
+            txtUsuariosLogados.setText(String.valueOf(model.getRowCount()));
             btnEncerrarServer.setEnabled(false);
         } catch (IOException ex) {
             System.err.println("Erro close application " + ex.getMessage());
@@ -265,7 +272,7 @@ public class TelaServer extends JFrame {
             java.util.logging.Logger.getLogger(TelaServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the form */

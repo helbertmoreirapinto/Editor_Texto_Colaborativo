@@ -3,6 +3,7 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
+import client.connect.EditFileConnect;
 import client.connect.UsuarioConnect;
 import client.model.ListUsuarioModel;
 import java.awt.event.ActionEvent;
@@ -35,17 +36,19 @@ public class TelaEditarArquivo extends JFrame {
     private final RedoAction redoAction;
     protected UndoManager undoManager;
     private UsuarioConnect connUser;
+    private EditFileConnect connEdit;
 
     public TelaEditarArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
         connUser = new UsuarioConnect();
+        connEdit = new EditFileConnect(user.getCodigo(), arquivo);
 
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();
         verifica_server_online();
-        areaTexto.setText(acesso.lerTexto(arquivo));
+        areaTexto.setText(connEdit.get_text());
 
         txtNomeArquivo.setText(this.arquivo.getNome());
         try {
@@ -73,6 +76,7 @@ public class TelaEditarArquivo extends JFrame {
             @Override
             public void windowClosing(WindowEvent evt) {
                 if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+                    connEdit.exit();
                     System.exit(0);
                 }
             }
@@ -81,6 +85,7 @@ public class TelaEditarArquivo extends JFrame {
 
     private void fechar_arquivo() {
         if (verifica_server_online()) {
+            connEdit.exit();
             TelaMenu tela = new TelaMenu();
             tela.setLocationRelativeTo(null);
             tela.setVisible(true);
@@ -360,7 +365,7 @@ public class TelaEditarArquivo extends JFrame {
 
     private void areaTextoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_areaTextoKeyReleased
         verifica_server_online();
-        acesso.salvarTexto(arquivo, areaTexto.getText());
+        connEdit.send_text(areaTexto.getText());
     }//GEN-LAST:event_areaTextoKeyReleased
 
     private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed

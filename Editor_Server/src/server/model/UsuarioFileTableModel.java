@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import server.Arquivo;
 import server.Usuario;
 
 /**
@@ -12,13 +13,13 @@ import server.Usuario;
  *
  * @author helbert
  */
-public class ClientTableModel extends AbstractTableModel {
+public class UsuarioFileTableModel extends AbstractTableModel {
 
-    private static final int COL_CODIGO = 0;
-    private static final int COL_NOME = 1;
+    private static final int COL_NOME_FILE = 0;
+    private static final int COL_NOME_USER = 1;
 
-    private final List<Usuario> linhas = new ArrayList<>();
-    private final String[] colunas = {"Código", "Nome"};
+    private final List<UsuarioFile> linhas = new ArrayList<>();
+    private final String[] colunas = {"Arquivo", "Usuario"};
 
     /**
      * Retorna o numero de registros
@@ -49,12 +50,12 @@ public class ClientTableModel extends AbstractTableModel {
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Usuario usuario = linhas.get(rowIndex);
+        UsuarioFile usuario = linhas.get(rowIndex);
         switch (columnIndex) {
-            case COL_CODIGO:
-                return usuario.getCodigo();
-            case COL_NOME:
-                return usuario.getNome();
+            case COL_NOME_FILE:
+                return usuario.getFile().getNome();
+            case COL_NOME_USER:
+                return usuario.getUsuario().getNome();
             default:
                 return "";
         }
@@ -77,8 +78,17 @@ public class ClientTableModel extends AbstractTableModel {
      * @param lineIndex
      * @return
      */
-    public Usuario getUsuario(int lineIndex) {
+    public UsuarioFile getUsuarioFile(int lineIndex) {
         return linhas.get(lineIndex);
+    }
+
+    /**
+     *
+     * @param u
+     * @param file
+     */
+    public void addUsuarioFile(Usuario u, Arquivo file) {
+        addUsuarioFile(new UsuarioFile(file, u));
     }
 
     /**
@@ -86,10 +96,24 @@ public class ClientTableModel extends AbstractTableModel {
      *
      * @param u
      */
-    public void addUsuario(Usuario u) {
+    public void addUsuarioFile(UsuarioFile u) {
         linhas.add(u);
         int ultimoIndice = getRowCount() - 1;
         fireTableRowsInserted(ultimoIndice, ultimoIndice);
+    }
+
+    /**
+     *
+     * @param u
+     */
+    public void removeUsuarioFile(UsuarioFile u) {
+        UsuarioFile l;
+        for (int i = 0; i < getRowCount(); i++) {
+            l = linhas.get(i);
+            if (u.getUsuario().getCodigo() == l.getUsuario().getCodigo() && u.getFile().getNome().equals(l.getFile().getNome())) {
+                removeUsuarioFile(i);
+            }
+        }
     }
 
     /**
@@ -97,7 +121,7 @@ public class ClientTableModel extends AbstractTableModel {
      *
      * @param rowIndex
      */
-    public void removeUsuario(int rowIndex) {
+    public void removeUsuarioFile(int rowIndex) {
         linhas.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
@@ -124,7 +148,7 @@ public class ClientTableModel extends AbstractTableModel {
      *
      * @param list
      */
-    public void addUsuarioList(List list) {
+    public void addUsuarioFileList(List list) {
         int tamanhoAntigo = getRowCount();
         linhas.addAll(list);
         fireTableRowsInserted(tamanhoAntigo, getRowCount() - 1);
@@ -135,8 +159,18 @@ public class ClientTableModel extends AbstractTableModel {
      *
      * @return
      */
-    public List<Usuario> getAllExits() {
+    public List<UsuarioFile> getAllExits() {
         return linhas;
+    }
+
+    /**
+     *
+     * @param row
+     * @param usu
+     * @param file
+     */
+    public void setValue(int row, Usuario usu, Arquivo file) {
+        setValue(row, new UsuarioFile(file, usu));
     }
 
     /**
@@ -145,7 +179,7 @@ public class ClientTableModel extends AbstractTableModel {
      * @param row
      * @param usu
      */
-    public void setValue(int row, Usuario usu) {
+    public void setValue(int row, UsuarioFile usu) {
         linhas.set(row, usu);
         fireTableRowsUpdated(row, row);
     }

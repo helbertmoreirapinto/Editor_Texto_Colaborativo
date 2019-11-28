@@ -14,12 +14,13 @@ public abstract class Connect {
     protected final String IP_SERVER = "127.0.0.1";
     protected static final int PORT_USUARIO = 6060;
     protected static final int PORT_FILE = 6160;
-    protected static final int EDIT_FILE = 6260;
+    protected static final int PORT_EDIT_FILE = 6260;
 
     protected final String SEP_CAMPOS = "!!";
     protected final String SEP_REGS = "!_!";
 
-    protected final String COMANDO_STATUS = "00";
+    protected final String COMAND_STATUS = "00";
+    protected final String FILE_DUPLICADO = "01";
 
     protected final String COMAND_FILELIST = "11";
     protected final String COMAND_GET_FILE = "12";
@@ -34,6 +35,10 @@ public abstract class Connect {
     protected final String COMAND_SAVE_USER = "24";
     protected final String COMAND_UPD_USER = "25";
 
+    protected final String COMAND_SEND_TEXT = "31";
+    protected final String COMAND_GET = "32";
+    protected final String COMAND_EXIT = "33";
+
     protected void delay(int delay) throws InterruptedException {
         Thread.sleep(delay);
     }
@@ -42,7 +47,7 @@ public abstract class Connect {
         boolean online;
         try (Socket socket = new Socket(IP_SERVER, PORT_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
-            comando.append(COMANDO_STATUS);
+            comando.append(COMAND_STATUS);
             output.writeUTF(comando.toString());
             output.flush();
             delay(50);

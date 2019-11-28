@@ -17,13 +17,13 @@ import server.exc.ArquivoDuplicadoException;
  *
  * @author helbert
  */
-public class Server extends Connect implements Runnable {
+public class ServerApplication extends Connect implements Runnable {
 
     private boolean status;
     private final ServerSocket server;
     private Socket socket;
 
-    public Server(ServerSocket server) throws IOException {
+    public ServerApplication(ServerSocket server) throws IOException {
         status = false;
         this.server = server;
     }
@@ -36,78 +36,78 @@ public class Server extends Connect implements Runnable {
 
         while (true) {
 //            if (status) {
-                try {
-                    socket = server.accept();
-                } catch (IOException ex) {
-                    System.err.println("socket error: " + ex.getMessage());
-                }
-
-                try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-                    comando = in.readUTF();
-                    campos = comando.split(SEP_CAMPOS);
-
-                    switch (campos[0]) {
-                        case COMANDO_LOGAR:
-                            ret = logar(campos[1], campos[2]);
-                            break;
-
-                        case COMAND_USERLIST:
-                            ret = get_usuarioList();
-                            break;
-
-                        case COMAND_GET_USER:
-                            ret = get_usuario_pelo_codigo(Integer.parseInt(campos[1]));
-                            break;
-
-                        case COMAND_FILELIST:
-                            ret = get_fileList(Integer.parseInt(campos[1]));
-                            break;
-
-                        case COMAND_SAVE_USER:
-                            ret = get_save_user(campos[1], campos[2], campos[3], Boolean.parseBoolean(campos[4]), Boolean.parseBoolean(campos[5]));
-                            break;
-
-                        case COMAND_UPD_USER:
-                            ret = get_update_user(Integer.parseInt(campos[1]), campos[2], campos[3], campos[4], Boolean.parseBoolean(campos[5]), Boolean.parseBoolean(campos[6]));
-                            break;
-                        case COMAND_NEW_FILE:
-                            ret = create_file(campos[1], Integer.parseInt(campos[2]), campos[3]);
-                            break;
-
-                        case COMAND_RENAME_FILE:
-                            ret = rename_file(campos[1], Integer.parseInt(campos[2]), campos[3], campos[4]);
-                            break;
-
-                        case COMAND_REPLACE_FILE:
-                            ret = replace_file(campos[1], Integer.parseInt(campos[2]), campos[3]);
-                            break;
-
-                        case COMAND_FILE_DATA_UPD:
-                            ret = update_file_data(campos[1], Integer.parseInt(campos[2]), campos[3]);
-                            break;
-
-                        case COMANDO_STATUS:
-                            ret = get_status_server();
-                            break;
-
-                        default:
-                            ret = "";
-                            break;
-                    }
-                    out.writeBoolean(ret != null && !ret.trim().isEmpty());
-                    out.writeUTF(ret);
-                    out.flush();
-
-                } catch (IOException ex) {
-                    System.err.println("Erro run: " + ex.getMessage());
-                }
+            try {
+                socket = server.accept();
+            } catch (IOException ex) {
+                System.err.println("socket error: " + ex.getMessage());
             }
+
+            try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+                comando = in.readUTF();
+                campos = comando.split(SEP_CAMPOS);
+
+                switch (campos[0]) {
+                    case COMANDO_LOGAR:
+                        ret = logar(campos[1], campos[2]);
+                        break;
+
+                    case COMAND_USERLIST:
+                        ret = get_usuarioList();
+                        break;
+
+                    case COMAND_GET_USER:
+                        ret = get_usuario_pelo_codigo(Integer.parseInt(campos[1]));
+                        break;
+
+                    case COMAND_FILELIST:
+                        ret = get_fileList(Integer.parseInt(campos[1]));
+                        break;
+
+                    case COMAND_SAVE_USER:
+                        ret = get_save_user(campos[1], campos[2], campos[3], Boolean.parseBoolean(campos[4]), Boolean.parseBoolean(campos[5]));
+                        break;
+
+                    case COMAND_UPD_USER:
+                        ret = get_update_user(Integer.parseInt(campos[1]), campos[2], campos[3], campos[4], Boolean.parseBoolean(campos[5]), Boolean.parseBoolean(campos[6]));
+                        break;
+
+                    case COMAND_NEW_FILE:
+                        ret = create_file(campos[1], Integer.parseInt(campos[2]), campos[3]);
+                        break;
+
+                    case COMAND_RENAME_FILE:
+                        ret = rename_file(campos[1], Integer.parseInt(campos[2]), campos[3], campos[4]);
+                        break;
+
+                    case COMAND_REPLACE_FILE:
+                        ret = replace_file(campos[1], Integer.parseInt(campos[2]), campos[3]);
+                        break;
+
+                    case COMAND_FILE_DATA_UPD:
+                        ret = update_file_data(campos[1], Integer.parseInt(campos[2]), campos[3]);
+                        break;
+
+                    case COMAND_STATUS:
+                        ret = get_status_server();
+                        break;
+
+                    default:
+                        ret = "";
+                        break;
+                }
+                out.writeBoolean(ret != null && !ret.trim().isEmpty() && !ret.equals(FILE_DUPLICADO));
+                out.writeUTF(ret);
+                out.flush();
+
+            } catch (IOException ex) {
+                System.err.println("Erro run: " + ex.getMessage());
+            }
+        }
 
 //        }
     }
-    
-    
+
     public void init_application() throws IOException {
         status = true;
     }
@@ -233,8 +233,10 @@ public class Server extends Connect implements Runnable {
                     .append(codAutor).append(SEP_CAMPOS)
                     .append(codUsers);
 
-        } catch (IOException | ArquivoDuplicadoException ex) {
+        } catch (IOException ex) {
             System.err.println(ex.getMessage());
+        } catch (ArquivoDuplicadoException ex) {
+            comando.append(FILE_DUPLICADO);
         }
         return comando.toString();
     }

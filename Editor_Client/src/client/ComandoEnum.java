@@ -1,4 +1,4 @@
-package client.thread;
+package client;
 
 /**
  * ENUM ComandoEnum. POssui os comandos que os clientes podem fazer ao servidor.
