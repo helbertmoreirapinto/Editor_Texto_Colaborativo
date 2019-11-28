@@ -43,12 +43,12 @@ public class TelaEditarArquivo extends JFrame {
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
         connUser = new UsuarioConnect();
-        connEdit = new EditFileConnect(user.getCodigo(), arquivo);
+        connEdit = new EditFileConnect(user.getCodigo(), arquivo, areaTexto);
 
         this.arquivo = arquivo;
         this.model = new ListUsuarioModel();
         verifica_server_online();
-        areaTexto.setText(connEdit.get_text());
+        areaTexto.setText(connEdit.get_text(arquivo.getNome()));
 
         txtNomeArquivo.setText(this.arquivo.getNome());
         try {

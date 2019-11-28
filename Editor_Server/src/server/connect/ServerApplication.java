@@ -92,6 +92,10 @@ public class ServerApplication extends Connect implements Runnable {
                         ret = get_status_server();
                         break;
 
+                    case COMAND_GET_TEXT:
+                        ret = get_text_file(campos[1]);
+                        break;
+
                     default:
                         ret = "";
                         break;
@@ -292,6 +296,15 @@ public class ServerApplication extends Connect implements Runnable {
                 .append(codAutor).append(SEP_CAMPOS)
                 .append(codUsers);
         return comando.toString();
+    }
+
+    private String get_text_file(String nomeFile) {
+        System.out.println("nome file: " + nomeFile);
+        String text;
+        Arquivo a = Arquivo.get_Arquivo_pelo_nome(nomeFile);
+        System.out.println("arquivo: " + a);
+        text = Arquivo.getTexto(a);
+        return text;
     }
 
 }

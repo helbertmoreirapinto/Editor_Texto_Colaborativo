@@ -82,6 +82,20 @@ public class Arquivo {
     }
 
     /* STATIC METHODS */
+    /**
+     *
+     * @return
+     */
+    private static ArrayList<Arquivo> carregar_lista_arquivo() {
+        int COD_USER_ADM = 1;
+        return carregar_lista_arquivo(COD_USER_ADM);
+    }
+
+    /**
+     *
+     * @param codUsuario
+     * @return
+     */
     public static ArrayList<Arquivo> carregar_lista_arquivo(int codUsuario) {
         return carregar_lista_arquivo(Usuario.get_usuario_pelo_codigo(codUsuario));
     }
@@ -271,6 +285,21 @@ public class Arquivo {
     public static void excluir(Arquivo arquivo) {
         arquivo.file.delete();
         arquivo.fileData.delete();
+    }
+
+    /**
+     *
+     * @param nomeFile
+     * @return
+     */
+    public static Arquivo get_Arquivo_pelo_nome(String nomeFile) {
+        ArrayList<Arquivo> list = carregar_lista_arquivo();
+        for (Arquivo a : list) {
+            if (a.getNome().equals(nomeFile)) {
+                return a;
+            }
+        }
+        return null;
     }
 
 }

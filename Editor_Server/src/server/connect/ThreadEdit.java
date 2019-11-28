@@ -42,12 +42,12 @@ public class ThreadEdit extends Connect implements Runnable {
 
             String param;
             String[] campos;
-            ArrayList<Arquivo> listFile;
-            Arquivo file = null;
+            Arquivo file;
             Usuario u;
             while (true) {
 //                if (online) {
                 soc = serv.accept();
+                System.out.println("Conect");
                 for (Map.Entry<String, List<ServerFile>> elem : list.entrySet()) {
                     if (elem.getValue() != null && elem.getValue().isEmpty()) {
                         list.remove(elem.getKey());
@@ -59,14 +59,7 @@ public class ThreadEdit extends Connect implements Runnable {
                 param = in.readUTF();
                 campos = param.split(SEP_CAMPOS);
 
-                listFile = Arquivo.carregar_lista_arquivo(Integer.parseInt(campos[1]));
-
-                for (Arquivo f : listFile) {
-                    if (f.getNome().equals(campos[0])) {
-                        file = f;
-                        break;
-                    }
-                }
+                file = Arquivo.get_Arquivo_pelo_nome(campos[0]);
 
                 if (!list.containsKey(campos[0])) {
                     list.put(campos[0], new ArrayList<>());
@@ -79,6 +72,8 @@ public class ThreadEdit extends Connect implements Runnable {
                 list.get(campos[0]).add(client);
                 Thread t = new Thread(client);
                 t.start();
+                out.writeBoolean(true);
+                out.flush();
 //                }
 
             }

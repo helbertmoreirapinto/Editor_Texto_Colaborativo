@@ -30,7 +30,7 @@ public abstract class Connect {
     protected final String COMAND_UPD_USER = "25";
 
     protected final String COMAND_SEND_TEXT = "31";
-    protected final String COMAND_GET = "32";
+    protected final String COMAND_GET_TEXT = "32";
     protected final String COMAND_EXIT = "33";
 
     protected void delay(int delay) throws InterruptedException {

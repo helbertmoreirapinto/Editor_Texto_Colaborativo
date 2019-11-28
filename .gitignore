@@ -1,2 +1,4 @@
 /Editor_Client/build/
 /Editor_Server/build/
+/Editor_Server/dist/
+/Editor_Client/dist/
