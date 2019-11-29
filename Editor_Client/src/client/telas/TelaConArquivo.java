@@ -4,6 +4,7 @@ import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
 import client.connect.ArquivoConnect;
+import client.connect.UsuarioConnect;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,7 +21,8 @@ public class TelaConArquivo extends JFrame {
 
     private final ArquivoTableModel model;
     private List<Arquivo> arquivoList;
-    private final ArquivoConnect conn;
+    private final ArquivoConnect connFile;
+    private final UsuarioConnect connUser;
     private final Sessao sessao;
     private final Usuario user;
 
@@ -28,7 +30,8 @@ public class TelaConArquivo extends JFrame {
         initComponents();
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
-        conn = new ArquivoConnect();
+        connFile = new ArquivoConnect();
+        connUser = new UsuarioConnect();
 
         model = new ArquivoTableModel();
         tabArquivo.setModel(model);
@@ -52,7 +55,7 @@ public class TelaConArquivo extends JFrame {
     private void pesquisar_arquivos() {
         try {
             model.limpar();
-            arquivoList = conn.carregar_lista_arquivo(user.getCodigo());
+            arquivoList = connFile.carregar_lista_arquivo(user.getCodigo());
             for (Arquivo arq : arquivoList) {
                 if (arq.getNome().contains(txtPesquisar.getText())) {
                     model.addArquivo(arq);
@@ -81,10 +84,15 @@ public class TelaConArquivo extends JFrame {
      */
     private void consultar_arquivo(Arquivo arquivo) {
         if (verifica_server_online()) {
-            TelaCadArquivo tela = new TelaCadArquivo(arquivo);
-            tela.setVisible(true);
-            tela.setLocationRelativeTo(null);
-            this.dispose();
+            try {
+                sessao.setUsuarioList(connUser.carregar_lista_usuario());
+                TelaCadArquivo tela = new TelaCadArquivo(arquivo);
+                tela.setVisible(true);
+                tela.setLocationRelativeTo(null);
+                this.dispose();
+            } catch (IOException | InterruptedException ex) {
+                System.err.println("Erro carregar lista usuarios: " + ex.getMessage());
+            }
         }
     }
 
@@ -94,7 +102,7 @@ public class TelaConArquivo extends JFrame {
      */
     private boolean verifica_server_online() {
         try {
-            return conn.get_status_server();
+            return connFile.get_status_server();
         } catch (IOException | InterruptedException ex) {
             JOptionPane.showMessageDialog(null, "Server offline");
             System.exit(0);

@@ -1,5 +1,6 @@
 package server.telas;
 
+import java.awt.event.WindowAdapter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashMap;
@@ -29,7 +30,18 @@ public class TelaServer extends JFrame {
         init();
         txtUsuariosLogados.setText(String.valueOf(model.getRowCount()));
         txtStatusServer.setText(getStatus());
+        addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent evt) {
+//                if (JOptionPane.showConfirmDialog(null, "Deseja sair") == JOptionPane.OK_OPTION) {
+//                    encerrar_aplicacoes();
+//                }
+//            }
 
+            private void encerrar_aplicacoes() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
     }
 
     /**

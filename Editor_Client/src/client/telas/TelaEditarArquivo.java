@@ -171,14 +171,14 @@ public class TelaEditarArquivo extends JFrame {
 
         areaTexto.setColumns(20);
         areaTexto.setRows(5);
+        areaTexto.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                areaTextoCaretUpdate(evt);
+            }
+        });
         areaTexto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 areaTextoMouseReleased(evt);
-            }
-        });
-        areaTexto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                areaTextoKeyReleased(evt);
             }
         });
         jScrollPane1.setViewportView(areaTexto);
@@ -376,11 +376,6 @@ public class TelaEditarArquivo extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void areaTextoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_areaTextoKeyReleased
-        verifica_server_online();
-        connEdit.send_text(areaTexto.getText());
-    }//GEN-LAST:event_areaTextoKeyReleased
-
     private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         fechar_arquivo();
     }//GEN-LAST:event_btnFecharActionPerformed
@@ -410,9 +405,14 @@ public class TelaEditarArquivo extends JFrame {
     }//GEN-LAST:event_itemFecharMouseReleased
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        JOptionPane.showMessageDialog(null, "Os dados foram dalvos com sucesso");
+        JOptionPane.showMessageDialog(null, "Os dados foram salvos com sucesso");
         fechar_arquivo();
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void areaTextoCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_areaTextoCaretUpdate
+        verifica_server_online();
+        connEdit.send_text(areaTexto.getText());
+    }//GEN-LAST:event_areaTextoCaretUpdate
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea areaTexto;
