@@ -44,6 +44,9 @@ public class TelaConUsuario extends JFrame {
         });
     }
 
+    /**
+     *
+     */
     private void selecionar_usuario() {
         int reg = tabUsuario.getSelectedRow();
         if (reg >= 0) {
@@ -53,6 +56,9 @@ public class TelaConUsuario extends JFrame {
         }
     }
 
+    /**
+     *
+     */
     private void listar_usuario() {
         try {
             String campoPesquisa = txtPesquisar.getText();
@@ -71,6 +77,10 @@ public class TelaConUsuario extends JFrame {
         }
     }
 
+    /**
+     *
+     * @param u
+     */
     private void consultar_usuario(Usuario u) {
         boolean s = verifica_server_online();
         if (s) {
@@ -81,6 +91,10 @@ public class TelaConUsuario extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return conn.get_status_server();

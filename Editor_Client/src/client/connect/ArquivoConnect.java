@@ -15,6 +15,13 @@ import java.util.List;
  */
 public class ArquivoConnect extends Connect {
 
+    /**
+     *
+     * @param codUser
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public List<Arquivo> carregar_lista_arquivo(int codUser) throws IOException, InterruptedException {
         List<Arquivo> list = new ArrayList<>();
         List<Integer> codigoUsuarioAcesso;
@@ -52,6 +59,13 @@ public class ArquivoConnect extends Connect {
         return list;
     }
 
+    /**
+     *
+     * @param arquivo
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Arquivo updateFileData(Arquivo arquivo) throws IOException, InterruptedException {
         try (Socket socket = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
@@ -89,6 +103,14 @@ public class ArquivoConnect extends Connect {
         return null;
     }
 
+    /**
+     *
+     * @param arquivo
+     * @param nome
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Arquivo rename(Arquivo arquivo, String nome) throws IOException, InterruptedException {
         try (Socket socket = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
@@ -124,6 +146,14 @@ public class ArquivoConnect extends Connect {
 
     }
 
+    /**
+     *
+     * @param arquivo
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws ArquivoDuplicadoException
+     */
     public Arquivo createFile(Arquivo arquivo) throws IOException, InterruptedException, ArquivoDuplicadoException {
         try (Socket socket = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
@@ -161,6 +191,13 @@ public class ArquivoConnect extends Connect {
         return null;
     }
 
+    /**
+     *
+     * @param arquivo
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Arquivo replace(Arquivo arquivo) throws IOException, InterruptedException {
         try (Socket socket = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();

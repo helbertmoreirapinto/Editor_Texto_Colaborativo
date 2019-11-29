@@ -32,6 +32,9 @@ public class TelaServer extends JFrame {
 
     }
 
+    /**
+     *
+     */
     private void init() {
         try {
             ServerSocket server_file = new ServerSocket(Connect.PORT_FILE);
@@ -48,12 +51,14 @@ public class TelaServer extends JFrame {
             s_edit = new ThreadEdit(serv, model, txtUsuariosLogados);
             Thread t_edit = new Thread(s_edit);
             t_edit.start();
-
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
     }
 
+    /**
+     *
+     */
     private void iniciar_server() {
         try {
             s_file.init_application();
@@ -69,6 +74,9 @@ public class TelaServer extends JFrame {
 
     }
 
+    /**
+     *
+     */
     private void encerrar_server() {
         try {
             s_file.close_application();

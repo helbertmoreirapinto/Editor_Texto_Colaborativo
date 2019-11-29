@@ -38,6 +38,11 @@ public class TelaEditarArquivo extends JFrame {
     private UsuarioConnect connUser;
     private EditFileConnect connEdit;
 
+    /**
+     *
+     * @param codigoUsuario
+     * @param arquivo
+     */
     public TelaEditarArquivo(int codigoUsuario, Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
@@ -84,6 +89,9 @@ public class TelaEditarArquivo extends JFrame {
         });
     }
 
+    /**
+     *
+     */
     private void fechar_arquivo() {
         if (verifica_server_online()) {
             connEdit.exit();
@@ -94,6 +102,10 @@ public class TelaEditarArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return connUser.get_status_server();

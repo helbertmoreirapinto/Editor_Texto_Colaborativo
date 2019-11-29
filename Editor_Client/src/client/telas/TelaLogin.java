@@ -29,6 +29,9 @@ public class TelaLogin extends JFrame {
         conn_file = new ArquivoConnect();
     }
 
+    /**
+     *
+     */
     private void logar() {
         try {
             Usuario user;
@@ -57,6 +60,12 @@ public class TelaLogin extends JFrame {
 
     }
 
+    /**
+     *
+     * @param codigoUsuario
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void iniciar_menu(int codigoUsuario) throws IOException, InterruptedException {
         List<Arquivo> arquivoList = conn_file.carregar_lista_arquivo(codigoUsuario);
         sessao.setArquivoList(arquivoList);

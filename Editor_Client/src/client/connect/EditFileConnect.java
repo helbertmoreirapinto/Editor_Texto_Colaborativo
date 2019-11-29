@@ -18,6 +18,13 @@ public class EditFileConnect extends Connect {
     private ObjectOutputStream output;
     private ObjectInputStream input;
 
+    /**
+     *
+     * @param codigo
+     * @param arquivo
+     * @param campo
+     * @param model
+     */
     public EditFileConnect(int codigo, Arquivo arquivo, JTextArea campo, ListUsuarioModel model) {
         try {
             StringBuilder comando = new StringBuilder();
@@ -43,6 +50,10 @@ public class EditFileConnect extends Connect {
         }
     }
 
+    /**
+     *
+     * @param text
+     */
     public void send_text(String text) {
         try {
             StringBuilder comando = new StringBuilder();
@@ -54,6 +65,11 @@ public class EditFileConnect extends Connect {
         }
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @return
+     */
     public String get_text(String nomeFile) {
         String texto = "";
         try (Socket s = new Socket(IP_SERVER, PORT_FILE); ObjectOutputStream o = new ObjectOutputStream(s.getOutputStream()); ObjectInputStream i = new ObjectInputStream(s.getInputStream())) {
@@ -73,6 +89,9 @@ public class EditFileConnect extends Connect {
         return texto;
     }
 
+    /**
+     *
+     */
     public void exit() {
         try {
             StringBuilder comando = new StringBuilder();

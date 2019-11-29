@@ -13,6 +13,14 @@ import java.util.HashMap;
  */
 public class UsuarioConnect extends Connect {
 
+    /**
+     *
+     * @param login
+     * @param senha
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Usuario logar(String login, String senha) throws IOException, InterruptedException {
         Usuario usuarioLogado = null;
         String resp_serv;
@@ -34,6 +42,13 @@ public class UsuarioConnect extends Connect {
         return usuarioLogado;
     }
 
+    /**
+     *
+     * @param codigoUsuario
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public Usuario get_usuario_pelo_codigo(int codigoUsuario) throws IOException, InterruptedException {
         Usuario usuario = null;
         String resp_serv;
@@ -54,6 +69,11 @@ public class UsuarioConnect extends Connect {
         return usuario;
     }
 
+    /**
+     *
+     * @param userAlt
+     * @throws IOException
+     */
     public void inserir_usuario(Usuario userAlt) throws IOException {
         try (Socket socket = new Socket(IP_SERVER, PORT_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
@@ -68,6 +88,11 @@ public class UsuarioConnect extends Connect {
         }
     }
 
+    /**
+     *
+     * @param userAlt
+     * @throws IOException
+     */
     public void alterar_usuario(Usuario userAlt) throws IOException {
         try (Socket socket = new Socket(IP_SERVER, PORT_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {
             StringBuilder comando = new StringBuilder();
@@ -83,6 +108,11 @@ public class UsuarioConnect extends Connect {
         }
     }
 
+    /**
+     *
+     * @return @throws IOException
+     * @throws InterruptedException
+     */
     public HashMap<Integer, Usuario> carregar_lista_usuario() throws IOException, InterruptedException {
         HashMap<Integer, Usuario> list = new HashMap<>();
         String retorno;

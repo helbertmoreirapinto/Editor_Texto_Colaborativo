@@ -40,10 +40,20 @@ public abstract class Connect {
     protected final String COMAND_USER_ONLINE = "33";
     protected final String COMAND_EXIT = "34";
 
+    /**
+     *
+     * @param delay
+     * @throws InterruptedException
+     */
     protected void delay(int delay) throws InterruptedException {
         Thread.sleep(delay);
     }
 
+    /**
+     *
+     * @return @throws IOException
+     * @throws InterruptedException
+     */
     public boolean get_status_server() throws IOException, InterruptedException {
         boolean online;
         try (Socket socket = new Socket(IP_SERVER, PORT_USUARIO); ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream()); ObjectInputStream input = new ObjectInputStream(socket.getInputStream())) {

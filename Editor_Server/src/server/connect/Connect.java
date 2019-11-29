@@ -34,6 +34,11 @@ public abstract class Connect {
     protected final String COMAND_USER_ONLINE = "33";
     protected final String COMAND_EXIT = "34";
 
+    /**
+     *
+     * @param delay
+     * @throws InterruptedException
+     */
     protected void delay(int delay) throws InterruptedException {
         Thread.sleep(delay);
     }

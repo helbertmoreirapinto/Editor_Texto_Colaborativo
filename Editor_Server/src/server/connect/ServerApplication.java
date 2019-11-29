@@ -23,6 +23,11 @@ public class ServerApplication extends Connect implements Runnable {
     private final ServerSocket server;
     private Socket socket;
 
+    /**
+     *
+     * @param server
+     * @throws IOException
+     */
     public ServerApplication(ServerSocket server) throws IOException {
         status = false;
         this.server = server;
@@ -109,18 +114,36 @@ public class ServerApplication extends Connect implements Runnable {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void init_application() throws IOException {
         status = true;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void close_application() throws IOException {
         status = false;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isOnline() {
         return status;
     }
 
+    /**
+     *
+     * @param login
+     * @param senha
+     * @return
+     */
     private String logar(String login, String senha) {
         Usuario user = Usuario.logar(login, senha);
         StringBuilder comando = new StringBuilder();
@@ -136,6 +159,10 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     private String get_usuarioList() {
         StringBuilder comando = new StringBuilder();
         HashMap<Integer, Usuario> list = Usuario.carregar_lista_usuario();
@@ -151,6 +178,11 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param codUser
+     * @return
+     */
     private String get_usuario_pelo_codigo(int codUser) {
         Usuario user = Usuario.get_usuario_pelo_codigo(codUser);
         StringBuilder comando = new StringBuilder();
@@ -167,6 +199,11 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param codUser
+     * @return
+     */
     private String get_fileList(int codUser) {
         StringBuilder comando = new StringBuilder();
         List<Arquivo> fileList = Arquivo.carregar_lista_arquivo(codUser);
@@ -183,6 +220,15 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param nome
+     * @param login
+     * @param senha
+     * @param ativo
+     * @param adm
+     * @return
+     */
     private String get_save_user(String nome, String login, String senha, boolean ativo, boolean adm) {
         System.out.println(String.format("NEW USER: %s", nome));
         StringBuilder comando = new StringBuilder();
@@ -197,6 +243,16 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param codigo
+     * @param nome
+     * @param login
+     * @param senha
+     * @param ativo
+     * @param adm
+     * @return
+     */
     private String get_update_user(int codigo, String nome, String login, String senha, boolean ativo, boolean adm) {
         System.out.println(String.format("UPD USER: %s", nome));
         StringBuilder comando = new StringBuilder();
@@ -217,10 +273,21 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     private String get_status_server() {
         return (status) ? "online" : "offline";
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @param codAutor
+     * @param codUsers
+     * @return
+     */
     private String create_file(String nomeFile, int codAutor, String codUsers) {
         System.out.println(String.format("NEW FILE: %s", nomeFile));
         StringBuilder comando = new StringBuilder();
@@ -246,6 +313,14 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @param codAutor
+     * @param codUsers
+     * @param rename
+     * @return
+     */
     private String rename_file(String nomeFile, int codAutor, String codUsers, String rename) {
         System.out.println(String.format("RENAME FILE: %s -> %s", nomeFile, rename));
         StringBuilder comando = new StringBuilder();
@@ -262,6 +337,13 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @param codAutor
+     * @param codUsers
+     * @return
+     */
     private String replace_file(String nomeFile, int codAutor, String codUsers) {
         System.out.println(String.format("REPLACE FILE: %s", nomeFile));
         StringBuilder comando = new StringBuilder();
@@ -285,6 +367,13 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @param codAutor
+     * @param codUsers
+     * @return
+     */
     private String update_file_data(String nomeFile, int codAutor, String codUsers) {
         System.out.println(String.format("UPD FILE DATA: %s -> %s", nomeFile, codUsers));
         StringBuilder comando = new StringBuilder();
@@ -302,6 +391,11 @@ public class ServerApplication extends Connect implements Runnable {
         return comando.toString();
     }
 
+    /**
+     *
+     * @param nomeFile
+     * @return
+     */
     private String get_text_file(String nomeFile) {
         System.out.println(String.format("GET TEXT FILE: %s", nomeFile));
         return Arquivo.getTexto(Arquivo.get_Arquivo_pelo_nome(nomeFile));

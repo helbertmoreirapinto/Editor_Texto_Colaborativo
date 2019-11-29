@@ -46,6 +46,9 @@ public class TelaConArquivo extends JFrame {
         });
     }
 
+    /**
+     *
+     */
     private void pesquisar_arquivos() {
         try {
             model.limpar();
@@ -60,6 +63,9 @@ public class TelaConArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     */
     private void selecionar_arquivo() {
         int index = tabArquivo.getSelectedRow();
         Arquivo a;
@@ -69,6 +75,10 @@ public class TelaConArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     * @param arquivo
+     */
     private void consultar_arquivo(Arquivo arquivo) {
         if (verifica_server_online()) {
             TelaCadArquivo tela = new TelaCadArquivo(arquivo);
@@ -78,6 +88,10 @@ public class TelaConArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return conn.get_status_server();

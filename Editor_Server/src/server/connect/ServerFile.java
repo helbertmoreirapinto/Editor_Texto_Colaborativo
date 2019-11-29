@@ -25,6 +25,16 @@ public class ServerFile extends Connect implements Runnable {
     private final Usuario user;
     private final Arquivo file;
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param editFileList
+     * @param model
+     * @param txtNum
+     * @param user
+     * @param file
+     */
     public ServerFile(ObjectInputStream input, ObjectOutputStream output, List<ServerFile> editFileList, UsuarioFileTableModel model, JLabel txtNum, Usuario user, Arquivo file) {
         this.input = input;
         this.output = output;
@@ -61,6 +71,20 @@ public class ServerFile extends Connect implements Runnable {
         }
         try {
             editFileList.remove(this);
+            StringBuilder usuariosLogados = new StringBuilder();
+            usuariosLogados.append(COMAND_USER_ONLINE)
+                    .append(SEP_CAMPOS);
+
+            for (ServerFile clients : editFileList) {
+                usuariosLogados.append(clients.getUser().getNome())
+                        .append(",");
+            }
+            usuariosLogados.deleteCharAt(usuariosLogados.length() - 1);
+            for (ServerFile clients : editFileList) {
+                clients.getOutput().writeUTF(usuariosLogados.toString());
+                clients.getOutput().flush();
+            }
+
             model.removeUsuarioFile(new UsuarioFile(file, user));
             txtNum.setText(String.valueOf(model.getRowCount()));
             this.input.close();

@@ -25,6 +25,12 @@ public class ThreadEdit extends Connect implements Runnable {
     private final JLabel txtNum;
     private boolean online;
 
+    /**
+     *
+     * @param serv
+     * @param model
+     * @param txtNum
+     */
     public ThreadEdit(ServerSocket serv, UsuarioFileTableModel model, JLabel txtNum) {
         this.serv = serv;
         this.model = model;
@@ -69,9 +75,9 @@ public class ThreadEdit extends Connect implements Runnable {
                 u = Usuario.get_usuario_pelo_codigo(Integer.parseInt(campos[1]));
                 model.addUsuarioFile(u, file);
                 txtNum.setText(String.valueOf(model.getRowCount()));
-
                 ServerFile client = new ServerFile(in, out, list.get(campos[0]), model, txtNum, u, file);
                 list.get(campos[0]).add(client);
+
                 Thread t = new Thread(client);
                 t.start();
 

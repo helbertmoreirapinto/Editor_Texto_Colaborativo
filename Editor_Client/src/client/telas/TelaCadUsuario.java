@@ -22,6 +22,10 @@ public class TelaCadUsuario extends JFrame {
     private final UsuarioConnect conn;
     private final Sessao sessao;
 
+    /**
+     *
+     * @param userAlterar
+     */
     public TelaCadUsuario(Usuario userAlterar) {
         initComponents();
         sessao = Sessao.getInstance();
@@ -47,6 +51,10 @@ public class TelaCadUsuario extends JFrame {
         });
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean validar_campos() {
         if (txtNome.getText().trim().equals("") || txtLogin.getText().trim().equals("") || txtSenha1.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(null, "Favor preencher todos os campos");
@@ -60,6 +68,10 @@ public class TelaCadUsuario extends JFrame {
         return true;
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     private void incluir_usuario() throws IOException {
         try {
             userAlt = new Usuario(
@@ -78,6 +90,10 @@ public class TelaCadUsuario extends JFrame {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     private void alterar_usuario() throws IOException {
         try {
             userAlt.setNome(txtNome.getText());
@@ -93,6 +109,10 @@ public class TelaCadUsuario extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return conn.get_status_server();

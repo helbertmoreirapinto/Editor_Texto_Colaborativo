@@ -34,6 +34,10 @@ public class TelaCadArquivo extends JFrame {
     private final ArquivoConnect connFile;
     private final UsuarioConnect connUser;
 
+    /**
+     *
+     * @param arquivo
+     */
     public TelaCadArquivo(Arquivo arquivo) {
         initComponents();
         sessao = Sessao.getInstance();
@@ -87,6 +91,9 @@ public class TelaCadArquivo extends JFrame {
         });
     }
 
+    /**
+     *
+     */
     private void marcar_usuario() {
         int i = listUsuario.getSelectedIndex();
         if (i >= 0) {
@@ -96,6 +103,9 @@ public class TelaCadArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     */
     private void desmarcar_usuario() {
         int i = listSelecionados.getSelectedIndex();
         if (i >= 0) {
@@ -105,6 +115,10 @@ public class TelaCadArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private ArrayList<Integer> lista_codigos_usuarios_selecionados() {
         ArrayList<Integer> listaCodigos = new ArrayList<>();
         List<String> aux = model2.getAllExits();
@@ -116,6 +130,11 @@ public class TelaCadArquivo extends JFrame {
         return listaCodigos;
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
     private void alterar_arquivo() throws IOException, InterruptedException {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
         arquivo.setUsuarioAcessoAdm(selecionados);
@@ -125,8 +144,8 @@ public class TelaCadArquivo extends JFrame {
     }
 
     /**
-     * @see verificar se arquivo existe na criacao
      *
+     * @throws InterruptedException
      */
     private void incluir_arquivo() throws InterruptedException {
         List<Integer> selecionados = lista_codigos_usuarios_selecionados();
@@ -152,6 +171,10 @@ public class TelaCadArquivo extends JFrame {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return connUser.get_status_server();

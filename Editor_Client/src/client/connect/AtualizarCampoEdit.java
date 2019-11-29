@@ -17,6 +17,13 @@ public class AtualizarCampoEdit extends Connect implements Runnable {
     private final ObjectOutputStream output;
     private final ListUsuarioModel model;
 
+    /**
+     *
+     * @param campo
+     * @param input
+     * @param output
+     * @param model
+     */
     public AtualizarCampoEdit(JTextArea campo, ObjectInputStream input, ObjectOutputStream output, ListUsuarioModel model) {
         this.campo = campo;
         this.input = input;
@@ -53,9 +60,9 @@ public class AtualizarCampoEdit extends Connect implements Runnable {
 
                     output.close();
                     input.close();
-                    
+
                     System.err.println("Thread atualizar texto " + ex.getMessage());
-                    
+
                 } catch (IOException ex1) {
                 }
             }

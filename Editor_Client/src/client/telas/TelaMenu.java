@@ -48,6 +48,10 @@ public class TelaMenu extends JFrame {
         });
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean verifica_server_online() {
         try {
             return conn.get_status_server();
