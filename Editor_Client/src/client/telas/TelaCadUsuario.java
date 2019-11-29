@@ -94,13 +94,13 @@ public class TelaCadUsuario extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        boolean online;
         try {
-            online = conn.get_status_server();
+            return conn.get_status_server();
         } catch (IOException | InterruptedException ex) {
-            return false;
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.exit(0);
         }
-        return online;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

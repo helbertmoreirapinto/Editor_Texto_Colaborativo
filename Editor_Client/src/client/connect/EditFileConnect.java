@@ -1,6 +1,7 @@
 package client.connect;
 
 import client.Arquivo;
+import client.model.ListUsuarioModel;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +18,7 @@ public class EditFileConnect extends Connect {
     private ObjectOutputStream output;
     private ObjectInputStream input;
 
-    public EditFileConnect(int codigo, Arquivo arquivo, JTextArea campo) {
+    public EditFileConnect(int codigo, Arquivo arquivo, JTextArea campo, ListUsuarioModel model) {
         try {
             StringBuilder comando = new StringBuilder();
             comando.append(arquivo.getNome()).append(SEP_CAMPOS)
@@ -33,9 +34,10 @@ public class EditFileConnect extends Connect {
                 System.out.println("Connect in server");
             }
 
-            AtualizarCampoEdit att = new AtualizarCampoEdit(campo, input);
+            AtualizarCampoEdit att = new AtualizarCampoEdit(campo, input, output, model);
             Thread t = new Thread(att);
             t.start();
+
         } catch (InterruptedException | IOException ex) {
             System.out.println(ex.getMessage());
         }
@@ -66,7 +68,7 @@ public class EditFileConnect extends Connect {
                 texto = i.readUTF();
             }
         } catch (InterruptedException | IOException ex) {
-            System.err.println(ex.getMessage());
+            System.err.println("Erro getText: " + ex.getMessage());
         }
         return texto;
     }
@@ -78,7 +80,7 @@ public class EditFileConnect extends Connect {
             output.writeUTF(comando.toString());
             output.flush();
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            System.err.println("Erro fechar conexao: " + ex.getMessage());
         }
     }
 }

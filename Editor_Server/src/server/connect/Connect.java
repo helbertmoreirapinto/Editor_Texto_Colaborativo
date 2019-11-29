@@ -31,7 +31,8 @@ public abstract class Connect {
 
     protected final String COMAND_SEND_TEXT = "31";
     protected final String COMAND_GET_TEXT = "32";
-    protected final String COMAND_EXIT = "33";
+    protected final String COMAND_USER_ONLINE = "33";
+    protected final String COMAND_EXIT = "34";
 
     protected void delay(int delay) throws InterruptedException {
         Thread.sleep(delay);

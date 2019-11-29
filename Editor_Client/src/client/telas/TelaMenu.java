@@ -3,16 +3,12 @@ package client.telas;
 import client.Arquivo;
 import client.Sessao;
 import client.Usuario;
-import client.connect.ArquivoConnect;
 import client.connect.UsuarioConnect;
 import client.model.ArquivoTableModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -53,13 +49,13 @@ public class TelaMenu extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        boolean online;
         try {
-            online = conn.get_status_server();
+            return conn.get_status_server();
         } catch (IOException | InterruptedException ex) {
-            return false;
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.exit(0);
         }
-        return online;
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -254,7 +250,7 @@ public class TelaMenu extends JFrame {
                 tela.setVisible(true);
                 this.dispose();
             } catch (IOException | InterruptedException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println("Erro carregar lista user: " + ex.getMessage());
             }
 
         }
@@ -282,8 +278,7 @@ public class TelaMenu extends JFrame {
         Arquivo a;
         if (evt.getClickCount() == 2 && tabArquivo.getSelectedRow() >= 0) {
             a = model.getArquivo(tabArquivo.getSelectedRow());
-            boolean s = verifica_server_online();
-            if (s) {
+            if (verifica_server_online()) {
                 TelaEditarArquivo tela = new TelaEditarArquivo(user.getCodigo(), a);
                 tela.setLocationRelativeTo(null);
                 tela.setVisible(true);

@@ -47,11 +47,11 @@ public class ServerFile extends Connect implements Runnable {
                     continue;
                 }
                 for (ServerFile sf : editFileList) {
-                    if (this == sf) {
-                        System.out.println(String.format("%s", msg));
-                    } else {
+                    if (this != sf) {
                         sf.output.writeUTF(msg);
                         sf.output.flush();
+                    } else {
+                        Arquivo.editar(file, msg);
                     }
                 }
             } catch (IOException ex) {
@@ -80,5 +80,13 @@ public class ServerFile extends Connect implements Runnable {
 
     public void stopServer() {
         status = false;
+    }
+
+    public ObjectOutputStream getOutput() {
+        return output;
+    }
+
+    public Usuario getUser() {
+        return user;
     }
 }

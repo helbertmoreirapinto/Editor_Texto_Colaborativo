@@ -43,10 +43,13 @@ public class TelaEditarArquivo extends JFrame {
         sessao = Sessao.getInstance();
         user = sessao.getUserLogado();
         connUser = new UsuarioConnect();
-        connEdit = new EditFileConnect(user.getCodigo(), arquivo, areaTexto);
+
+        this.model = new ListUsuarioModel();
+        listOnline.setModel(model);
+        connEdit = new EditFileConnect(user.getCodigo(), arquivo, areaTexto, model);
 
         this.arquivo = arquivo;
-        this.model = new ListUsuarioModel();
+
         verifica_server_online();
         areaTexto.setText(connEdit.get_text(arquivo.getNome()));
 
@@ -60,8 +63,6 @@ public class TelaEditarArquivo extends JFrame {
         }
 
         txtUsuarioLogado.setText(String.format("[%d] %s", user.getCodigo(), user.getNome()));
-        listOnline.setModel(model);
-        model.addElem(user.getNome());
 
         undoManager = new UndoManager();
         areaTexto.getDocument().addUndoableEditListener(new UndoListener());
@@ -94,13 +95,13 @@ public class TelaEditarArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        boolean online;
         try {
-            online = connUser.get_status_server();
+            return connUser.get_status_server();
         } catch (IOException | InterruptedException ex) {
-            return false;
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.exit(0);
         }
-        return online;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

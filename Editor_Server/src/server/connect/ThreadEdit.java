@@ -37,20 +37,22 @@ public class ThreadEdit extends Connect implements Runnable {
         Socket soc = null;
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
+
         try {
             HashMap<String, List<ServerFile>> list = new HashMap<>();
-
+            StringBuilder usuariosLogados;
             String param;
             String[] campos;
             Arquivo file;
             Usuario u;
-            while (true) {
-//                if (online) {
+            while (!Thread.interrupted()) {
                 soc = serv.accept();
                 System.out.println("Conect");
-                for (Map.Entry<String, List<ServerFile>> elem : list.entrySet()) {
-                    if (elem.getValue() != null && elem.getValue().isEmpty()) {
-                        list.remove(elem.getKey());
+                if (!list.isEmpty()) {
+                    for (Map.Entry<String, List<ServerFile>> elem : list.entrySet()) {
+                        if (elem.getValue() != null && elem.getValue().isEmpty()) {
+                            list.remove(elem.getKey());
+                        }
                     }
                 }
 
@@ -72,10 +74,24 @@ public class ThreadEdit extends Connect implements Runnable {
                 list.get(campos[0]).add(client);
                 Thread t = new Thread(client);
                 t.start();
+
                 out.writeBoolean(true);
                 out.flush();
-//                }
 
+                usuariosLogados = new StringBuilder();
+                usuariosLogados.append(COMAND_USER_ONLINE)
+                        .append(SEP_CAMPOS);
+
+                for (ServerFile clients : list.get(campos[0])) {
+                    usuariosLogados.append(clients.getUser().getNome())
+                            .append(",");
+                }
+                usuariosLogados.deleteCharAt(usuariosLogados.length() - 1);
+
+                for (ServerFile clients : list.get(campos[0])) {
+                    clients.getOutput().writeUTF(usuariosLogados.toString());
+                    clients.getOutput().flush();
+                }
             }
 
         } catch (IOException ex) {

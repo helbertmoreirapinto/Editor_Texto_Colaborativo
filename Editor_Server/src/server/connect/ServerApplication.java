@@ -35,7 +35,6 @@ public class ServerApplication extends Connect implements Runnable {
         String ret;
 
         while (true) {
-//            if (status) {
             try {
                 socket = server.accept();
             } catch (IOException ex) {
@@ -108,8 +107,6 @@ public class ServerApplication extends Connect implements Runnable {
                 System.err.println("Erro run: " + ex.getMessage());
             }
         }
-
-//        }
     }
 
     public void init_application() throws IOException {
@@ -128,7 +125,7 @@ public class ServerApplication extends Connect implements Runnable {
         Usuario user = Usuario.logar(login, senha);
         StringBuilder comando = new StringBuilder();
         if (user != null) {
-            System.out.println(String.format("--> connect: [%d] %s", user.getCodigo(), user.getNome()));
+            System.out.println(String.format("CONNECT: [%d] %s", user.getCodigo(), user.getNome()));
             comando.append(String.valueOf(user.getCodigo())).append(SEP_CAMPOS);
             comando.append(user.getNome()).append(SEP_CAMPOS);
             comando.append(user.getLogin()).append(SEP_CAMPOS);
@@ -142,7 +139,6 @@ public class ServerApplication extends Connect implements Runnable {
     private String get_usuarioList() {
         StringBuilder comando = new StringBuilder();
         HashMap<Integer, Usuario> list = Usuario.carregar_lista_usuario();
-        System.out.println(String.format("load_userList tam:%d", list.size()));
         for (Map.Entry<Integer, Usuario> elem : list.entrySet()) {
             comando.append(String.valueOf(elem.getValue().getCodigo())).append(SEP_CAMPOS);
             comando.append(elem.getValue().getNome()).append(SEP_CAMPOS);
@@ -151,6 +147,7 @@ public class ServerApplication extends Connect implements Runnable {
             comando.append(String.valueOf(elem.getValue().isAdm())).append(SEP_CAMPOS);
             comando.append(String.valueOf(elem.getValue().isAtivo())).append(SEP_CAMPOS).append(SEP_REGS);
         }
+        System.out.println(String.format("USERLIST: %d elem", list.size()));
         return comando.toString();
     }
 
@@ -158,13 +155,14 @@ public class ServerApplication extends Connect implements Runnable {
         Usuario user = Usuario.get_usuario_pelo_codigo(codUser);
         StringBuilder comando = new StringBuilder();
         if (user != null) {
-            System.out.println(String.format("user_found: [%d] %s", user.getCodigo(), user.getNome()));
+
             comando.append(String.valueOf(user.getCodigo())).append(SEP_CAMPOS);
             comando.append(user.getNome()).append(SEP_CAMPOS);
             comando.append(user.getLogin()).append(SEP_CAMPOS);
             comando.append(user.getSenha()).append(SEP_CAMPOS);
             comando.append(String.valueOf(user.isAdm())).append(SEP_CAMPOS);
             comando.append(String.valueOf(user.isAtivo()));
+            System.out.println(String.format("GET USER: [%d] %s", user.getCodigo(), user.getNome()));
         }
         return comando.toString();
     }
@@ -172,7 +170,6 @@ public class ServerApplication extends Connect implements Runnable {
     private String get_fileList(int codUser) {
         StringBuilder comando = new StringBuilder();
         List<Arquivo> fileList = Arquivo.carregar_lista_arquivo(codUser);
-        System.out.println(String.format("cod_user: %d file_found: %d", codUser, fileList.size()));
         for (Arquivo file : fileList) {
             comando.append(file.getNome()).append(SEP_CAMPOS);
             comando.append(file.getCodigoAutor()).append(SEP_CAMPOS);
@@ -182,10 +179,12 @@ public class ServerApplication extends Connect implements Runnable {
             comando.deleteCharAt(comando.length() - 1);
             comando.append(SEP_CAMPOS).append(SEP_REGS);
         }
+        System.out.println(String.format("FILELIST[user: %d]: %d elem", codUser, fileList.size()));
         return comando.toString();
     }
 
     private String get_save_user(String nome, String login, String senha, boolean ativo, boolean adm) {
+        System.out.println(String.format("NEW USER: %s", nome));
         StringBuilder comando = new StringBuilder();
         Usuario user = new Usuario(nome, login, senha, adm, ativo);
         Usuario.inserir_usuario(user);
@@ -199,6 +198,7 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String get_update_user(int codigo, String nome, String login, String senha, boolean ativo, boolean adm) {
+        System.out.println(String.format("UPD USER: %s", nome));
         StringBuilder comando = new StringBuilder();
         Usuario user = Usuario.get_usuario_pelo_codigo(codigo);
         user.setAdm(adm);
@@ -222,6 +222,7 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String create_file(String nomeFile, int codAutor, String codUsers) {
+        System.out.println(String.format("NEW FILE: %s", nomeFile));
         StringBuilder comando = new StringBuilder();
         try {
             String[] codUsersVet = codUsers.split(",");
@@ -246,6 +247,7 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String rename_file(String nomeFile, int codAutor, String codUsers, String rename) {
+        System.out.println(String.format("RENAME FILE: %s -> %s", nomeFile, rename));
         StringBuilder comando = new StringBuilder();
         String[] codUsersVet = codUsers.split(",");
         List<Integer> codUsersList = new ArrayList<>();
@@ -261,6 +263,7 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String replace_file(String nomeFile, int codAutor, String codUsers) {
+        System.out.println(String.format("REPLACE FILE: %s", nomeFile));
         StringBuilder comando = new StringBuilder();
         try {
             String[] codUsersVet = codUsers.split(",");
@@ -283,6 +286,7 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String update_file_data(String nomeFile, int codAutor, String codUsers) {
+        System.out.println(String.format("UPD FILE DATA: %s -> %s", nomeFile, codUsers));
         StringBuilder comando = new StringBuilder();
         String[] codUsersVet = codUsers.split(",");
         List<Integer> codUsersList = new ArrayList<>();
@@ -299,12 +303,8 @@ public class ServerApplication extends Connect implements Runnable {
     }
 
     private String get_text_file(String nomeFile) {
-        System.out.println("nome file: " + nomeFile);
-        String text;
-        Arquivo a = Arquivo.get_Arquivo_pelo_nome(nomeFile);
-        System.out.println("arquivo: " + a);
-        text = Arquivo.getTexto(a);
-        return text;
+        System.out.println(String.format("GET TEXT FILE: %s", nomeFile));
+        return Arquivo.getTexto(Arquivo.get_Arquivo_pelo_nome(nomeFile));
     }
 
 }

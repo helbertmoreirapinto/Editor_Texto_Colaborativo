@@ -48,9 +48,7 @@ public class TelaLogin extends JFrame {
             }
         } catch (NoSuchAlgorithmException ex) {
             System.err.println("Erro crypto " + ex.getMessage());
-        } catch (InterruptedException | ClassNotFoundException ex) {
-            System.err.println("Erro parsing object " + ex.getMessage());
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
             JOptionPane.showMessageDialog(null, "Server offline");
             System.err.println("Server offline " + ex.getMessage());
         } finally {

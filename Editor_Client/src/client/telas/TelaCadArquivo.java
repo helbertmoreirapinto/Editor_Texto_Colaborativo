@@ -153,13 +153,13 @@ public class TelaCadArquivo extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        boolean online;
         try {
-            online = connUser.get_status_server();
+            return connUser.get_status_server();
         } catch (IOException | InterruptedException ex) {
-            return false;
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.exit(0);
         }
-        return online;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

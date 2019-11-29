@@ -1,7 +1,6 @@
 package client.telas;
 
 import client.Usuario;
-import client.connect.ArquivoConnect;
 import client.connect.UsuarioConnect;
 import client.model.UsuarioTableModel;
 import java.awt.event.WindowAdapter;
@@ -83,13 +82,13 @@ public class TelaConUsuario extends JFrame {
     }
 
     private boolean verifica_server_online() {
-        boolean online;
         try {
-            online = conn.get_status_server();
+            return conn.get_status_server();
         } catch (IOException | InterruptedException ex) {
-            return false;
+            JOptionPane.showMessageDialog(null, "Server offline");
+            System.exit(0);
         }
-        return online;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

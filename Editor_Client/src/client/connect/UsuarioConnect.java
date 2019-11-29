@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class UsuarioConnect extends Connect {
 
-    public Usuario logar(String login, String senha) throws IOException, InterruptedException, ClassNotFoundException {
+    public Usuario logar(String login, String senha) throws IOException, InterruptedException {
         Usuario usuarioLogado = null;
         String resp_serv;
         String[] campos;
